@@ -51,7 +51,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "Concept: Scan Servo", group = "Concept")
 @Disabled
 public class ConceptScanServo extends LinearOpMode {
-
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
     static final double MAX_POS     =  1.0;     // Maximum rotational position
@@ -65,7 +64,6 @@ public class ConceptScanServo extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         // Connect to servo (Assume Robot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
         servo = hardwareMap.get(Servo.class, "left_hand");
@@ -103,7 +101,6 @@ public class ConceptScanServo extends LinearOpMode {
             telemetry.update();
 
             // Set the servo to the new position and pause;
-            servo.setPosition(position);
             sleep(CYCLE_MS);
             idle();
         }
