@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -43,7 +42,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.function.Supplier;
 
-@Configurable
 @TeleOp(name = "Red Teleop")
 public class redteleop extends OpMode {
     GoBildaPinpointDriver pinpoint;

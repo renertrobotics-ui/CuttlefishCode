@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -18,16 +18,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 /**
  * @version 2.0, 11/28/2024
  */
 
-@Autonomous(name = "RED buddy Auto", group = "Examples")
-public class farnewblueteleop extends OpMode {
+@Autonomous(name = "RED octopi buddy Auto", group = "Examples")
+public class octopiauto extends OpMode {
     GoBildaPinpointDriver pinpoint;
     private Follower follower;
     private Timer pathTimer, opmodeTimer;
@@ -55,10 +54,10 @@ public class farnewblueteleop extends OpMode {
     private final Pose start6Pose = new Pose(40, 110, Math.toRadians(135));
 
 
-    private final Pose start2Pose = new Pose(8, 4, Math.toRadians(0));
+    private final Pose start2Pose = new Pose(4.5, 4, Math.toRadians(0));
     private final Pose start4Pose = new Pose(4, 73, Math.toRadians(0));
 
-    private final Pose start3Pose = new Pose(6, 4, Math.toRadians(0));
+    private final Pose start3Pose = new Pose(1.5, 4, Math.toRadians(0));
     private final Pose startPose = new Pose (0, 0, Math.toRadians(0));
     private final Pose endPose = new Pose (28, 63, Math.toRadians(0));
 
@@ -75,7 +74,7 @@ public class farnewblueteleop extends OpMode {
     private final Pose pickup2Pose = new Pose(46, 58, Math.toRadians(0));
     private final Pose pickup2closePose = new Pose (1, 57, Math.toRadians(0));
     private final Pose gatePose = new Pose (36.2, 68.5, Math.toRadians(0));
-    private final Pose endgatePose = new Pose (40, 0, Math.toRadians(0));
+    private final Pose endgatePose = new Pose (28, 63, Math.toRadians(0));
 
     private final Pose gashPose = new Pose (31, 68.5, Math.toRadians(0));
 
@@ -86,10 +85,10 @@ public class farnewblueteleop extends OpMode {
     private final Pose pickup3closePose = new Pose (1, 71, Math.toRadians(0));
     private final Pose humanclosePose = new Pose (47, 15, Math.toRadians(90));
     private final Pose humanPose = new Pose (47, 7, Math.toRadians(90));
-    private final Pose humanclosePose2 = new Pose (36, 27, Math.toRadians(90));
-    private final Pose humanPose2 = new Pose (49, 27, Math.toRadians(90));
-    private final Pose humanclosePose3 = new Pose (36, -2, Math.toRadians(0));
-    private final Pose humanPose3 = new Pose (49, -2, Math.toRadians(0));
+    private final Pose humanclosePose2 = new Pose (36, 0, Math.toRadians(0));
+    private final Pose humanPose2 = new Pose (49, 0, Math.toRadians(0));
+    private final Pose humanclosePose3 = new Pose (36, 0, Math.toRadians(0));
+    private final Pose humanPose3 = new Pose (49, 0, Math.toRadians(0));
 
 
 
@@ -185,7 +184,7 @@ public class farnewblueteleop extends OpMode {
 
         grabHumansigma3 = follower.pathBuilder()
                 .addPath(new BezierLine(start3Pose, humanPose3))
-                .setLinearHeadingInterpolation(start3Pose.getHeading(), humanPose3.getHeading())
+                .setLinearHeadingInterpolation(start3Pose.getHeading(), humanclosePose2.getHeading())
                 .build();
         grabHuman3 = follower.pathBuilder()
                 .addPath(new BezierLine(humanclosePose3, humanPose3))
@@ -193,7 +192,7 @@ public class farnewblueteleop extends OpMode {
                 .build();
         scoreHuman3 = follower.pathBuilder()
                 .addPath(new BezierLine(humanPose3, start2Pose))
-                .setLinearHeadingInterpolation(humanPose3.getHeading(), start2Pose.getHeading())
+                .setLinearHeadingInterpolation(humanPose2.getHeading(), start2Pose.getHeading())
                 .build();
 
 
@@ -305,7 +304,7 @@ public class farnewblueteleop extends OpMode {
             case 5:
                 intakeMotor.setPower(1);
                 transferMotor.setPower(0);
-                follower.followPath(grabPickup1, 1, false);
+                follower.followPath(grabPickup1, 1, true);
                 setPathState(6);
                 break;
             case 6:
@@ -316,7 +315,7 @@ public class farnewblueteleop extends OpMode {
             case 7:
                 intakeMotor.setPower(1);
                 transferMotor.setPower(0);
-                follower.followPath(scorePickup1, 0.85, true);
+                follower.followPath(scorePickup1, 1, true);
                 setPathState(8);
                 break;
             case 8:
@@ -475,10 +474,10 @@ public class farnewblueteleop extends OpMode {
             case 30:
                 shooter = 1700;
                 intakeMotor.setPower(1);
-                if (!follower.isBusy() && transferTimer.seconds() > 1) {
+                if (!follower.isBusy() && transferTimer.seconds() > 0.75) {
                     shouldshoot = true;
                     transferMotor.setPower(1);
-                    if (transferTimer.seconds() > 1.5){
+                    if (transferTimer.seconds() > 1.25){
                         setPathState(31);
                         transferMotor.setPower(0);
                         shouldshoot = false;
@@ -489,7 +488,7 @@ public class farnewblueteleop extends OpMode {
                 intakeMotor.setPower(1);
                 transferMotor.setPower(0);
                 follower.followPath(grabHumansigma2, 1, false);
-                setPathState(3400);
+                setPathState(34);
                 break;
             case 32:
                 if (!follower.isBusy()) {
@@ -500,22 +499,13 @@ public class farnewblueteleop extends OpMode {
             case 33:
                 intakeMotor.setPower(1);
                 transferMotor.setPower(0);
-                follower.followPath(grabHuman2, 1,false);
-                setPathState(3400);
-                break;
-            case 3400:
-                if (!follower.isBusy()) {
-                    transferTimer.reset();
-                    setPathState(34);
-                }
+                follower.followPath(grabHuman2, 1, false);
+                setPathState(34);
                 break;
             case 34:
-                if (transferTimer.seconds() < 0.5 && transferTimer.seconds() > 0.2) {
-                    transferMotor.setPower(0.5);
-                }
-                if (transferTimer.seconds() > 1) {
+                if (!follower.isBusy()) {
+                    transferTimer.reset();
                     setPathState(35);
-                    transferMotor.setPower(0);
                 }
                 break;
             case 35:
@@ -533,10 +523,10 @@ public class farnewblueteleop extends OpMode {
             case 37:
                 shooter = 1700;
                 intakeMotor.setPower(1);
-                if (!follower.isBusy() && transferTimer.seconds() > 1) {
+                if (!follower.isBusy() && transferTimer.seconds() > 0.75) {
                     shouldshoot = true;
                     transferMotor.setPower(1);
-                    if (transferTimer.seconds() > 1.5){
+                    if (transferTimer.seconds() > 1.25){
                         setPathState(31);
                         transferMotor.setPower(0);
                         shouldshoot = false;
@@ -592,7 +582,7 @@ public class farnewblueteleop extends OpMode {
         double robotHeadingDeg = Math.toDegrees(follower.getPose().getHeading());
         double turretTargetDeg = fieldAngleDeg - robotHeadingDeg;
         double turnneed = turretTargetDeg;
-        counterturret.setPosition(0.5 + turnneed / 665);
+        counterturret.setPosition(0.5185 + turnneed / 665);
 
     }
 
@@ -616,10 +606,9 @@ public class farnewblueteleop extends OpMode {
         follower.update();
         autonomousPathUpdate();
 
-        if (skibidtimer.seconds() > 26 && skibidtimer.seconds() < 28) {
-            setPathState(50);
-            telemetry.addData("hi", "hi");
-        }
+        /*if (skibidtimer.seconds() > 26 && skibidtimer.seconds() < 27) {
+            setPathState(51);
+        }*/
 
 
         telemetry.addData("servo pos", counterturret.getPosition());

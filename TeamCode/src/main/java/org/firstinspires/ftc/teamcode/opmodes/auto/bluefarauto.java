@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -7,7 +7,6 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -19,16 +18,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 /**
  * @version 2.0, 11/28/2024
  */
 
-@Autonomous(name = "blue push autonomous", group = "Examples")
-public class BLUE_PUSH_AUTO extends OpMode {
+@Autonomous(name = "far blue autonomous", group = "Examples")
+public class bluefarauto extends OpMode {
     GoBildaPinpointDriver pinpoint;
     private Follower follower;
     private Timer pathTimer, opmodeTimer;
@@ -60,8 +57,7 @@ public class BLUE_PUSH_AUTO extends OpMode {
     private final Pose start4Pose = new Pose(4, -70, Math.toRadians(0));
 
     private final Pose start3Pose = new Pose(1.5, -59, Math.toRadians(0));
-    private final Pose startPose = new Pose (-6.5, -0, Math.toRadians(0));
-    private final Pose buddyPose = new Pose (2, 1, Math.toRadians(0));
+    private final Pose startPose = new Pose (0, -0, Math.toRadians(0));
 
     /** Scoring Pose of our robot. It is facing the goal at a 135 degree angle. */
     private final Pose scorePose = new Pose(11, -30, Math.toRadians(-45));
@@ -75,8 +71,8 @@ public class BLUE_PUSH_AUTO extends OpMode {
     /** Middle (Second Set) of Artifacts from the Spike Mark */
     private final Pose pickup2Pose = new Pose(46, -58, Math.toRadians(0));
     private final Pose pickup2closePose = new Pose (1, -57, Math.toRadians(0));
-    private final Pose gatePose = new Pose (38, -67, Math.toRadians(0));
-    private final Pose endgatePose = new Pose (28, -61, Math.toRadians(0));
+    private final Pose gatePose = new Pose (36.2, -67, Math.toRadians(0));
+    private final Pose endgatePose = new Pose (28, -63, Math.toRadians(0));
 
     private final Pose gashPose = new Pose (31, -67, Math.toRadians(0));
 
@@ -92,7 +88,7 @@ public class BLUE_PUSH_AUTO extends OpMode {
 
     /* These are our Paths and PathChains that we will define in buildPaths() */
     private Path scorePreload;
-    private PathChain pushem, antipushem, scoreclosePickup1,score2,score3, grabPickup1,scoreHuman, grabHumanclose, grabHuman, grabHumansigma, moveoffline, moveBuddy, superscore, pashGate, scoreclosePickup2, grabsigmaPickup1, grabPickup2, grabsigmaPickup2, pushGate, grabPickup3, grabsigmaPickup3, scorePickup1, scorePickup2, scorePickup3;
+    private PathChain pushem, antipushem, scoreclosePickup1,score2,score3, grabPickup1,scoreHuman, grabHumanclose, grabHuman, grabHumansigma, moveoffline, superscore, pashGate, scoreclosePickup2, grabsigmaPickup1, grabPickup2, grabsigmaPickup2, pushGate, grabPickup3, grabsigmaPickup3, scorePickup1, scorePickup2, scorePickup3;
     private DcMotor intakeMotor;
     private double distY = 0;
     private double turretOutput;
@@ -177,13 +173,9 @@ public class BLUE_PUSH_AUTO extends OpMode {
                 .setLinearHeadingInterpolation(start2Pose.getHeading(), start4Pose.getHeading())
                 .build();
 
-        moveBuddy = follower.pathBuilder()
-                .addPath(new BezierLine(buddyPose, start2Pose))
-                .setLinearHeadingInterpolation(buddyPose.getHeading(), start2Pose.getHeading())
-                .build();
         moveoffline = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, buddyPose))
-                .setLinearHeadingInterpolation(startPose.getHeading(), buddyPose.getHeading())
+                .addPath(new BezierLine(startPose, start2Pose))
+                .setLinearHeadingInterpolation(startPose.getHeading(), start2Pose.getHeading())
                 .build();
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1closePose, pickup1Pose))
@@ -274,26 +266,12 @@ public class BLUE_PUSH_AUTO extends OpMode {
             case 0:
                 intake = false;
                 transferMotor.setPower(0);
-                follower.followPath(moveoffline, 1, true);
+                follower.followPath(moveoffline, 0.9, true);
                 setPathState(1);
                 velo = 1555;
                 intakeTimer.reset();
                 break;
             case 1:
-                if (!follower.isBusy()) {
-                    transferTimer.reset();
-                    setPathState(100);
-                }
-                break;
-            case 100:
-                intake = false;
-                transferMotor.setPower(0);
-                follower.followPath(moveBuddy, 1, true);
-                setPathState(200);
-                velo = 1555;
-                intakeTimer.reset();
-                break;
-            case 200:
                 if (!follower.isBusy()) {
                     transferTimer.reset();
                     setPathState(2);
@@ -302,10 +280,10 @@ public class BLUE_PUSH_AUTO extends OpMode {
                 shooter = 1600;
                 intake = true;
                 if (!follower.isBusy()) {
-                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 1.25 && transferTimer.seconds() > 0.5) {
+                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 1.5 && transferTimer.seconds() > 0.5) {
                         shouldshoot = true;
                         velo = 1555;
-                    } else if (transferTimer.seconds() > 1.25){
+                    } else if (transferTimer.seconds() > 1.5){
                         setPathState(16);
                         transferMotor.setPower(0);
                         shouldshoot = false;
@@ -316,7 +294,7 @@ public class BLUE_PUSH_AUTO extends OpMode {
             case 3:
                 if (!follower.isBusy()) {
                     intake = false;
-                    follower.followPath(score2, 1, false);
+                    follower.followPath(score2, 0.9, false);
                     setPathState(4);
                 }
                 break;
@@ -341,7 +319,7 @@ public class BLUE_PUSH_AUTO extends OpMode {
                 if(!follower.isBusy()) {
 
                     transferMotor.setPower(0);
-                    follower.followPath(grabsigmaPickup1, 1, true);
+                    follower.followPath(grabsigmaPickup1, 0.9, true);
                     setPathState(11);
                 }
                 break;
@@ -361,13 +339,13 @@ public class BLUE_PUSH_AUTO extends OpMode {
             case 2020:
                 if(!follower.isBusy()) {
                     intake = true;
-                    follower.followPath(scoreclosePickup1, 1,false);
+                    follower.followPath(scoreclosePickup1, 0.9,false);
                     setPathState(12);
                 }
                 break;
             case 12:
                 if(!follower.isBusy()) {
-                    follower.followPath(scorePickup1, 1,false);
+                    follower.followPath(scorePickup1, 0.9,false);
                     setPathState(13);
                 }
                 break;
@@ -381,9 +359,9 @@ public class BLUE_PUSH_AUTO extends OpMode {
                 shooter = 1625;
                 intake = true;
                 if (!follower.isBusy()) {
-                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 1 && transferTimer.seconds() > 0.25) {
+                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 1.5 && transferTimer.seconds() > 0.5) {
                         shouldshoot = true;
-                    } else if (transferTimer.seconds() > 1){
+                    } else if (transferTimer.seconds() > 1.25){
                         setPathState(22);
                         transferMotor.setPower(0);
                         shouldshoot = false;
@@ -392,13 +370,13 @@ public class BLUE_PUSH_AUTO extends OpMode {
                 break;
             case 7:
                 if(!follower.isBusy()) {
-                    follower.followPath(scoreclosePickup2, 1,true);
+                    follower.followPath(scoreclosePickup2, 0.9,true);
                     setPathState(7);
                 }
                 break;
             case 6:
                 if(!follower.isBusy()) {
-                    follower.followPath(scorePickup2, 1,true);
+                    follower.followPath(scorePickup2, 0.9,true);
                     setPathState(8);
                 }
                 break;
@@ -413,9 +391,9 @@ public class BLUE_PUSH_AUTO extends OpMode {
                 shooter = 1600;
                 intake = true;
                 if (!follower.isBusy()) {
-                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 1 && transferTimer.seconds() > 0.25) {
+                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 1.5 && transferTimer.seconds() > 0.5) {
                         shouldshoot = true;
-                    } else if (transferTimer.seconds() > 1){
+                    } else if (transferTimer.seconds() > 1.25){
                         setPathState(10);
                         transferMotor.setPower(0);
                         shouldshoot = false;
@@ -424,7 +402,7 @@ public class BLUE_PUSH_AUTO extends OpMode {
                 break;
             case 15:
                 if(!follower.isBusy()) {
-                    follower.followPath(score3, 1, true);
+                    follower.followPath(score3, 0.9, true);
                     setPathState(95);
 
                 }
@@ -432,7 +410,7 @@ public class BLUE_PUSH_AUTO extends OpMode {
             case 95:
                 if(!follower.isBusy()) {
                     transferMotor.setPower(0);
-                    follower.followPath(grabsigmaPickup3, 1,true);
+                    follower.followPath(grabsigmaPickup3, 0.9,true);
                     setPathState(96);
                 }
                 break;
@@ -455,18 +433,18 @@ public class BLUE_PUSH_AUTO extends OpMode {
                 break;
             case 3000:
                 if(!follower.isBusy()) {
-                    follower.followPath(pushGate, 1, false);
+                    follower.followPath(pushGate, 0.9, false);
                     setPathState(3001);
                 }
                 break;
             case (3001):
                 if (!follower.isBusy()) {
-                    follower.followPath(pashGate, 1, false);
+                    follower.followPath(pashGate, 0.9, false);
                     setPathState(17);
                 }break;
             case 17:
                 if(!follower.isBusy()) {
-                    follower.followPath(scorePickup3, 1,true);
+                    follower.followPath(scorePickup3, 0.9,true);
                     setPathState(18);
                 }
                 break;
@@ -479,10 +457,10 @@ public class BLUE_PUSH_AUTO extends OpMode {
             case 23:
                 intake = true;
                 if (!follower.isBusy()) {
-                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 1.25  && transferTimer.seconds() > 0.5) {
+                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 1.5  && transferTimer.seconds() > 0.5) {
                         shouldshoot = true;
                         transferMotor.setPower(1);
-                    } else if (transferTimer.seconds() > 1.25){
+                    } else if (transferTimer.seconds() > 1.5){
                         setPathState(3);
                         transferMotor.setPower(0);
                         shouldshoot = false;
@@ -527,7 +505,7 @@ public class BLUE_PUSH_AUTO extends OpMode {
             case 4000:
                 if(!follower.isBusy()) {
                     transferMotor.setPower(0);
-                    follower.followPath(scoreHuman, 0.95,false);
+                    follower.followPath(scoreHuman, 0.85,false);
                     setPathState(30);
                 }
                 break;
@@ -540,9 +518,9 @@ public class BLUE_PUSH_AUTO extends OpMode {
             case 31:
                 intake = true;
                 if (!follower.isBusy()) {
-                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 1.25 && transferTimer.seconds() > 0.5) {
+                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 2 && transferTimer.seconds() > 1) {
                         shouldshoot = true;
-                    } else if (transferTimer.seconds() > 1.25){
+                    } else if (transferTimer.seconds() > 2){
                         setPathState(2100);
                         transferMotor.setPower(0);
                         shouldshoot = false;
@@ -585,7 +563,7 @@ public class BLUE_PUSH_AUTO extends OpMode {
         telemetry.addData("heading", heading);
         double turretX = (86 + follower.getPose().getX()) + (Math.cos(follower.getPose().getHeading()));
         double turretY = (-follower.getPose().getY()) + (Math.sin(follower.getPose().getHeading()));
-        distY = (136 - Math.abs(turretY));
+            distY = (136 - Math.abs(turretY));
 
 
         double distX = (144 - Math.abs(turretX));
@@ -594,7 +572,7 @@ public class BLUE_PUSH_AUTO extends OpMode {
         double robotHeadingDeg = Math.toDegrees(-follower.getPose().getHeading());
         double turretTargetDeg = fieldAngleDeg - robotHeadingDeg;
         double turnneed = turretTargetDeg;
-        counterturret.setPosition(0.51 - turnneed / 665);
+        counterturret.setPosition(0.506 - turnneed / 665);
 
     }
 
@@ -670,7 +648,7 @@ public class BLUE_PUSH_AUTO extends OpMode {
         }
         if (shouldshoot) {
             transferMotor.setPower(0.9);
-            blocker.setPosition(15);
+            blocker.setPosition(0.95);
         } else {
             transferMotor.setPower(0);
             blocker.setPosition(0.75);

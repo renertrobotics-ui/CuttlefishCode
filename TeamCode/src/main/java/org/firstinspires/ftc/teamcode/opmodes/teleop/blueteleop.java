@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 
 @Configurable
 @TeleOp(name = "Blue Teleop")
-public class servoturret extends OpMode {
+public class blueteleop extends OpMode {
     GoBildaPinpointDriver pinpoint;
 
 
@@ -255,15 +255,15 @@ public class servoturret extends OpMode {
 
         // turret control
         pinpointautoaim();
-            Pose2D pos2D = pinpoint.getPosition();
-            double robotx = 2925 + pos2D.getX(DistanceUnit.MM) + (Math.cos(pos2D.getHeading(AngleUnit.RADIANS)));
-            double roboty = -1560 + pos2D.getY(DistanceUnit.MM) + (Math.sin(pos2D.getHeading(AngleUnit.RADIANS)));
-            double y = (3657 - Math.abs(robotx))/25.4;
-            double dx = (3657.6 - Math.abs(roboty))/25.4;
+        Pose2D pos2D = pinpoint.getPosition();
+        double robotx = 2925 + pos2D.getX(DistanceUnit.MM) + (Math.cos(pos2D.getHeading(AngleUnit.RADIANS)));
+        double roboty = -1560 + pos2D.getY(DistanceUnit.MM) + (Math.sin(pos2D.getHeading(AngleUnit.RADIANS)));
+        double y = (3657 - Math.abs(robotx))/25.4;
+        double dx = (3657.6 - Math.abs(roboty))/25.4;
 
-            double x = Math.sqrt(dx*dx+y*y);
-            double power = 0.00000587054 * x*x*x*x - 0.00310024 * x*x*x + 0.62862 * x*x-52.04003 * x+ 3035.4987 + veloffset;
-            telemetry.addData("distance", x);
+        double x = Math.sqrt(dx*dx+y*y);
+        double power = 0.00000587054 * x*x*x*x - 0.00310024 * x*x*x + 0.62862 * x*x-52.04003 * x+ 3035.4987 + veloffset;
+        telemetry.addData("distance", x);
         if (!pidhigh) {
             shooter1Motor.setVelocityPIDFCoefficients(50, 0, 0, sKF);
             shooter2Motor.setVelocityPIDFCoefficients(50, 0, 0, sKF);
@@ -299,7 +299,7 @@ public class servoturret extends OpMode {
         telemetry.addData("stpid", gamepad1.left_trigger);
 
         // intake motor control
-       if (gamepad1.x) {
+        if (gamepad1.x) {
             transferMotor.setPower(-1);
         } else {
             transferMotor.setPower(1);

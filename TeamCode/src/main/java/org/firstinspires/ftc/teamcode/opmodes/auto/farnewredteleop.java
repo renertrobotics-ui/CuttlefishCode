@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -18,16 +18,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 /**
  * @version 2.0, 11/28/2024
  */
 
-@Autonomous(name = "RED octopi buddy Auto", group = "Examples")
-public class octopiauto extends OpMode {
+@Autonomous(name = "blue  Octopi Auto", group = "Examples")
+public class farnewredteleop extends OpMode {
     GoBildaPinpointDriver pinpoint;
     private Follower follower;
     private Timer pathTimer, opmodeTimer;
@@ -46,57 +45,57 @@ public class octopiauto extends OpMode {
      * (For Into the Deep, this would be Blue Observation Zone (0,0) to Red Observation Zone (144,144).)
      * Even though Pedro uses a different coordinate system than RR, you can convert any roadrunner pose by adding +72 both the x and y.
      * This visualizer is very easy to use to find and create paths/pathchains/poses: <https://visualizer.pedropathing.com/>
-     * Lets assume our robot is 16 by 16 inches
+     * Lets assume our robot is 16 by 16 iknches
      * Lets assume the Robot is facing the Blue Goal when it is located above the tape line and touching the Blue Goal */
 
     /** Start Pose of our robot */
-    private final Pose start1Pose = new Pose(10, 77, Math.toRadians(0));
-    private final Pose start5Pose = new Pose(15, 80, Math.toRadians(0));
-    private final Pose start6Pose = new Pose(40, 110, Math.toRadians(135));
+    private final Pose start1Pose = new Pose(10, -77, Math.toRadians(0));
+    private final Pose start5Pose = new Pose(15, -80, Math.toRadians(0));
+    private final Pose start6Pose = new Pose(40, -110, Math.toRadians(135));
 
 
-    private final Pose start2Pose = new Pose(4.5, 4, Math.toRadians(0));
-    private final Pose start4Pose = new Pose(4, 73, Math.toRadians(0));
+    private final Pose start2Pose = new Pose(4.5, -4, Math.toRadians(0));
+    private final Pose start4Pose = new Pose(4, -73, Math.toRadians(0));
 
-    private final Pose start3Pose = new Pose(1.5, 4, Math.toRadians(0));
-    private final Pose startPose = new Pose (0, 0, Math.toRadians(0));
-    private final Pose endPose = new Pose (28, 63, Math.toRadians(0));
+    private final Pose start3Pose = new Pose(4.5, -4, Math.toRadians(0));
+    private final Pose startPose = new Pose (0, -0, Math.toRadians(0));
+    private final Pose endPose = new Pose (28, -63, Math.toRadians(0));
 
     /** Scoring Pose of our robot. It is facing the goal at a 135 degree angle. */
-    private final Pose scorePose = new Pose(11, 30, Math.toRadians(-45));
-    private final Pose scoreclosePose = new Pose (15, 10, Math.toRadians(0));
+    private final Pose scorePose = new Pose(11, -30, Math.toRadians(-45));
+    private final Pose scoreclosePose = new Pose (15, -10, Math.toRadians(0));
 
     /** Highest (First Set) of Artifacts from the Spike Mark */
-    private final Pose pickup1closePose = new Pose (1, 19, Math.toRadians(0));
-    private final Pose pickup1Pose = new Pose(49, 19, Math.toRadians(0));
+    private final Pose pickup1closePose = new Pose (1, -19, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(45, -19, Math.toRadians(0));
     private final Pose humanareaPose = new Pose(55,0, Math.toRadians(0));
 
     /** Middle (Second Set) of Artifacts from the Spike Mark */
-    private final Pose pickup2Pose = new Pose(46, 58, Math.toRadians(0));
-    private final Pose pickup2closePose = new Pose (1, 57, Math.toRadians(0));
-    private final Pose gatePose = new Pose (36.2, 68.5, Math.toRadians(0));
-    private final Pose endgatePose = new Pose (28, 63, Math.toRadians(0));
+    private final Pose pickup2Pose = new Pose(46, -58, Math.toRadians(0));
+    private final Pose pickup2closePose = new Pose (1, -57, Math.toRadians(0));
+    private final Pose gatePose = new Pose (36.2, -68.5, Math.toRadians(0));
+    private final Pose endgatePose = new Pose (28, -63, Math.toRadians(0));
 
-    private final Pose gashPose = new Pose (31, 68.5, Math.toRadians(0));
+    private final Pose gashPose = new Pose (31, -68.5, Math.toRadians(0));
 
-    private final Pose gategrabPose = new Pose (38.5, 51, Math.toRadians(-35));
-    private final Pose gashgrabPose = new Pose (28.5, 51, Math.toRadians(-35));
+    private final Pose gategrabPose = new Pose (38.5, -51, Math.toRadians(-35));
+    private final Pose gashgrabPose = new Pose (28.5, -51, Math.toRadians(-35));
     /** Lowest (Third Set) of Artifacts from the Spike Mark */
-    private final Pose pickup3Pose = new Pose(34, 71, Math.toRadians(0));
-    private final Pose pickup3closePose = new Pose (1, 71, Math.toRadians(0));
-    private final Pose humanclosePose = new Pose (47, 15, Math.toRadians(90));
-    private final Pose humanPose = new Pose (47, 7, Math.toRadians(90));
-    private final Pose humanclosePose2 = new Pose (36, 0, Math.toRadians(0));
-    private final Pose humanPose2 = new Pose (49, 0, Math.toRadians(0));
-    private final Pose humanclosePose3 = new Pose (36, 0, Math.toRadians(0));
-    private final Pose humanPose3 = new Pose (49, 0, Math.toRadians(0));
+    private final Pose pickup3Pose = new Pose(34, -71, Math.toRadians(0));
+    private final Pose pickup3closePose = new Pose (1, -71, Math.toRadians(0));
+    private final Pose humanclosePose = new Pose (47, -15, Math.toRadians(90));
+    private final Pose humanPose = new Pose (47, -7, Math.toRadians(90));
+    private final Pose humanclosePose2 = new Pose (30, 0, Math.toRadians(0));
+    private final Pose humanPose2 = new Pose (44, 0, Math.toRadians(0));
+    private final Pose humanclosePose3 = new Pose (30, 0, Math.toRadians(0));
+    private final Pose humanPose3 = new Pose (44, 0, Math.toRadians(0));
 
 
 
 
     /* These are our Paths and PathChains that we will define in buildPaths() */
     private Path scorePreload;
-    private PathChain grabHumansigma, moveEnd, grabHumansigma2,grabHumansigma3, moveoffline, grabHuman, scoreHuman, grabHuman2, scoreHuman2, grabHuman3, scoreHuman3, grabsigmaPickup1, grabPickup1, scorePickup1, grabsigmaPickup2, grabPickup2, gashPush, gatePush, scoreGate, grabsigmaPickupG, grabPickupG;
+    private PathChain grabHumansigma, moveEnd2, moveEnd, grabHumansigma2,grabHumansigma3, moveoffline, grabHuman, scoreHuman, grabHuman2, scoreHuman2, grabHuman3, scoreHuman3, grabsigmaPickup1, grabPickup1, scorePickup1, grabsigmaPickup2, grabPickup2, gashPush, gatePush, scoreGate, grabsigmaPickupG, grabPickupG;
     private DcMotor intakeMotor;
     private double turretOutput;
     private double t1urret;
@@ -110,7 +109,7 @@ public class octopiauto extends OpMode {
 
     private double Kp = 0.002;
     private double error;
-    private double shooter = 1870;
+    private double shooter = 1875;
     private double out;
     private double distY = 0;
     private boolean intake = false;
@@ -179,7 +178,7 @@ public class octopiauto extends OpMode {
                 .setLinearHeadingInterpolation(humanclosePose2.getHeading(), humanPose2.getHeading())
                 .build();
         scoreHuman2 = follower.pathBuilder()
-                .addPath(new BezierLine(humanPose2, start2Pose))
+                .addPath(new BezierLine(humanPose2, startPose))
                 .setLinearHeadingInterpolation(humanPose2.getHeading(), start2Pose.getHeading())
                 .build();
 
@@ -238,7 +237,11 @@ public class octopiauto extends OpMode {
                 .setLinearHeadingInterpolation(gashgrabPose.getHeading(), gategrabPose.getHeading())
                 .build();
         moveEnd = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, endgatePose))
+                .addPath(new BezierLine(startPose, pickup1closePose))
+                .setLinearHeadingInterpolation(startPose.getHeading(), endgatePose.getHeading())
+                .build();
+        moveEnd2 = follower.pathBuilder()
+                .addPath(new BezierLine(pickup1closePose, endgatePose))
                 .setLinearHeadingInterpolation(startPose.getHeading(), endgatePose.getHeading())
                 .build();
 
@@ -540,15 +543,17 @@ public class octopiauto extends OpMode {
 
             case 50:
                 if (!follower.isBusy()) {
-                    transferTimer.reset();
+                    follower.followPath(moveEnd, 1, true);
                     setPathState(51);
                 }
                 break;
             case 51:
-                intakeMotor.setPower(1);
-                transferMotor.setPower(0);
-                follower.followPath(moveEnd, 0.75, true);
-                setPathState(-1);
+                if (!follower.isBusy()) {
+                    intakeMotor.setPower(1);
+                    transferMotor.setPower(0);
+                    follower.followPath(moveEnd, 0.75, true);
+                    setPathState(-1);
+                }
                 break;
         }
     }
@@ -574,17 +579,30 @@ public class octopiauto extends OpMode {
         telemetry.addData("heading", heading);
         double turretX = (86 + follower.getPose().getX()) + (Math.cos(follower.getPose().getHeading()));
         double turretY = (-follower.getPose().getY()) + (Math.sin(follower.getPose().getHeading()));
-        distY = (136 - Math.abs(turretY));
+        if (
+                pathState == 3  || pathState == 28 || pathState == 4  ||
+                        pathState == 6  || pathState == 8  || pathState == 9  ||
+                        pathState == 10 || pathState == 11 || pathState == 2020 ||
+                        pathState == 12 || pathState == 13 || pathState == 14 ||
+                        pathState == 22 || pathState == 4000 ||
+                        pathState == 30 || pathState == 31 || pathState == 21
+        ) {
+            distY = (136 - Math.abs(turretY));
+        } else {
+            distY = (136 - Math.abs(turretY));
 
-
+        }
         double distX = (144 - Math.abs(turretX));
         double fieldAngleRad = Math.atan2(distY, distX);
         double fieldAngleDeg = Math.toDegrees(fieldAngleRad);
-        double robotHeadingDeg = Math.toDegrees(follower.getPose().getHeading());
+        double robotHeadingDeg = Math.toDegrees(-follower.getPose().getHeading());
         double turretTargetDeg = fieldAngleDeg - robotHeadingDeg;
         double turnneed = turretTargetDeg;
-        counterturret.setPosition(0.5185 + turnneed / 665);
-
+        if (pathState  < 4) {
+            counterturret.setPosition(0.515 - turnneed/665);
+        } else {
+            counterturret.setPosition(0.515 - turnneed / 665);
+        }
     }
 
 
@@ -607,9 +625,9 @@ public class octopiauto extends OpMode {
         follower.update();
         autonomousPathUpdate();
 
-        /*if (skibidtimer.seconds() > 26 && skibidtimer.seconds() < 27) {
+        if (skibidtimer.seconds() > 26 && skibidtimer.seconds() < 27) {
             setPathState(51);
-        }*/
+        }
 
 
         telemetry.addData("servo pos", counterturret.getPosition());
@@ -626,16 +644,7 @@ public class octopiauto extends OpMode {
         double dx = (141 - Math.abs(roboty));
         telemetry.addData("Odo X", robotx);
         telemetry.addData("Odo Y", roboty);
-        if (intake) {
-            if (intakeTimer.seconds() > 0.05) {
-                intakeTimer.reset();
-            } else {
-                intakeMotor.setPower(1);
-            }
-        } else {
-            intakeMotor.setPower(0);
-        }
-
+        intakeMotor.setPower(1);
 
         double x = Math.sqrt(dx*dx+y*y);
         double power = 0.00000587054 * x*x*x*x - 0.00310024 * x*x*x + 0.62862 * x*x-52.04003 * x+3009.4987;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -18,12 +18,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
 /**
  * @version 2.0, 11/28/2024
  */
 
-@Autonomous(name = "far red autonomous", group = "Examples")
-public class redfarauto extends OpMode {
+@Autonomous(name = "blue push autonomous", group = "Examples")
+public class BLUE_PUSH_AUTO extends OpMode {
     GoBildaPinpointDriver pinpoint;
     private Follower follower;
     private Timer pathTimer, opmodeTimer;
@@ -46,42 +48,42 @@ public class redfarauto extends OpMode {
      * Lets assume the Robot is facing the Blue Goal when it is located above the tape line and touching the Blue Goal */
 
     /** Start Pose of our robot */
-    private final Pose start1Pose = new Pose(10, 77, Math.toRadians(0));
-    private final Pose start5Pose = new Pose(10, 77, Math.toRadians(0));
-    private final Pose start6Pose = new Pose(40, 110, Math.toRadians(-135));
+    private final Pose start1Pose = new Pose(10, -77, Math.toRadians(0));
+    private final Pose start5Pose = new Pose(15, -80, Math.toRadians(0));
+    private final Pose start6Pose = new Pose(40, -110, Math.toRadians(135));
 
 
-    private final Pose start2Pose = new Pose(1.5, 74, Math.toRadians(0));
-    private final Pose start4Pose = new Pose(4, 71, Math.toRadians(0));
+    private final Pose start2Pose = new Pose(1.5, -74, Math.toRadians(0));
+    private final Pose start4Pose = new Pose(4, -70, Math.toRadians(0));
 
-    private final Pose start3Pose = new Pose(1.5, 59, Math.toRadians(0));
+    private final Pose start3Pose = new Pose(1.5, -59, Math.toRadians(0));
     private final Pose startPose = new Pose (-6.5, -0, Math.toRadians(0));
-    private final Pose buddyPose = new Pose (5, 1, Math.toRadians(0));
+    private final Pose buddyPose = new Pose (2, 1, Math.toRadians(0));
 
     /** Scoring Pose of our robot. It is facing the goal at a 135 degree angle. */
-    private final Pose scorePose = new Pose(11, 30, Math.toRadians(45));
-    private final Pose scoreclosePose = new Pose (15, 10, Math.toRadians(0));
+    private final Pose scorePose = new Pose(11, -30, Math.toRadians(-45));
+    private final Pose scoreclosePose = new Pose (15, -10, Math.toRadians(0));
 
     /** Highest (First Set) of Artifacts from the Spike Mark */
-    private final Pose pickup1closePose = new Pose (1, 33, Math.toRadians(0));
-    private final Pose pickup1Pose = new Pose(47, 33.5, Math.toRadians(0));
+    private final Pose pickup1closePose = new Pose (1, -33, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(46, -33.5, Math.toRadians(0));
     private final Pose humanareaPose = new Pose(55,0, Math.toRadians(0));
 
     /** Middle (Second Set) of Artifacts from the Spike Mark */
-    private final Pose pickup2Pose = new Pose(47, 57, Math.toRadians(0));
-    private final Pose pickup2closePose = new Pose (1, 57, Math.toRadians(0));
-    private final Pose gatePose = new Pose (40, 64, Math.toRadians(0));
-    private final Pose endgatePose = new Pose (28, 63, Math.toRadians(0));
+    private final Pose pickup2Pose = new Pose(46, -58, Math.toRadians(0));
+    private final Pose pickup2closePose = new Pose (1, -57, Math.toRadians(0));
+    private final Pose gatePose = new Pose (38, -67, Math.toRadians(0));
+    private final Pose endgatePose = new Pose (28, -61, Math.toRadians(0));
 
-    private final Pose gashPose = new Pose (33, 64, Math.toRadians(0));
+    private final Pose gashPose = new Pose (31, -67, Math.toRadians(0));
 
-    private final Pose gategrabPose = new Pose (38.5, 51, Math.toRadians(35));
-    private final Pose gashgrabPose = new Pose (28.5, 51, Math.toRadians(35));
+    private final Pose gategrabPose = new Pose (38.5, -51, Math.toRadians(-35));
+    private final Pose gashgrabPose = new Pose (28.5, -51, Math.toRadians(-35));
     /** Lowest (Third Set) of Artifacts from the Spike Mark */
-    private final Pose pickup3Pose = new Pose(35, 70, Math.toRadians(0));
-    private final Pose pickup3closePose = new Pose (1, 70, Math.toRadians(0));
-    private final Pose humanclosePose = new Pose (51, 6, Math.toRadians(-90));
-    private final Pose humanPose = new Pose (51, 0, Math.toRadians(-90));
+    private final Pose pickup3Pose = new Pose(34, -70, Math.toRadians(0));
+    private final Pose pickup3closePose = new Pose (1, -70, Math.toRadians(0));
+    private final Pose humanclosePose = new Pose (47, -6, Math.toRadians(90));
+    private final Pose humanPose = new Pose (47, 0, Math.toRadians(90));
 
 
 
@@ -196,8 +198,8 @@ public class redfarauto extends OpMode {
 
         /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         pushGate = follower.pathBuilder()
-                .addPath(new BezierLine(pickup2Pose, gashPose))
-                .setLinearHeadingInterpolation(pickup2Pose.getHeading(), gashPose.getHeading())
+                .addPath(new BezierLine(pickup3Pose, gashPose))
+                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), gashPose.getHeading())
                 .build();
         pashGate = follower.pathBuilder()
                 .addPath(new BezierLine(gashPose, gatePose))
@@ -213,8 +215,8 @@ public class redfarauto extends OpMode {
                 .build();
 
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(gashPose, start4Pose))
-                .setLinearHeadingInterpolation(gashPose.getHeading(), startPose.getHeading())
+                .addPath(new BezierLine(pickup2Pose, start4Pose))
+                .setLinearHeadingInterpolation(pickup2Pose.getHeading(), startPose.getHeading())
                 .build();
 
         /* This is our grabPickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
@@ -229,8 +231,8 @@ public class redfarauto extends OpMode {
 
         /* This is our scorePickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup3Pose, start1Pose))
-                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), startPose.getHeading())
+                .addPath(new BezierLine(gatePose, start1Pose))
+                .setLinearHeadingInterpolation(gatePose.getHeading(), startPose.getHeading())
                 .build();
         superscore = follower.pathBuilder()
                 .addPath(new BezierLine(start1Pose, endgatePose))
@@ -269,14 +271,17 @@ public class redfarauto extends OpMode {
             case 0:
                 intake = false;
                 transferMotor.setPower(0);
-                follower.followPath(moveoffline, 0.9, true);
+                follower.followPath(moveoffline, 1, true);
                 setPathState(1);
+                velo = 1555;
+                intakeTimer.reset();
                 break;
             case 1:
                 if (!follower.isBusy()) {
                     transferTimer.reset();
                     setPathState(100);
                 }
+                break;
             case 100:
                 intake = false;
                 transferMotor.setPower(0);
@@ -294,10 +299,10 @@ public class redfarauto extends OpMode {
                 shooter = 1600;
                 intake = true;
                 if (!follower.isBusy()) {
-                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 1 && transferTimer.seconds() > 0.25) {
+                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 1.25 && transferTimer.seconds() > 0.5) {
                         shouldshoot = true;
                         velo = 1555;
-                    } else if (transferTimer.seconds() > 1){
+                    } else if (transferTimer.seconds() > 1.25){
                         setPathState(16);
                         transferMotor.setPower(0);
                         shouldshoot = false;
@@ -308,7 +313,7 @@ public class redfarauto extends OpMode {
             case 3:
                 if (!follower.isBusy()) {
                     intake = false;
-                    follower.followPath(score2, 1, true);
+                    follower.followPath(score2, 1, false);
                     setPathState(4);
                 }
                 break;
@@ -320,8 +325,8 @@ public class redfarauto extends OpMode {
             case 4:
                 if(!follower.isBusy()) {
                     intake = true;
-                    follower.followPath(grabPickup2,0.9, true);
-                    setPathState(3000);
+                    follower.followPath(grabPickup2,0.9, false);
+                    setPathState(6);
                     if (follower.getCurrentTValue() > 0.45 && follower.getCurrentTValue() < 0.850) {
                         transferMotor.setPower(0.5);
                     } else {
@@ -340,7 +345,7 @@ public class redfarauto extends OpMode {
             case 11:
                 if(!follower.isBusy()) {
                     intake = true;
-                    follower.followPath(grabPickup1,0.9,true);
+                    follower.followPath(grabPickup1,0.9,false);
                     if (follower.getCurrentTValue() > 0.40 && follower.getCurrentTValue() < 0.80) {
                         transferMotor.setPower(1);
                     } else {
@@ -353,13 +358,13 @@ public class redfarauto extends OpMode {
             case 2020:
                 if(!follower.isBusy()) {
                     intake = true;
-                    follower.followPath(scoreclosePickup1, 1,true);
+                    follower.followPath(scoreclosePickup1, 1,false);
                     setPathState(12);
                 }
                 break;
             case 12:
                 if(!follower.isBusy()) {
-                    follower.followPath(scorePickup1, 1,true);
+                    follower.followPath(scorePickup1, 1,false);
                     setPathState(13);
                 }
                 break;
@@ -436,39 +441,26 @@ public class redfarauto extends OpMode {
             case 16:
                 if(!follower.isBusy()) {
                     intake = true;
-                    follower.followPath(grabPickup3, 0.9,true);
+                    follower.followPath(grabPickup3, 0.9,false);
                     if (follower.getCurrentTValue() > 0.45 && follower.getCurrentTValue() < 0.80) {
                         transferMotor.setPower(1);
                     } else {
                         transferMotor.setPower(0);
                     }
-                    setPathState(17);
+                    setPathState(3000);
                 }
                 break;
             case 3000:
                 if(!follower.isBusy()) {
-                    follower.followPath(pushGate, 1, true);
+                    follower.followPath(pushGate, 1, false);
                     setPathState(3001);
                 }
                 break;
             case (3001):
                 if (!follower.isBusy()) {
-                    follower.followPath(pashGate, 1, true);
-                    setPathState(3002);
+                    follower.followPath(pashGate, 1, false);
+                    setPathState(17);
                 }break;
-            case (3002):
-                if (!follower.isBusy()) {
-                    transferTimer.reset();
-                }
-                setPathState(3003);
-                break;
-            case (3003):
-                if (!follower.isBusy()) {
-                    if (transferTimer.seconds() > 0.2) {
-                        setPathState(6);
-                    }
-                }
-                break;
             case 17:
                 if(!follower.isBusy()) {
                     follower.followPath(scorePickup3, 1,true);
@@ -484,10 +476,10 @@ public class redfarauto extends OpMode {
             case 23:
                 intake = true;
                 if (!follower.isBusy()) {
-                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 1 && transferTimer.seconds() > 0.25) {
+                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 1.25  && transferTimer.seconds() > 0.5) {
                         shouldshoot = true;
                         transferMotor.setPower(1);
-                    } else if (transferTimer.seconds() > 1){
+                    } else if (transferTimer.seconds() > 1.25){
                         setPathState(3);
                         transferMotor.setPower(0);
                         shouldshoot = false;
@@ -517,9 +509,8 @@ public class redfarauto extends OpMode {
                 }*/
             case 22:
                 if(!follower.isBusy()) {
-                    intake = true;
                     transferMotor.setPower(0);
-                    follower.followPath(grabHumansigma, 0.95,true);
+                    follower.followPath(grabHumansigma, 1,true);
                     setPathState(4000);
                 }
                 break;
@@ -533,7 +524,7 @@ public class redfarauto extends OpMode {
             case 4000:
                 if(!follower.isBusy()) {
                     transferMotor.setPower(0);
-                    follower.followPath(scoreHuman, 1,true);
+                    follower.followPath(scoreHuman, 0.95,false);
                     setPathState(30);
                 }
                 break;
@@ -546,9 +537,9 @@ public class redfarauto extends OpMode {
             case 31:
                 intake = true;
                 if (!follower.isBusy()) {
-                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 2 && transferTimer.seconds() > 1) {
+                    if (shooter2Motor.getVelocity() > 1500 && transferTimer.seconds() < 1.25 && transferTimer.seconds() > 0.5) {
                         shouldshoot = true;
-                    } else if (transferTimer.seconds() > 1.75){
+                    } else if (transferTimer.seconds() > 1.25){
                         setPathState(2100);
                         transferMotor.setPower(0);
                         shouldshoot = false;
@@ -584,9 +575,6 @@ public class redfarauto extends OpMode {
                 result = Math.min(result, voltage);
             }
         }
-        if (result > 13.3) {
-            result = 13.3;
-        }
         return result;
     }
     private void pinpointautoaim() {
@@ -594,32 +582,17 @@ public class redfarauto extends OpMode {
         telemetry.addData("heading", heading);
         double turretX = (86 + follower.getPose().getX()) + (Math.cos(follower.getPose().getHeading()));
         double turretY = (-follower.getPose().getY()) + (Math.sin(follower.getPose().getHeading()));
-        if (
-                pathState == 3  || pathState == 28 || pathState == 4  ||
-                        pathState == 6  || pathState == 8  || pathState == 9  ||
-                        pathState == 10 || pathState == 11 || pathState == 2020 ||
-                        pathState == 12 || pathState == 13 || pathState == 14 ||
-                        pathState == 22 || pathState == 4000 ||
-                        pathState == 30 || pathState == 31 || pathState == 21
-        ) {
-            distY = (136 - Math.abs(turretY));
-        } else {
-            distY = (136 - Math.abs(turretY));
+        distY = (136 - Math.abs(turretY));
 
-        }
+
         double distX = (144 - Math.abs(turretX));
         double fieldAngleRad = Math.atan2(distY, distX);
         double fieldAngleDeg = Math.toDegrees(fieldAngleRad);
-        double robotHeadingDeg = Math.toDegrees(follower.getPose().getHeading());
+        double robotHeadingDeg = Math.toDegrees(-follower.getPose().getHeading());
         double turretTargetDeg = fieldAngleDeg - robotHeadingDeg;
         double turnneed = turretTargetDeg;
-        if (pathState  == -2) {
-            counterturret.setPosition(0.519 + turnneed/665);
-        } else if (pathState > 24){
-            counterturret.setPosition(0.519 + turnneed / 665);
-        } else {
-            counterturret.setPosition(0.519 + turnneed / 665);
-        }
+        counterturret.setPosition(0.51 - turnneed / 665);
+
     }
 
 
@@ -636,8 +609,8 @@ public class redfarauto extends OpMode {
         } else {
             sKF = 15.5*10.85 / 13.2;
         }
-        shooter2Motor.setVelocityPIDFCoefficients(50, 0, 0, sKF);
-        shooter1Motor.setVelocityPIDFCoefficients(50, 0, 0, sKF);
+        shooter2Motor.setVelocityPIDFCoefficients(30, 0, 0, sKF);
+        shooter1Motor.setVelocityPIDFCoefficients(30, 0, 0, sKF);
 
         follower.update();
         autonomousPathUpdate();
@@ -645,7 +618,7 @@ public class redfarauto extends OpMode {
 
         telemetry.addData("servo pos", counterturret.getPosition());
 
-        telemetry.addData("path: ", pathState);
+        telemetry.addData("path", pathState);
         telemetry.update();
         pinpointautoaim();
         robotx = follower.getPose().getX() + (Math.cos(follower.getPose().getHeading()));
@@ -693,8 +666,8 @@ public class redfarauto extends OpMode {
             shooter1Motor.setVelocity(-1540);
         }
         if (shouldshoot) {
-            transferMotor.setPower(1);
-            blocker.setPosition(0.95);
+            transferMotor.setPower(0.9);
+            blocker.setPosition(15);
         } else {
             transferMotor.setPower(0);
             blocker.setPosition(0.75);
