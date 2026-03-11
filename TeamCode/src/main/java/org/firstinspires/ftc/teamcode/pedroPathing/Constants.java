@@ -13,13 +13,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(13)
-            .forwardZeroPowerAcceleration(-29.3)
-            .lateralZeroPowerAcceleration(-57.79)
+            .forwardZeroPowerAcceleration(-31.298)
+            .lateralZeroPowerAcceleration(-71.689)
             .translationalPIDFCoefficients(new PIDFCoefficients(
-                    0.01,
+                    0.04,
                     0,
-                    0.000175,
-                    0.005
+                    0,
+                    0
             ))
             .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(
                     0.02,
@@ -28,10 +28,10 @@ public class Constants {
                     0.01
             ))
             .headingPIDFCoefficients(new PIDFCoefficients(
-                    0.4,
+                    0.7,
                     0,
-                    0.1,
-                    0.01
+                    0,
+                    0
             ))
             .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(
                     1.5,
@@ -40,11 +40,11 @@ public class Constants {
                     0.0005
             ))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(
-                    0.03,
+                    0.0047,
                     0,
-                    0.000175,
+                    0,
                     0.6,
-                    0.01
+                    0
             ))
             .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(
                     0.003,
