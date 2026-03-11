@@ -1,428 +1,192 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
-
+/*
+import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS;
+import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS44;
+import static org.firstinspires.ftc.teamcode.subsystems.Flywheel.shooter;
+*/
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
-// ===== CHANGED: VisionPortal AprilTag imports =====
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-// ================================================
-import java.util.List;
-
-import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.HeadingInterpolator;
-import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathChain;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-
-import java.util.function.Supplier;
-
-@TeleOp(name = "Red Teleop")
-public class redteleop extends OpMode {
-    GoBildaPinpointDriver pinpoint;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+/*
+import org.firstinspires.ftc.teamcode.subsystems.DistanceBlue;
+import org.firstinspires.ftc.teamcode.subsystems.DistanceRed;
+import org.firstinspires.ftc.teamcode.subsystems.LimelightLocalization;
+import org.firstinspires.ftc.teamcode.subsystems.PositionalHood;
+import org.firstinspires.ftc.teamcode.subsystems.TempHood;
+*/
+import org.firstinspires.ftc.teamcode.subsystems.drivesubsystem;
 
 
-    private DcMotor intakeMotor;
-    private Limelight3A limelight;
-    private boolean manual = false;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+import static dev.nextftc.extensions.pedro.PedroComponent.follower;
+import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.LambdaCommand;
+import dev.nextftc.core.components.SubsystemComponent;
+import dev.nextftc.extensions.pedro.PedroComponent;
+import dev.nextftc.ftc.ActiveOpMode;
+import dev.nextftc.ftc.Gamepads;
+import dev.nextftc.ftc.NextFTCOpMode;
+import dev.nextftc.core.components.BindingsComponent;
+import dev.nextftc.ftc.components.BulkReadComponent;
+import dev.nextftc.hardware.driving.Drivetrain;
+import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.powerable.SetPower;
 
-    private DcMotor FrontleftdrivemotorBRFL;
-    private DcMotor FrontrightdrivemotorBLORF;
-    private DcMotor backleftdrivemotorBLORF;
-    private DcMotor backrightdrivemotorBRFL;
-    private double turretzero = 0.513;
 
-    private DcMotorEx shooter1Motor;
-    private DcMotorEx shooter2Motor;
-    private DcMotor transferMotor;
-    private Servo counterturret;
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Red Teleop")
+public class redteleop extends NextFTCOpMode {
 
-    private Servo blocker;
+    public MotorEx intakeMotor;
+    public MotorEx transfer;
+    public redteleop() {
+        addComponents(
+                new PedroComponent(Constants::createFollower),
+                new SubsystemComponent(drivesubsystem.INSTANCE/*, Intake.INSTANCE, Spindexer.INSTANCE*/),
+                BulkReadComponent.INSTANCE,
+                BindingsComponent.INSTANCE
 
-    private IMU imu;
-    private boolean autoshoot = true;
-    private double distanceFromLimelightToGoalInches;
-    private double slowModeMultiplier = 2500;
-    private double currentx;
-    private double currenty;
-    private double targetx = 1;
-    private double power;
-    private double targety = 1;
-    private boolean reset;
-    private double driverupdown = 0;
 
-    private boolean forward = false;
-    private boolean backward = false;
-    private boolean turret = true;
-    private boolean transfer;
-    public static Pose startingPose; //See ExampleAuto to understand how to use this
-    private boolean automatedDrive;
-    private ElapsedTime timer = new ElapsedTime();
-    private boolean ingate = false;
+        );
+    }
+
+    public static boolean red;
+    public static boolean isRed(){
+        return red;
+    }
+
+    public static int tagID;
+    public static boolean findMotif = false;
+    public static int ball1Color = 0; //green = 1, purple = 2
+    public static int ball2Color = 0;
+    public static int ball3Color = 0;
+
+    public static int getBall1Color() {
+        return ball1Color;
+    }
+
+    public static int getBall2Color() {
+        return ball2Color;
+    }
+    public static int getBall3Color() {
+        return ball3Color;
+    }
+    public boolean lift;
+    boolean lowerangle = false;
 
 
 
-    // Controls
-    private boolean slowMode = false;
-    private double shoterpower;
-    private boolean intake = false;
-    private double degreesmoved;
-    private ElapsedTime transfertimer = new ElapsedTime();
-    private boolean six = false;
-    private boolean intakeforward = true;
-    private boolean pidhigh = false;
-    private Supplier<PathChain> pathChain;
 
 
-    // PID constants for turret
-    private double veloffset = 0;
-    private double Kp = 0.027;
-    private double turretOutput;
-    private boolean close = true;
-    private boolean pinned = false;
-    private boolean far = false;
+    public boolean liftmid;
+    boolean loweranglemid = false;
 
-    private double t1urret;
+    public boolean isInLaunchZone(double x, double y) {
 
-
-    private double offset = 0;
-
-
-    private double getBatteryVoltage() {
-        double result = Double.POSITIVE_INFINITY;
-        for (VoltageSensor sensor : hardwareMap.voltageSensor) {
-            double voltage = sensor.getVoltage();
-            if (voltage > 0) {
-                result = Math.min(result, voltage);
+        // Triangle 1: Goal Side (Top)
+        // Vertices: (-8, 144), (152, 144), (72, 64)
+        // This triangle exists between y = 64 and y = 144.
+        if (y >= 64 && y <= 144) {
+            // As y increases from 64 to 144, the width of the triangle increases.
+            // The slope of the edges is (144 - 64) / (152 - 72) = 80 / 80 = 1.
+            double halfWidth = (y - 64);
+            if (x >= (72 - halfWidth) && x <= (72 + halfWidth)) {
+                return true;
             }
         }
-        return result;
-    }
-    private double getShooterPower(double distance) {
-        shoterpower=-0.00000618753*(distance*distance*distance*distance)+0.00217717*(distance*distance*distance)-0.220607*(distance*distance)+7.57294*distance+1497.90135;
-        return shoterpower;
-    }
-    private void feildCentricDrive(double pinpointDistance) {
-        double distanceToTarget = pinpointDistance;
-        if (pinpointDistance < 0) {
-            distanceToTarget += (2 * (Math.PI));
+
+        // Triangle 2: Audience Side (Bottom)
+        // Vertices: (72, 32), (104, 0), (40, 0)
+        // This triangle exists between y = 0 and y = 32.
+        if (y >= 0 && y <= 32) {
+            // As y decreases from 32 to 0, the width increases.
+            // The slope of the edges is (32 - 0) / (72 - 40) = 32 / 32 = 1.
+            double halfWidth = (32 - y);
+            if (x >= (72 - halfWidth) && x <= (72 + halfWidth)) {
+                return true;
+            }
         }
 
-        double y = Math.cos(distanceToTarget) * (gamepad1.right_stick_y) + (gamepad1.right_stick_x) * (Math.sin(distanceToTarget));
-        double x = Math.cos(distanceToTarget) * (gamepad1.right_stick_x) - (gamepad1.right_stick_y) * (Math.sin(distanceToTarget));
-        double correction = (gamepad1.left_stick_x)/6;
+        return false;
+    }
 
-        ((DcMotorEx) FrontleftdrivemotorBRFL).setVelocity(((y - x) - (gamepad1.left_stick_x) - correction) * slowModeMultiplier);
-        ((DcMotorEx) FrontrightdrivemotorBLORF).setVelocity(((y + x) + (gamepad1.left_stick_x) + correction) * slowModeMultiplier);
-        ((DcMotorEx) backleftdrivemotorBLORF).setVelocity(((y + x) - (gamepad1.left_stick_x) - correction) * slowModeMultiplier);
-        ((DcMotorEx) backrightdrivemotorBRFL).setVelocity(((y - x) + (gamepad1.left_stick_x) + correction) * slowModeMultiplier);
+
+
+
+    private static final int APRILTAG_PIPELINE = 7;
+    @Override
+    public void onInit() {
+        Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.pipelineSwitch(0);
+        limelight.start();
+        red=true;
+        intakeMotor = new MotorEx("intake").reversed();
+        transfer = new MotorEx("transfer").reversed();
+        Gamepads.gamepad1().leftTrigger().greaterThan(0.3).whenBecomesTrue(()-> intakeMotor.setPower(1))
+                .whenBecomesFalse(() -> intakeMotor.setPower(0));
+        Gamepads.gamepad1().leftBumper().whenBecomesTrue(()-> transfer.setPower(1))
+                .whenBecomesFalse(() -> transfer.setPower(0));
+        Gamepads.gamepad2().leftTrigger().greaterThan(0.3).whenBecomesTrue(()->intakeMotor.setPower(-1))
+                .whenBecomesFalse(() -> intakeMotor.setPower(0));
+        Gamepads.gamepad2().rightTrigger().greaterThan(0.3).whenBecomesTrue(()-> transfer.setPower(-1))
+                .whenBecomesFalse(() -> intakeMotor.setPower(0));
+        Gamepads.gamepad1().x().whenBecomesTrue(()->follower.setPose(new Pose(79.967,9.271,Math.toRadians(90))));
+
+
+
+
+
+
 
     }
-    private void pinpointautoaim() {
-        Pose2D pos2D = pinpoint.getPosition();
-        double turretX = 2925 + pos2D.getX(DistanceUnit.MM) + (Math.cos(pos2D.getHeading(AngleUnit.RADIANS)));
-        double turretY =(-2040 + pos2D.getY(DistanceUnit.MM) + (Math.sin(pos2D.getHeading(AngleUnit.RADIANS))));
-        double newDistY = -144 + (3565 - turretY)/25.4;
 
-        telemetry.addData("newy", newDistY);
-        telemetry.addData("turrety", turretY);
-        double distX = (3454 - Math.abs(turretX))/25.4;
-        double fieldAngleRad = Math.atan2(newDistY, distX);
-        double fieldAngleDeg = Math.toDegrees(fieldAngleRad);
-        double robotHeadingDeg = pos2D.getHeading(AngleUnit.DEGREES);
-        double turretTargetDeg = fieldAngleDeg - robotHeadingDeg;
-        double turnneed = turretTargetDeg;
-        counterturret.setPosition(turretzero + turnneed/665);
-
-    }
-    private boolean nogatehit() {
-        Pose2D pos2D = pinpoint.getPosition();
-        double turretX = 2925 + pos2D.getX(DistanceUnit.MM) + (Math.cos(pos2D.getHeading(AngleUnit.RADIANS)));
-        double turretY =(-2000 + pos2D.getY(DistanceUnit.MM) + (Math.sin(pos2D.getHeading(AngleUnit.RADIANS))));
-        double newDistY = -144 + (3657.6 - turretY)/25.4;
-        telemetry.addData("newy", newDistY);
-        double distY = (3657.6 - turretY)/25.4;
-        telemetry.addData("turrety", turretY);
-        double distX = (3454 - Math.abs(turretX))/25.4;
-        double direction = Math.atan((gamepad1.right_stick_y)/(gamepad1.right_stick_x));
-        telemetry.addData("direction", direction);
-        telemetry.addData("x", distX);
-        telemetry.addData("y", distY);
-        if (distX > 121 && distX < 141 && distY > 73 && distY < 93) {
-            telemetry.addData("in zone", "true");
-            ingate = false;
-        } else {
-            ingate = true;
+    @Override
+    public void onUpdate() {
+        /*float newtps=1000;
+        if(lowerangle==true){
+            newtps = findTPS44(DistanceRed.INSTANCE.getDistanceFromTag());
+            //ActiveOpMode.telemetry().addData("Lowerangle:", lowerangle);
         }
-
-        if (direction > 0 && direction < Math.PI/4) {
-            telemetry.addData("over 0 under pi/4", "true");
-        } else if (direction < 0 && direction > (2*Math.PI - Math.PI/4)) {
-            telemetry.addData("under 0 over 7pi/4", "true");
+        else if(lowerangle==false) {
+            newtps = findTPS(DistanceRed.INSTANCE.getDistanceFromTag());
+            //ActiveOpMode.telemetry().addData("Lowerangle:", lowerangle);
         }
-        /*if (131 < distY && 141 > distY && distX > 78 && distX < 88) {
-            telemetry.addData("are u in the zone?", "your in the FUCKING ZONE GET THE FUCK OUT OF THERE");
+        if (DistanceRed.INSTANCE.getDistanceFromTag() != 0) {
+            shooter(newtps);
+            //ActiveOpMode.telemetry().addData("newtps", newtps);
         }*/
-        return ingate;
     }
-    VisionPortal visionPortal;
-    AprilTagProcessor aprilTag;
-    static final double TAG_SIZE_METERS = 0.1651;
-    private double atagtarget;
 
+    public boolean shoot;
 
     @Override
-    public void init() {
-        turretOutput = 0;
-        double voltage = getBatteryVoltage();
-        double KF = 50 * 10.8 / voltage;
-
-        // initializing and configuring the pinpoint
-        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
-        configurePinpoint();
-        pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
-        // initializing drive motors
-        FrontleftdrivemotorBRFL = hardwareMap.get(DcMotor.class, "Front left drive motor BRFL");
-        FrontrightdrivemotorBLORF = hardwareMap.get(DcMotor.class, "Front right drive motor BLORF");
-        backleftdrivemotorBLORF = hardwareMap.get(DcMotor.class, "back left drive motor BLORF");
-        backrightdrivemotorBRFL = hardwareMap.get(DcMotor.class, "back right drive motor BRFL");
-
-        FrontleftdrivemotorBRFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontrightdrivemotorBLORF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backleftdrivemotorBLORF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backrightdrivemotorBRFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        FrontleftdrivemotorBRFL.setDirection(DcMotor.Direction.FORWARD);
-        backleftdrivemotorBLORF.setDirection(DcMotor.Direction.FORWARD);
-        FrontrightdrivemotorBLORF.setDirection(DcMotor.Direction.REVERSE);
-        backrightdrivemotorBRFL.setDirection(DcMotor.Direction.REVERSE);
-
-        // initializing transfer motor
-        intakeMotor = hardwareMap.get(DcMotor.class, "Transfer_Motor");
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        //initializing shooter motors
-        shooter1Motor = hardwareMap.get(DcMotorEx.class, "LeftShooter_Motor");
-        shooter1Motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        shooter1Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter1Motor.setVelocityPIDFCoefficients(0.2, 0, 0, KF);
-        shooter2Motor = hardwareMap.get(DcMotorEx.class, "RightShooter_Motor");
-        shooter2Motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        shooter2Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        shooter2Motor.setVelocityPIDFCoefficients(0.2, 0, 0, KF);
-
-        // initializing intake motors
-        transferMotor = hardwareMap.get(DcMotor.class, "Intake_Motor");
-        transferMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        transferMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        transferMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        // initializing servo
-        counterturret = hardwareMap.servo.get("counterturret");
-        blocker = hardwareMap.servo.get("blocker");
+    public void onStartButtonPressed() {
 
 
-        // initializing and configuring WEBBY
-        aprilTag = new AprilTagProcessor.Builder()
-
-                .setDrawAxes(false)
-                .setDrawCubeProjection(false)
-                .setDrawTagOutline(true)
-                .build();
-
-        visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webby"))
-                .addProcessor(aprilTag)
-                .build();
-
-
-
-        telemetry.setMsTransmissionInterval(10);
-        // initializing and configuring interal IMU
-        imu = hardwareMap.get(IMU.class, "imu");
-        RevHubOrientationOnRobot revHubOrientationOnRobot =
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.UP);
-        imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
-
+        //Gamepads.gamepad2().cross().whenBecomesTrue(() -> hood());
+        //Gamepads.gamepad2().triangle().whenBecomesTrue(() -> hoodMid());
+        /*SequentialGroup onStart= new SequentialGroup(
+                new Delay(2),
+                //TempHood.INSTANCE.HoodUp,
+                new SetPower(transfer, 0.25),
+                new Delay(0.01),
+                new SetPower(transfer, 0),
+                TempHood.INSTANCE.HoodUp,
+                new SetPower(transfer, 1),
+                new Delay(0.5),
+                TempHood.INSTANCE.HoodDown,
+                new SetPower(transfer, 0)
+        );
+        //int tag=MotifScanning.INSTANCE.findMotif();
+        onStart.schedule();*/
     }
 
-    @Override
-    public void start() {
 
-        pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
-    }
-
-    @Override
-    public void loop() {
-        // PID battery stuff
-        double svoltage = getBatteryVoltage();
-        double sKF = 150 / svoltage;
-
-        transferMotor.setPower(1);
-        // turret control
-        if (gamepad1.x) {
-            transferMotor.setPower(-1);
-        } else {
-            transferMotor.setPower(1);
-        }
-        pinpointautoaim();
-        Pose2D pos2D = pinpoint.getPosition();
-        double turretX = 2925 + pos2D.getX(DistanceUnit.MM) + (Math.cos(pos2D.getHeading(AngleUnit.RADIANS)));
-        double turretY =(-2000 + pos2D.getY(DistanceUnit.MM) + (Math.sin(pos2D.getHeading(AngleUnit.RADIANS))));
-        double y = -130 + (3300 - turretY)/25.4;
-        telemetry.addData("newy", y);
-        if (gamepad2.rightBumperWasPressed()) {
-            turretzero -= 0.005;
-        }
-        if (gamepad2.leftBumperWasPressed()) {
-            turretzero += 0.005;
-        }
-        double dx = (3657.6 - Math.abs(turretX))/25.4;
-
-        double x = Math.sqrt(dx*dx+y*y);
-        double power = 0.00000587054 * x*x*x*x - 0.00310024 * x*x*x + 0.62862 * x*x-52.04003 * x+3035 + veloffset;
-        telemetry.addData("distance", x);
-        shooter1Motor.setVelocityPIDFCoefficients(50, 0, 0, sKF);
-        shooter2Motor.setVelocityPIDFCoefficients(50, 0, 0, sKF);
-        if (gamepad2.xWasPressed()) {
-            veloffset += 10;
-        }
-        if (gamepad2.yWasPressed()) {
-            veloffset -= 10;
-        }
-        if (power > 1900) {
-            power = 1900;
-        }
-        shooter1Motor.setVelocity(-1 * power);
-        shooter2Motor.setVelocity(power);
-        if (gamepad1.xWasPressed()) {
-            pidhigh = !pidhigh;
-        }
-
-
-
-
-
-        // intake motor control
-        transferMotor.setPower(1);
-
-        if (gamepad1.x) {
-            transferMotor.setPower(-1);
-        }
-        if (gamepad2.aWasPressed()) {
-            intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
-        if (gamepad2.bWasPressed()) {
-            intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-        }
-        boolean nohit = nogatehit();
-        if (gamepad1.yWasPressed()){
-            if (slowModeMultiplier == 2500){
-                slowModeMultiplier = 500;
-            } else if (!nohit){
-                slowModeMultiplier = 2500;
-
-            } else if (nohit) {
-                slowModeMultiplier = 500;
-            }
-        }
-
-        // transfer motor control
-        if (gamepad1.rightBumperWasPressed() || gamepad1.aWasPressed()) {
-            transfer = !transfer;
-        }
-        if (gamepad1.leftBumperWasPressed()) {
-            transfertimer.reset();
-            six = true;
-        }
-        if (six = true && transfertimer.seconds() < 0.075) {
-            intakeMotor.setPower(-1);
-        } else if (six = true && transfertimer.seconds() > 0.075) {
-            intakeMotor.setPower(0);
-            six = false;
-        }
-        if (transfer && x < 140) {
-            intakeMotor.setPower(-1);
-            gamepad1.rumble(50);
-            blocker.setPosition(0.65);
-
-        } else if (transfer && x > 140){
-            intakeMotor.setPower(-0.9);
-            gamepad1.rumble(50);
-            blocker.setPosition(0.65);
-        } else {
-            blocker.setPosition(0.95);
-
-        }
-        if (gamepad1.bWasPressed()) {
-            pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
-        }
-
-        // shooter motor controls
-
-        telemetry.addData("left", shooter1Motor.getVelocity());
-        telemetry.addData("right", shooter2Motor.getVelocity());
-
-        // fieldcentric driving
-        pinpoint.update();
-        double heading = pos2D.getHeading(AngleUnit.RADIANS);
-        feildCentricDrive(heading);
-        List<AprilTagDetection> detections = aprilTag.getDetections();
-        telemetry.addData("newy", y);
-
-        if (!detections.isEmpty()) {
-            AprilTagDetection detection = detections.get(0);
-
-            double atagx = detection.center.x - 320;
-            telemetry.addData("Distance x", detection.center.x);
-            telemetry.addData("PID ERROR: ", atagx);
-
-
-        }
-
-        telemetry.update();
-
-    }
-    public void configurePinpoint () {
-        pinpoint.setOffsets(-160.0, -50.0, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
-
-        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-
-        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
-                GoBildaPinpointDriver.EncoderDirection.FORWARD);
-
-        pinpoint.resetPosAndIMU();
-
+    public void onStop(){
+        red=false;
     }
 }
