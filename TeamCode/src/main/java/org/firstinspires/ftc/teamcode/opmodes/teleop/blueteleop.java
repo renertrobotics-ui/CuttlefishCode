@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS;
 import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS44;
 import static org.firstinspires.ftc.teamcode.subsystems.Flywheel.shooter;*/
 
+import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -34,7 +36,7 @@ import dev.nextftc.hardware.powerable.SetPower;
 public class blueteleop extends NextFTCOpMode {
 
     public MotorEx intakeMotor;
-    public MotorEx transfer;
+    public MotorEx transferMotor;
     public blueteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
@@ -82,16 +84,16 @@ public class blueteleop extends NextFTCOpMode {
 //        limelight.pipelineSwitch(APRILTAG_PIPELINE);
 //        limelight.start();
         blue=true;
-        intakeMotor = new MotorEx("intake").reversed();
-        transfer = new MotorEx("transfer").reversed();
+        intakeMotor = new MotorEx("Intake_Motor");
+        transferMotor = new MotorEx("Transfer_Motor");
         Gamepads.gamepad1().leftTrigger().greaterThan(0.3).whenBecomesTrue(()-> intakeMotor.setPower(1))
                 .whenBecomesFalse(() -> intakeMotor.setPower(0));
-        Gamepads.gamepad1().leftBumper().whenBecomesTrue(()-> transfer.setPower(1))
-                .whenBecomesFalse(() -> transfer.setPower(0));
-        Gamepads.gamepad2().leftTrigger().greaterThan(0.3).whenBecomesTrue(()->intakeMotor.setPower(-1))
-                .whenBecomesFalse(() -> intakeMotor.setPower(0));
-        Gamepads.gamepad2().rightTrigger().greaterThan(0.3).whenBecomesTrue(()-> transfer.setPower(-1))
-                .whenBecomesFalse(() -> intakeMotor.setPower(0));
+        Gamepads.gamepad1().leftBumper().whenBecomesTrue(()-> transferMotor.setPower(1))
+                .whenBecomesFalse(() -> transferMotor.setPower(0));
+        /*Gamepads.gamepad2().leftTrigger().greaterThan(0.3).whenBecomesTrue(()->intakeMotor.setPower(-1))
+                .whenBecomesFalse(() -> intakeMotor.setPower(0));*/
+        Gamepads.gamepad1().rightTrigger().greaterThan(0.3).whenBecomesTrue(()-> transferMotor.setPower(-1))
+                .whenBecomesFalse(() -> transferMotor.setPower(0));
 
 
 
@@ -100,8 +102,10 @@ public class blueteleop extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
-        float newtps=1000;
-        /*if(lowerangle==true){
+        //float newtps=1000;
+        //shooter(newtps);
+        //ActiveOpMode.telemetry().addData("newtps", newtps);
+/*if(lowerangle==true){
             newtps = findTPS44(DistanceBlue.INSTANCE.getDistanceFromTag());
             //ActiveOpMode.telemetry().addData("Lowerangle:", lowerangle);
         }
@@ -126,14 +130,14 @@ public class blueteleop extends NextFTCOpMode {
         /*SequentialGroup onStart= new SequentialGroup(
                 new Delay(2),
                 //TempHood.INSTANCE.HoodUp,
-                new SetPower(transfer, 0.25),
+                new SetPower(transferMotor, 0.25),
                 new Delay(0.01),
-                new SetPower(transfer, 0),
+                new SetPower(transferMotor, 0),
                 TempHood.INSTANCE.HoodUp,
-                new SetPower(transfer, 1),
+                new SetPower(transferMotor, 1),
                 new Delay(0.5),
                 TempHood.INSTANCE.HoodDown,
-                new SetPower(transfer, 0)
+                new SetPower(transferMotor, 0)
         );
         //int tag=MotifScanning.INSTANCE.findMotif();
         onStart.schedule();*/

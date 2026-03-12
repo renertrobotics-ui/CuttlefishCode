@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 /*
 import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS;
 import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS44;
-import static org.firstinspires.ftc.teamcode.subsystems.Flywheel.shooter;
+import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
 */
+import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -42,7 +44,7 @@ import dev.nextftc.hardware.powerable.SetPower;
 public class redteleop extends NextFTCOpMode {
 
     public MotorEx intakeMotor;
-    public MotorEx transfer;
+    public MotorEx transferMotor;
     public redteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
@@ -61,22 +63,6 @@ public class redteleop extends NextFTCOpMode {
 
     public static int tagID;
     public static boolean findMotif = false;
-    public static int ball1Color = 0; //green = 1, purple = 2
-    public static int ball2Color = 0;
-    public static int ball3Color = 0;
-
-    public static int getBall1Color() {
-        return ball1Color;
-    }
-
-    public static int getBall2Color() {
-        return ball2Color;
-    }
-    public static int getBall3Color() {
-        return ball3Color;
-    }
-    public boolean lift;
-    boolean lowerangle = false;
 
 
 
@@ -120,20 +106,17 @@ public class redteleop extends NextFTCOpMode {
     private static final int APRILTAG_PIPELINE = 7;
     @Override
     public void onInit() {
-        Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(0);
-        limelight.start();
         red=true;
-        intakeMotor = new MotorEx("intake").reversed();
-        transfer = new MotorEx("transfer").reversed();
+        intakeMotor = new MotorEx("Intake_Motor").reversed();
+        transferMotor = new MotorEx("Transfer_Motor").reversed();
         Gamepads.gamepad1().leftTrigger().greaterThan(0.3).whenBecomesTrue(()-> intakeMotor.setPower(1))
                 .whenBecomesFalse(() -> intakeMotor.setPower(0));
-        Gamepads.gamepad1().leftBumper().whenBecomesTrue(()-> transfer.setPower(1))
-                .whenBecomesFalse(() -> transfer.setPower(0));
+        Gamepads.gamepad1().leftBumper().whenBecomesTrue(()-> transferMotor.setPower(1))
+                .whenBecomesFalse(() -> transferMotor.setPower(0));
         Gamepads.gamepad2().leftTrigger().greaterThan(0.3).whenBecomesTrue(()->intakeMotor.setPower(-1))
                 .whenBecomesFalse(() -> intakeMotor.setPower(0));
-        Gamepads.gamepad2().rightTrigger().greaterThan(0.3).whenBecomesTrue(()-> transfer.setPower(-1))
-                .whenBecomesFalse(() -> intakeMotor.setPower(0));
+        Gamepads.gamepad2().rightTrigger().greaterThan(0.3).whenBecomesTrue(()-> transferMotor.setPower(-1))
+                .whenBecomesFalse(() -> transferMotor.setPower(0));
         Gamepads.gamepad1().x().whenBecomesTrue(()->follower.setPose(new Pose(79.967,9.271,Math.toRadians(90))));
 
 
@@ -146,7 +129,11 @@ public class redteleop extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
-        /*float newtps=1000;
+        float newtps=1000;
+        shooter(newtps);
+        ActiveOpMode.telemetry().addData("newtps", newtps);
+
+        /*
         if(lowerangle==true){
             newtps = findTPS44(DistanceRed.INSTANCE.getDistanceFromTag());
             //ActiveOpMode.telemetry().addData("Lowerangle:", lowerangle);

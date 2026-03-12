@@ -10,6 +10,8 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 //import static org.firstinspires.ftc.teamcode.subsystems.Calculations.lowangle;
 //import static org.firstinspires.ftc.teamcode.subsystems.Flywheel.shooter;
 import static org.firstinspires.ftc.teamcode.opmodes.teleop.redteleop.isRed;
+import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
+
 import static org.firstinspires.ftc.teamcode.opmodes.teleop.blueteleop.isBlue;
 
 //import static org.firstinspires.ftc.teamcode.subsystems.ShooterCalc.calculateShotVectorandUpdateHeading;
@@ -131,15 +133,6 @@ public class drivesubsystem implements Subsystem {
         return aimMultiplier * clip(power, -YAW_MAX, YAW_MAX);
     }
 
-    private void autolocktrue(){
-        autolock = true;
-    }
-
-    private void autolockfalse(){
-        autolock = false;
-    }
-
-
     private void slowtrue(){
         slow = true;
     }
@@ -148,10 +141,10 @@ public class drivesubsystem implements Subsystem {
         slow = false;
     }
 
-    public static final MotorEx fL = new MotorEx("Front left drive motor BRFL").brakeMode();
-    public static final MotorEx bL = new MotorEx("back left drive motor BLORF").brakeMode();
-    public static final MotorEx fR = new MotorEx("Front right drive motor BLORF").brakeMode();
-    public static final MotorEx bR = new MotorEx("back right drive motor BRFL").brakeMode();
+    public static final MotorEx fL = new MotorEx("Front left drive motor BRFL").brakeMode().reversed();
+    public static final MotorEx bL = new MotorEx("back left drive motor BLORF").brakeMode().reversed();
+    public static final MotorEx fR = new MotorEx("Front right drive motor BLORF").brakeMode().reversed();
+    public static final MotorEx bR = new MotorEx("back right drive motor BRFL").brakeMode().reversed();
     public static MotorEx flywheel2 = new MotorEx("LeftShooter_Motor");
     public static MotorEx flywheel= new MotorEx("RightShooter_Motor");
 
@@ -193,9 +186,9 @@ public class drivesubsystem implements Subsystem {
                         fR,
                         bL,
                         bR,
-                        Gamepads.gamepad1().leftStickX().map(it -> alliance * it * 0.4),
-                        Gamepads.gamepad1().leftStickY().map(it -> alliance * it *0.4),
-                        Gamepads.gamepad1().rightStickX().map(it -> it * 0.4 * 0.75),
+                        Gamepads.gamepad1().leftStickY().map(it -> alliance * it * 0.4),
+                        Gamepads.gamepad1().leftStickX().map(it -> alliance * it *-0.4),
+                        Gamepads.gamepad1().rightStickX().map(it -> it * 0.4 * -0.75),
                         new FieldCentric(imu)
                 );
             }
@@ -206,9 +199,9 @@ public class drivesubsystem implements Subsystem {
                         fR,
                         bL,
                         bR,
-                        Gamepads.gamepad1().leftStickX().map(it -> alliance *it),
-                        Gamepads.gamepad1().leftStickY().map(it -> alliance *it),
-                        Gamepads.gamepad1().rightStickX().map(it -> it * 0.75),
+                        Gamepads.gamepad1().leftStickY().map(it -> 1.1 *alliance *it),
+                        Gamepads.gamepad1().leftStickX().map(it -> alliance * -1.1 * it),
+                        Gamepads.gamepad1().rightStickX().map(it -> it * -0.9),
                         new FieldCentric(imu)
                 );
             }
@@ -260,9 +253,6 @@ public class drivesubsystem implements Subsystem {
         startingpose = Storage.currentPose;
         follower.setStartingPose(startingpose);
 
-        hoodServo1n= ActiveOpMode.hardwareMap().get(Servo.class, "hoodServo1");
-        hoodServo2n=  ActiveOpMode.hardwareMap().get(Servo.class, "hoodServo2");
-
 
 
 
@@ -297,7 +287,7 @@ public class drivesubsystem implements Subsystem {
 
 
     static Command transferOn = new LambdaCommand()
-            .setStart(()-> transfermotor.setPower(1))
+            .setStart(()-> transfermotor.setPower(-1))
             .setIsDone(() -> true);
     static Command transferOff = new LambdaCommand()
             .setStart(() -> transfermotor.setPower(0))
@@ -305,9 +295,8 @@ public class drivesubsystem implements Subsystem {
 
 
     public static void shoot(){
-        if(shooting==false){
-            shooting = true;
-            SequentialGroup shoot = new SequentialGroup(transferOn, shootFalse);
+        if(shooting){
+            SequentialGroup shoot = new SequentialGroup(transferOn, new Delay(1), shootFalse);
             shoot.schedule();
         }
     }
@@ -339,11 +328,6 @@ public class drivesubsystem implements Subsystem {
         return false;
     }
 
-    private static Servo hoodServo1n;
-    private static Servo hoodServo2n;
-
-    private static ServoEx hoodServo1 = new ServoEx(() -> hoodServo1n);
-    private static ServoEx hoodServo2 = new ServoEx(() -> hoodServo2n);
     Command shooter = new LambdaCommand()
             .setStart(()-> shoot());
     public Command Localize(){
@@ -353,10 +337,10 @@ public class drivesubsystem implements Subsystem {
     @Override
     public void periodic() {
         if (firsttime == true) {
-            Gamepads.gamepad1().x().whenBecomesTrue((()->Localize().schedule()));
+            //Gamepads.gamepad1().x().whenBecomesTrue((()->Localize().schedule()));
             Gamepads.gamepad1().rightTrigger().greaterThan(0.3).whenBecomesTrue(shooter);
-            intakemotor = new MotorEx("intake_Motor");
-            transfermotor = new MotorEx("transfer_Motor");
+            intakemotor = new MotorEx("Intake_Motor");
+            transfermotor = new MotorEx("Transfer_Motor");
             firsttime = false;
 
 
