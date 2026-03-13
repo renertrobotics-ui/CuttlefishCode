@@ -74,7 +74,6 @@ public class ShooterSubsystem implements Subsystem {
         flywheelvelocity2 = flywheel2.getVelocity();
         KineticState currentState = new KineticState(0, flywheelvelocity, 0.0);
         KineticState currentState2 = new KineticState(0, -1*flywheelvelocity2, 0.0);
-        //if(tps-(-1*flywheelvelocity)<7 && tps-(-1*flywheelvelocity)>-7){
         velocityControlWithFeedforwardExample(currentState, tps);
         velocityControlWithFeedforwardExample2(currentState2, tps);
         double rpm = (flywheelvelocity / 28) * 60.0;

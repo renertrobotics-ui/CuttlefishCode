@@ -67,13 +67,6 @@ public class drivesubsystem implements Subsystem {
     public drivesubsystem() {
     }
 
-    private Limelight3A limelight;
-
-    private boolean hasTag;
-
-    private double tx;
-
-    private boolean autolock = false;
 
     public double aimMultiplier = 0.575;
 
@@ -89,57 +82,6 @@ public class drivesubsystem implements Subsystem {
     private double lastError = 0;
     private double lastTime = 0;
 
-    public double currentHoodState = 0;
-
-    public double hoodAngleDriver = 0;
-
-    private double clip(double v, double lo, double hi) {
-        return Math.max(lo, Math.min(hi, v));
-    }
-
-
-
-    private double visionYawCommand(double txDeg) {
-        if (Math.abs(txDeg) < YAW_DEADBAND_DEG) {
-            lastError = 0;
-            return 0.0;
-        }
-
-        // 1. Use System time for consistent math
-        double currentTime = System.currentTimeMillis() / 1000.0;
-        double deltaTime = currentTime - lastTime;
-        if (deltaTime <= 0) deltaTime = 0.001;
-
-        // 2. Only calculate D if the vision frame actually updated
-        // This prevents the "zero-derivative" jitter
-        double errorDerivative = 0;
-        if (txDeg != lastError) {
-            errorDerivative = (txDeg - lastError) / deltaTime;
-        }
-
-        // 3. Power Calculation
-        double pTerm = YAW_KP * txDeg;
-        double dTerm = YAW_KD * errorDerivative;
-
-        // 4. Add a small 'kS' (Static friction) to help it finish the move
-        // This allows you to lower KP and KD overall.
-        double kS = 0.05 * Math.signum(txDeg);
-
-        double power = pTerm + dTerm + kS;
-
-        lastError = txDeg;
-        lastTime = currentTime;
-
-        return aimMultiplier * clip(power, -YAW_MAX, YAW_MAX);
-    }
-
-    private void slowtrue(){
-        slow = true;
-    }
-
-    private void slowfalse(){
-        slow = false;
-    }
 
     public static final MotorEx fL = new MotorEx("Front left drive motor BRFL").brakeMode().reversed();
     public static final MotorEx bL = new MotorEx("back left drive motor BLORF").brakeMode().reversed();
@@ -186,8 +128,8 @@ public class drivesubsystem implements Subsystem {
                         fR,
                         bL,
                         bR,
-                        Gamepads.gamepad1().leftStickY().map(it -> alliance * it * 0.4),
-                        Gamepads.gamepad1().leftStickX().map(it -> alliance * it *-0.4),
+                        Gamepads.gamepad1().leftStickX().map(it -> alliance * it * 0.4),
+                        Gamepads.gamepad1().leftStickY().map(it -> alliance * it *-0.4),
                         Gamepads.gamepad1().rightStickX().map(it -> it * 0.4 * -0.75),
                         new FieldCentric(imu)
                 );
@@ -199,9 +141,9 @@ public class drivesubsystem implements Subsystem {
                         fR,
                         bL,
                         bR,
-                        Gamepads.gamepad1().leftStickY().map(it -> 1.1 *alliance *it),
-                        Gamepads.gamepad1().leftStickX().map(it -> alliance * -1.1 * it),
-                        Gamepads.gamepad1().rightStickX().map(it -> it * -0.9),
+                        Gamepads.gamepad1().leftStickX().map(it -> 1.5 *alliance *it),
+                        Gamepads.gamepad1().leftStickY().map(it -> alliance * -1.5 * it),
+                        Gamepads.gamepad1().rightStickX().map(it -> it * -1),
                         new FieldCentric(imu)
                 );
             }
@@ -217,7 +159,6 @@ public class drivesubsystem implements Subsystem {
 
         firsttime = true;
         shooting = false;
-        autolock = false;
         follower = follower();
         if(isBlue()!=true && isRed()!=true) {
             ActiveOpMode.telemetry().addLine("No direction set");

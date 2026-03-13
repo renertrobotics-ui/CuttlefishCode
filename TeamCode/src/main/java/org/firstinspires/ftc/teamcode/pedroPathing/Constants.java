@@ -13,12 +13,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(13)
-            .forwardZeroPowerAcceleration(-31.298)
+            .forwardZeroPowerAcceleration(-34)
             .lateralZeroPowerAcceleration(-71.689)
             .translationalPIDFCoefficients(new PIDFCoefficients(
-                    0.05,
+                    0.1,
                     0,
-                    0.007,
+                    0.015,
                     0.1
             ))
             .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(
@@ -40,7 +40,7 @@ public class Constants {
                     0.0005
             ))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(
-                    0.005,
+                    0.015,
                     0,
                     0.001,
                     0.6,
@@ -65,10 +65,10 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(67.88)
-            .yVelocity(50.6);
+            .xVelocity(73.6579)
+            .yVelocity(50.6739);
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-2)
+            .forwardPodY(-6.3)
             .strafePodX(-2)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
