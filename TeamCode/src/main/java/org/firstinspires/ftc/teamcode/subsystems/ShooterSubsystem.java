@@ -38,7 +38,7 @@ public class ShooterSubsystem implements Subsystem {
 
     public static double configvelocity = 1400; //far zone - ~1500. near zone - ~1200-1300
 
-    public static void velocityControlWithFeedforwardExample(KineticState currentstate, float configtps) {
+    public static void velocityControlWithFeedforward(KineticState currentstate, float configtps) {
         // Create a velocity controller with PID and feedforward
         ControlSystem controller1 = ControlSystem.builder()
                 .velPid(myPidCoeff) // Velocity PID with kP=0.1, kI=0.01, kD=0.05
@@ -53,7 +53,7 @@ public class ShooterSubsystem implements Subsystem {
         double power = controller1.calculate(currentstate);
         flywheel.setPower(power);
     }
-    public static void velocityControlWithFeedforwardExample2(KineticState currentstate, float configtps) {
+    public static void velocityControlWithFeedforward2(KineticState currentstate, float configtps) {
         // Create a velocity controller with PID and feedforward
         ControlSystem controller2 = ControlSystem.builder()
                 .velPid(myPidCoeff) // Velocity PID with kP=0.1, kI=0.01, kD=0.05
@@ -74,8 +74,8 @@ public class ShooterSubsystem implements Subsystem {
         flywheelvelocity2 = flywheel2.getVelocity();
         KineticState currentState = new KineticState(0, flywheelvelocity, 0.0);
         KineticState currentState2 = new KineticState(0, -1*flywheelvelocity2, 0.0);
-        velocityControlWithFeedforwardExample(currentState, tps);
-        velocityControlWithFeedforwardExample2(currentState2, tps);
+        velocityControlWithFeedforward(currentState, tps);
+        velocityControlWithFeedforward2(currentState2, tps);
         double rpm = (flywheelvelocity / 28) * 60.0;
 
     }
