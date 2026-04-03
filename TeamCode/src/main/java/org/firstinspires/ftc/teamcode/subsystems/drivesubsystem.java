@@ -80,15 +80,12 @@ public class drivesubsystem implements Subsystem {
     public static final MotorEx bL = new MotorEx("back left drive motor BLORF").brakeMode().reversed();
     public static final MotorEx fR = new MotorEx("Front right drive motor BLORF").brakeMode().reversed();
     public static final MotorEx bR = new MotorEx("back right drive motor BRFL").brakeMode().reversed();
-    public static MotorEx flywheel2 = new MotorEx("LeftShooter_Motor");
-    public static MotorEx flywheel= new MotorEx("RightShooter_Motor");
 
     private IMUEx imu;
 
     public boolean firsttime = true;
 
     public int alliance;
-    public boolean bum = false;
 
 
 
@@ -100,9 +97,7 @@ public class drivesubsystem implements Subsystem {
 
         if (isBlue() != true && isRed() != true) {
             ActiveOpMode.telemetry().addLine("No direction set");
-            bum = true;
         } else {
-            bum = false;
             if (isBlue() == true) {
                 alliance = 1;
                 }
@@ -151,14 +146,11 @@ public class drivesubsystem implements Subsystem {
     public void initialize() {
 
         firsttime = true;
-        shooting = false;
         follower = follower();
         if(isBlue()!=true && isRed()!=true) {
             ActiveOpMode.telemetry().addLine("No direction set");
-            bum=true;
         }
         else{
-            bum = false;
             if(isBlue()==true) {
                 alliance=1;
             }
@@ -198,42 +190,19 @@ public class drivesubsystem implements Subsystem {
 
 
 
-    private MotorEx intakemotor;
-    private static MotorEx transfermotor;
 
-    double goalY = 138;
-    double goalX = 138;
+    double goalY = 141;
+    double goalX = 141;
 
     static double localizeX;
     double localizeY;
 
-    double goalYDist = 138;
-    double goalXDist = 138;
+    double goalYDist = 141;
+    double goalXDist = 141;
 
 
     static boolean shooting = false;
 
-    static Command shootTrue = new LambdaCommand()
-            .setStart(() -> shooting=true);
-
-    static Command shootFalse = new LambdaCommand()
-            .setStart(() -> shooting=false);
-
-
-    static Command transferOn = new LambdaCommand()
-            .setStart(()-> transfermotor.setPower(-1))
-            .setIsDone(() -> true);
-    static Command transferOff = new LambdaCommand()
-            .setStart(() -> transfermotor.setPower(0))
-            .setIsDone(() -> true);
-
-
-    public static void shoot(){
-        if(shooting){
-            SequentialGroup shoot = new SequentialGroup(transferOn, new Delay(1), shootFalse);
-            shoot.schedule();
-        }
-    }
 
     public boolean isInLaunchZone(double x, double y) {
 
@@ -262,8 +231,6 @@ public class drivesubsystem implements Subsystem {
         return false;
     }
 
-    Command shooter = new LambdaCommand()
-            .setStart(()-> shoot());
     public Command Localize(){
         return localize;
     }
@@ -272,9 +239,6 @@ public class drivesubsystem implements Subsystem {
     public void periodic() {
         if (firsttime == true) {
             //Gamepads.gamepad1().x().whenBecomesTrue((()->Localize().schedule()));
-            Gamepads.gamepad1().rightTrigger().greaterThan(0.3).whenBecomesTrue(shooter);
-            intakemotor = new MotorEx("Intake_Motor");
-            transfermotor = new MotorEx("Transfer_Motor");
             firsttime = false;
 
 
@@ -298,25 +262,7 @@ public class drivesubsystem implements Subsystem {
         double robotHeading = follower.getPose().getHeading();
         Vector robotToGoalVector = new Vector(follower.getPose().distanceFrom(new Pose(goalX, goalY)), Math.atan2(goalY - currPose.getY(), goalX - currPose.getX()));
         //Vector v = new Vector(new Pose(138, 138));
-        double s1speed = 60 * flywheel.getVelocity()/28;
-        double s2speed = 60 * flywheel2.getVelocity()/28;
-
-        //ActiveOpMode.telemetry().addData("Motor1Speed", s1speed);
-        //ActiveOpMode.telemetry().addData("Motor2Speed", s2speed);
         ActiveOpMode.telemetry().addData("alliance", alliance);
-        //ActiveOpMode.telemetry().addData("bum", bum);
-        //ActiveOpMode.telemetry().addData("servo1pos", hoodServo1.getPosition());
-        //ActiveOpMode.telemetry().addData("servo2pos", hoodServo2.getPosition());
-
-        //double frontLeftRPM = 28 / 60 * fL.getVelocity();
-        //double frontRightRPM = 28 / 60 * fR.getVelocity();
-        //double backLeftRPM = 28 / 60 * bL.getVelocity();
-        //double backRightRPM = 28 / 60 * bR.getVelocity();
-        //ActiveOpMode.telemetry().addData("frontRightRPM", frontRightRPM);
-        //ActiveOpMode.telemetry().addData("backRightRPM", backRightRPM);
-        //ActiveOpMode.telemetry().addData("frontLeftRPM", frontLeftRPM);
-        //ActiveOpMode.telemetry().addData("backLeftRPM", backLeftRPM);
-
         ActiveOpMode.telemetry().addData("aimMultipler", aimMultiplier);
         //ActiveOpMode.telemetry().addData("goalX", goalX);
         //ActiveOpMode.telemetry().addData("goalY", goalY);
@@ -327,7 +273,6 @@ public class drivesubsystem implements Subsystem {
         //ActiveOpMode.telemetry().addData("robotHeading", Math.toDegrees(robotHeading));
         //ActiveOpMode.telemetry().addData("velocity", follower.getVelocity());
         //ActiveOpMode.telemetry().addData("distance", distance);
-        //ActiveOpMode.telemetry().addData("yVCtx", visionYawCommand(headingError));
         ActiveOpMode.telemetry().update();
     }
 }

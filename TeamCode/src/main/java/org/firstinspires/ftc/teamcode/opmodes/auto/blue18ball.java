@@ -64,7 +64,7 @@ public class blue18ball extends NextFTCOpMode {
 
     int tagId = 0;
 
-    public Pose start = new Pose(29.842, 135.289, Math.toRadians(90));
+    public Pose start = new Pose(23, 128, Math.toRadians(144));
 
 
     private MotorEx transfer1;
@@ -215,15 +215,48 @@ public class blue18ball extends NextFTCOpMode {
 
                 intakeMotorOn,
                 transferOn,
+
+
                 new FollowPath(paths.intakeSet1,true,1.0),
                 new FollowPath(paths.launchSet1,true,1.0),
                 shoot,
 
                 intakeMotorOn,
                 transferOn,
+
+                new FollowPath(paths.resetAndIntake1,true,1.0),
+                new Delay(1),
+                //reverseIntakeForMe,
+                new FollowPath(paths.launchSpam1, true, 1.0),
+                shoot,
+
+                intakeMotorOn,
+                transferOn,
+
+
+/*
+
                 new FollowPath(paths.intakeSet3,true,1.0),
                 new FollowPath(paths.launchSet3,true,1.0),
+                shoot,*/
+                new FollowPath(paths.resetAndIntake1,true,1.0),
+                new Delay(1),
+                //reverseIntakeForMe,
+                new FollowPath(paths.launchSpam1, true, 1.0),
                 shoot,
+
+                intakeMotorOn,
+                transferOn,
+                new FollowPath(paths.resetAndIntake3,true,1.0),
+                new Delay(1.0),
+                //reverseIntakeForMe,
+                new FollowPath(paths.launchSpam3, true, 1.0),
+                shoot,
+
+                intakeMotorOn,
+                transferOn,
+
+
 
                 new FollowPath(paths.teleOpPark,true,1.0)
         );
@@ -288,6 +321,9 @@ public class blue18ball extends NextFTCOpMode {
         public PathChain launchSpam1;
         public PathChain resetAndIntake2;
         public PathChain launchSpam2;
+        public PathChain resetAndIntake3;
+        public PathChain launchSpam3;
+
         public PathChain intakeSet1;
         public PathChain launchSet1;
         public PathChain intakeSet3;
@@ -297,11 +333,11 @@ public class blue18ball extends NextFTCOpMode {
         public Paths(Follower follower) {
             preloadLaunch = follower.pathBuilder().addPath(
                             new BezierCurve(
-                                    new Pose(29.842, 135.289),  // 142 - 112.158
+                                    new Pose(23, 128),  // 142 - 112.158
                                     new Pose(32.000, 110.500),  // 142 - 110.0
                                     new Pose(42.000, 100.000)   // 142 - 100.0
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
+                    ).setLinearHeadingInterpolation(Math.toRadians(144), Math.toRadians(180))
                     .setVelocityConstraint(1.0)
                     .setTValueConstraint(0.8)
                     .build();
@@ -332,7 +368,7 @@ public class blue18ball extends NextFTCOpMode {
                             new BezierCurve(
                                     new Pose(50.000, 94.000),
                                     new Pose(38.000, 67.000),
-                                    new Pose(7, 57.25)      // 142 - 130.5
+                                    new Pose(7, 56.25)      // 142 - 130.5
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
                     .setVelocityConstraint(1.0)
@@ -353,7 +389,7 @@ public class blue18ball extends NextFTCOpMode {
 
             launchSpam1 = follower.pathBuilder().addPath(
                             new BezierCurve(
-                                    new Pose(7, 57.25),
+                                    new Pose(7, 56.25),
                                     new Pose(38.000, 67.000),
                                     new Pose(50.000, 94.000)
                             )
@@ -367,7 +403,7 @@ public class blue18ball extends NextFTCOpMode {
                             new BezierCurve(
                                     new Pose(50.000, 94.000),
                                     new Pose(38.000, 67.000),
-                                    new Pose(7, 57.25)      // 142 - 130.5
+                                    new Pose(7, 56.25)      // 142 - 130.5
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
                     .setVelocityConstraint(1.0)
@@ -378,9 +414,35 @@ public class blue18ball extends NextFTCOpMode {
 
             launchSpam2 = follower.pathBuilder().addPath(
                             new BezierCurve(
-                                    new Pose(7, 57.25),       // 142 - 129
+                                    new Pose(7, 56.25),       // 142 - 129
                                     new Pose(38.000, 67.000),
                                     new Pose(50.0, 94.0)
+                            )
+                    ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
+                    .setVelocityConstraint(0.3)
+                    .setTValueConstraint(0.95)
+                    .addPoseCallback(new Pose(18, 61), reverseIntakeForMe, 0.3) // 142 - 118
+                    .build();
+
+
+            resetAndIntake3 = follower.pathBuilder().addPath(
+                            new BezierCurve(
+                                    new Pose(50.000, 94.000),
+                                    new Pose(38.000, 67.000),
+                                    new Pose(7, 56.25)      // 142 - 130.5
+                            )
+                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
+                    .setVelocityConstraint(1.0)
+                    .setTValueConstraint(0.8)
+                    .addTemporalCallback(0.1, intakeMotorOn)
+                    .addTemporalCallback(0.1, transferOn)
+                    .build();
+
+            launchSpam3 = follower.pathBuilder().addPath(
+                            new BezierCurve(
+                                    new Pose(7, 56.25),       // 142 - 129
+                                    new Pose(38.000, 67.000),
+                                    new Pose(60.0, 144.0)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
                     .setVelocityConstraint(0.3)
