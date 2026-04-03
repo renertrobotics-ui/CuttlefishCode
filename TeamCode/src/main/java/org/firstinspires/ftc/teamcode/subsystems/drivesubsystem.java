@@ -90,8 +90,7 @@ public class drivesubsystem implements Subsystem {
 
 
 
-    //Pose startingpose = Storage.currentPose;
-    Pose startingpose = new Pose(72,72, Math.toRadians(90));
+    Pose startingpose = Storage.currentPose;
     @Override
     public Command getDefaultCommand() {
 
@@ -109,7 +108,7 @@ public class drivesubsystem implements Subsystem {
         follower.update();
         Pose currPose = follower.getPose();
         double robotHeading = follower.getPose().getHeading();
-
+            //driving stuff here for mecanum
             if (slow == true) {
                 return new MecanumDriverControlled(
                         fL,
@@ -150,6 +149,7 @@ public class drivesubsystem implements Subsystem {
         if(isBlue()!=true && isRed()!=true) {
             ActiveOpMode.telemetry().addLine("No direction set");
         }
+        //alliance 1 means on blue alliance, -1 means on red alliance
         else{
             if(isBlue()==true) {
                 alliance=1;
@@ -238,14 +238,13 @@ public class drivesubsystem implements Subsystem {
     @Override
     public void periodic() {
         if (firsttime == true) {
-            //Gamepads.gamepad1().x().whenBecomesTrue((()->Localize().schedule()));
+            Gamepads.gamepad1().x().whenBecomesTrue((()->Localize().schedule()));
             firsttime = false;
 
 
         }
         follower.update();
 
-        //ActiveOpMode.telemetry().addData("Lowangle:", lowerangle);
 
 
         if (isBlue() == true) {
@@ -262,8 +261,6 @@ public class drivesubsystem implements Subsystem {
         double robotHeading = follower.getPose().getHeading();
         Vector robotToGoalVector = new Vector(follower.getPose().distanceFrom(new Pose(goalX, goalY)), Math.atan2(goalY - currPose.getY(), goalX - currPose.getX()));
         //Vector v = new Vector(new Pose(138, 138));
-        ActiveOpMode.telemetry().addData("alliance", alliance);
-        ActiveOpMode.telemetry().addData("aimMultipler", aimMultiplier);
         //ActiveOpMode.telemetry().addData("goalX", goalX);
         //ActiveOpMode.telemetry().addData("goalY", goalY);
         ActiveOpMode.telemetry().addData("RobotX", currPose.getX());
