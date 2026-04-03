@@ -71,32 +71,32 @@ public class intakeTransferSubsystem implements Subsystem {
         Transfer_Motor.setPower(0);
     }
     public void blockerOpen() {
-        blocker.setPosition(67) // todo: find open position of blocker servo
+        blocker.setPosition(67); // todo: find open position of blocker servo
     }
     public void blockerClose() {
-        blocker.setPosition(67) // todo: find closed position of blocker servo
+        blocker.setPosition(67); // todo: find closed position of blocker servo
     }
     public void autonomousIntakeTransferOperation{
         switch (NumberOfBallsInBobot()) {
             case 0:
-                runIntake()
-                runTransfer()
-                blockerClose()
+                runIntake();
+                runTransfer();
+                blockerClose();
                 break;
             case 1:
-                runIntake()
-                runTransfer()
-                blockerClose()
+                runIntake();
+                runTransfer();
+                blockerClose();
                 break;
             case 2;
-                runIntake()
-                stopTransfer()
-                blockerOpen()
+                runIntake();
+                stopTransfer();
+                blockerOpen();
                 break;
             case 3;
-                stopIntake()
-                stopTransfer()
-                blockerOpen()
+                stopIntake();
+                stopTransfer();
+                blockerOpen();
                 break;
         }
     }
