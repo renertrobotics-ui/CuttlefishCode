@@ -62,25 +62,21 @@ import java.util.function.Supplier;
 
 @Configurable
 public class drivesubsystem implements Subsystem {
-
+    // here is where I create the instance of the class so that it can be used in blueteleop
     public static final drivesubsystem INSTANCE = new drivesubsystem();
+
     public drivesubsystem() {
     }
 
 
-    public double aimMultiplier = 0.575;
 
     private boolean slow = false;
-    // ADDED: Fields to track error over time for D term
-    private double lastError = 0;
-    private double lastTime = 0;
-
-
+    //this is how to create a motor
     public static final MotorEx fL = new MotorEx("Front left drive motor BRFL").brakeMode().reversed();
     public static final MotorEx bL = new MotorEx("back left drive motor BLORF").brakeMode().reversed();
     public static final MotorEx fR = new MotorEx("Front right drive motor BLORF").brakeMode().reversed();
     public static final MotorEx bR = new MotorEx("back right drive motor BRFL").brakeMode().reversed();
-
+    // this is how you create your IMU
     private IMUEx imu;
 
     public boolean firsttime = true;
@@ -92,6 +88,7 @@ public class drivesubsystem implements Subsystem {
 
     Pose startingpose = Storage.currentPose;
     @Override
+    //this is your default command - it runs all the time
     public Command getDefaultCommand() {
 
         if (isBlue() != true && isRed() != true) {
@@ -202,7 +199,7 @@ public class drivesubsystem implements Subsystem {
 
 
     static boolean shooting = false;
-
+/*
 
     public boolean isInLaunchZone(double x, double y) {
 
@@ -229,12 +226,12 @@ public class drivesubsystem implements Subsystem {
         }
 
         return false;
-    }
+    } */
 
     public Command Localize(){
         return localize;
     }
-
+    // this is your periodic loop, it runs all the time but is different than a default command
     @Override
     public void periodic() {
         if (firsttime == true) {
