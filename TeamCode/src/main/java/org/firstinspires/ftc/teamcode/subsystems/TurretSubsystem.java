@@ -26,6 +26,7 @@ import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.hardware.driving.FieldCentric;
 import dev.nextftc.hardware.driving.MecanumDriverControlled;
 import dev.nextftc.hardware.impl.ServoEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -34,28 +35,33 @@ import dev.nextftc.hardware.impl.MotorEx;
 @Configurable
 public class TurretSubsystem implements Subsystem {
 
-    public final TurretSubsystem INSTANCE = new TurretSubsystem();
+    public static final TurretSubsystem INSTANCE = new TurretSubsystem();
     public TurretSubsystem() {
     }
     private IMUEx imu;
     GoBildaPinpointDriver pinpoint;
 
     public int alliance;
-    ServoEx ServoEx;
+    ServoEx ServoExLeft;
+    ServoEx ServoExRight;
 
 
 
     @Override
     public void initialize() {
-        ServoEx = new ServoEx("cr_servo_name");
+        follower = PedroComponent.follower();
+        ServoExLeft = new ServoEx("axonLeft");
+        ServoExRight = new ServoEx("axonRight");
         imu = new IMUEx("imu", Direction.RIGHT, Direction.UP).zeroed();
     }
 
     public void turret_on(double position) {
-        ServoEx.setPosition(position);
+        ServoExLeft.setPosition(0.5 + position); // 0.5 is center position
+        ServoExRight.setPosition(0.5 - position); // invert to make sure both end up in the same spot
     }
     public void turret_off() {
-        ServoEx.setPosition(0.5);
+        ServoExLeft.setPosition(0.5);
+        ServoExRight.setPosition(0.5);
     }
 
     public void calculate_heading(Pose currentpose) {
@@ -82,7 +88,7 @@ public class TurretSubsystem implements Subsystem {
             double fieldAngleRad = Math.atan2(distY, distX);
             double robotHeadingRadians = (-currentpose.getHeading());
             double turretTargetRad = fieldAngleRad - robotHeadingRadians;
-            turnneed = 0.5 +  turretTargetRad/(Math.PI*2);
+            turnneed = turretTargetRad/(Math.PI*2);
         }
         //turret_on(turnneed);
         ActiveOpMode.telemetry().addData("turnneed", turnneed);
@@ -96,6 +102,14 @@ public class TurretSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
+        follower.update();
+        Pose currPose = follower.getPose();
+        double robotHeading = follower.getPose().getHeading();
+        if (Gamepads.gamepad1().a().get()) {
+            calculate_heading(currPose);
+        } else {
+            turret_off();
+        }
 
     }
 

@@ -159,7 +159,7 @@ public class drivesubsystem implements Subsystem {
 
         firsttime = true;
         shooting = false;
-        follower = follower();
+
         if(isBlue()!=true && isRed()!=true) {
             ActiveOpMode.telemetry().addLine("No direction set");
             bum=true;
