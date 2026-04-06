@@ -44,16 +44,14 @@ public class TurretSubsystem implements Subsystem {
     ServoEx ServoEx;
 
 
-    public Command localize;
 
     @Override
     public void initialize() {
         ServoEx = new ServoEx("cr_servo_name");
         imu = new IMUEx("imu", Direction.RIGHT, Direction.UP).zeroed();
-        pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
     }
 
-    public <position> void turret_on(double position) {
+    public void turret_on(double position) {
         ServoEx.setPosition(position);
     }
     public void turret_off() {
@@ -61,16 +59,37 @@ public class TurretSubsystem implements Subsystem {
     }
 
     public void calculate_heading(Pose currentpose) {
-        double turretX = currentpose.getX() + (Math.cos(currentpose.getHeading()));
-        double turretY = currentpose.getY() + (Math.sin(currentpose.getHeading()));
-        double distY = (3657.6 - Math.abs(turretY))/25.4;
-        double distX = (3657.6 - Math.abs(turretX))/25.4;
-        double fieldAngleRad = Math.atan2(distY, distX);
-        double robotHeadingRadians = (-currentpose.getHeading());
-        double turretTargetDeg = fieldAngleRad - robotHeadingRadians;
-        double turnneed = 0.5 - turretTargetDeg/(Math.PI*2);
-        ActiveOpMode.telemetry().addData("position", turnneed);
-        turret_on(turnneed);
+        double turretX = 0;
+        double turretY = 0;
+        double distY = 0;
+        double distX = 0;
+        double turnneed = 0;
+        if (isBlue()) {
+            turretX = currentpose.getX() + (Math.cos(currentpose.getHeading()));
+            turretY = currentpose.getY() + (Math.sin(currentpose.getHeading()));
+            distY = 141 - Math.abs(turretY);
+            distX = 141 - Math.abs(turretX);
+            double fieldAngleRad = Math.atan2(distY, distX);
+            double robotHeadingRadians = (-currentpose.getHeading());
+            double turretTargetRad = fieldAngleRad - robotHeadingRadians;
+            turnneed = 0.5 - turretTargetRad/(Math.PI*2);
+            turret_on(turnneed);
+        } else if (isRed()){
+            turretX = currentpose.getX() + (Math.cos(currentpose.getHeading()));
+            turretY = currentpose.getY() + (Math.sin(currentpose.getHeading()));
+            distY = 141 - Math.abs(turretY);
+            distX = 141 - Math.abs(turretX);
+            double fieldAngleRad = Math.atan2(distY, distX);
+            double robotHeadingRadians = (-currentpose.getHeading());
+            double turretTargetRad = fieldAngleRad - robotHeadingRadians;
+            turnneed = 0.5 +  turretTargetRad/(Math.PI*2);
+        }
+        //turret_on(turnneed);
+        ActiveOpMode.telemetry().addData("turnneed", turnneed);
+        ActiveOpMode.telemetry().addData("robotx", turretX);
+        ActiveOpMode.telemetry().addData("roboty", turretY);
+        ActiveOpMode.telemetry().addData("goalx", distY);
+        ActiveOpMode.telemetry().addData("goaly", distX);
 
     }
 
