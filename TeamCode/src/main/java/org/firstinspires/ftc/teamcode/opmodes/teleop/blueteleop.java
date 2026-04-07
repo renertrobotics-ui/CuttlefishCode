@@ -4,32 +4,21 @@ import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS;
 import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS44;
 import static org.firstinspires.ftc.teamcode.subsystems.Flywheel.shooter;*/
 
-import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
-
-import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
-
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants; /*
 import org.firstinspires.ftc.teamcode.subsystems.DistanceBlue;
 import org.firstinspires.ftc.teamcode.subsystems.DistanceRed;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.TempHood;*/
-import org.firstinspires.ftc.teamcode.subsystems.drivesubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 
-import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
-import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.powerable.SetPower;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "blue teleop")
@@ -40,7 +29,7 @@ public class blueteleop extends NextFTCOpMode {
     public blueteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(drivesubsystem.INSTANCE/*, Intake.INSTANCE, Spindexer.INSTANCE*/),
+                new SubsystemComponent(DriveSubsystem.INSTANCE/*, Intake.INSTANCE, Spindexer.INSTANCE*/),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
 

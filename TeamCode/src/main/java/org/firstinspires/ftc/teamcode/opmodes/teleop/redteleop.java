@@ -6,10 +6,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter
 */
 import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
 
-import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 /*
@@ -19,16 +16,12 @@ import org.firstinspires.ftc.teamcode.subsystems.LimelightLocalization;
 import org.firstinspires.ftc.teamcode.subsystems.PositionalHood;
 import org.firstinspires.ftc.teamcode.subsystems.TempHood;
 */
-import org.firstinspires.ftc.teamcode.subsystems.drivesubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem;
 
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
-import static dev.nextftc.extensions.pedro.PedroComponent.follower;
-import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.commands.utility.LambdaCommand;
+
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.ActiveOpMode;
@@ -36,9 +29,7 @@ import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.ftc.components.BulkReadComponent;
-import dev.nextftc.hardware.driving.Drivetrain;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.powerable.SetPower;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Red Teleop")
@@ -49,7 +40,7 @@ public class redteleop extends NextFTCOpMode {
     public redteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(drivesubsystem.INSTANCE, TurretSubsystem.INSTANCE),
+                new SubsystemComponent(DriveSubsystem.INSTANCE, TurretSubsystem.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
 
