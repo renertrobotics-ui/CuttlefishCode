@@ -189,8 +189,6 @@ public class DriveSubsystem implements Subsystem {
         }
 
 
-        startingpose = Storage.currentPose;
-        follower.setStartingPose(startingpose);
 
 
 
