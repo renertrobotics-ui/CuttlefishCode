@@ -40,6 +40,8 @@ public class TurretSubsystem implements Subsystem {
     }
     private IMUEx imu;
     GoBildaPinpointDriver pinpoint;
+    public double current_servo_position = 0.5;
+    public boolean operator_on = true;
 
     public int alliance;
     ServoEx ServoExLeft;
@@ -56,12 +58,23 @@ public class TurretSubsystem implements Subsystem {
     }
 
     public void turret_on(double position) {
-        ServoExLeft.setPosition(0.5 + position); // 0.5 is center position
-        ServoExRight.setPosition(0.5 - position); // invert to make sure both end up in the same spot
+        ActiveOpMode.telemetry().addData("left position automatic", 0.5 + position);
+        //ServoExLeft.setPosition(0.5 + position); // 0.5 is center position
+        //ServoExRight.setPosition(0.5 - position); // invert to make sure both end up in the same spot
+        current_servo_position = ServoExLeft.getPosition() - 0.5;
     }
     public void turret_off() {
-        ServoExLeft.setPosition(0.5);
-        ServoExRight.setPosition(0.5);
+        ActiveOpMode.telemetry().addData("left position heading", 0.5);
+        //ServoExLeft.setPosition(0.5);
+        //ServoExRight.setPosition(0.5);
+        current_servo_position = ServoExLeft.getPosition() - 0.5;
+    }
+
+    public void operator_control(double positionChange) {
+        current_servo_position += positionChange/50;
+        ActiveOpMode.telemetry().addData("left position operator", 0.5 + current_servo_position);
+        //ServoExLeft.setPosition(0.5 + current_servo_position);
+        //ServoExRight.setPosition(0.5 - current_servo_position);
     }
 
     public void calculate_heading(Pose currentpose) {
@@ -79,7 +92,6 @@ public class TurretSubsystem implements Subsystem {
             double robotHeadingRadians = (-currentpose.getHeading());
             double turretTargetRad = fieldAngleRad - robotHeadingRadians;
             turnneed = 0.5 - turretTargetRad/(Math.PI*2);
-            turret_on(turnneed);
         } else if (isRed()){
             turretX = currentpose.getX() + (Math.cos(currentpose.getHeading()));
             turretY = currentpose.getY() + (Math.sin(currentpose.getHeading()));
@@ -105,11 +117,23 @@ public class TurretSubsystem implements Subsystem {
         follower.update();
         Pose currPose = follower.getPose();
         double robotHeading = follower.getPose().getHeading();
-        if (Gamepads.gamepad1().a().get()) {
-            calculate_heading(currPose);
-        } else {
-            turret_off();
+
+        if (Gamepads.gamepad1().b().get()) {
+            operator_on = !operator_on;
         }
+
+        if (operator_on){
+            if (Gamepads.gamepad1().a().get()) {
+                turret_off();
+            } else {
+                operator_control(Gamepads.gamepad1().leftStickX().get());
+            }
+        } else {
+            calculate_heading(currPose);
+        }
+
+        ActiveOpMode.telemetry().addData("position left", ServoExLeft.getPosition());
+        ActiveOpMode.telemetry().addData("position right", ServoExRight.getPosition());
 
     }
 
