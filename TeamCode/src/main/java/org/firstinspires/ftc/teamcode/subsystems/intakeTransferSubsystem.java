@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import dev.nextftc.core.subsystems.Subsystem;
 //todo: add imports for color sensors
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -9,6 +12,8 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import dev.nextftc.ftc.ActiveOpMode;
+
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -17,6 +22,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -42,13 +48,12 @@ public static ServoEx blocker = new ServoEx("blocker");
     public static boolean BallInTransfer = true;
     public static boolean BallInThroat = true;
 
-    static NormalizedColorSensor Intake;
-    static NormalizedColorSensor Transfer;
-
-    @Override
+    static ColorSensor Intake;
+    static ColorSensor Transfer;
+@Override
     public void initialize() {
-        Transfer = hardwareMap.get(NormalizedColorSensor.class, "rampSensor");
-        Intake = hardwareMap.get(NormalizedColorSensor.class, "intakeSensor");
+        Transfer = hardwareMap.get(ColorSensor.class, "rampSensor");
+        Intake = hardwareMap.get(ColorSensor.class, "intakeSensor");
 
 
     }
@@ -73,6 +78,8 @@ public static ServoEx blocker = new ServoEx("blocker");
             }
 
         }
+        ActiveOpMode.telemetry().addData("balls brosky", BallInIntake);
+
         // do not take this out of context
 
         return Balls;
@@ -123,5 +130,7 @@ public static ServoEx blocker = new ServoEx("blocker");
     public void periodic() {
         UpdateColorSensors();
         autonomousIntakeTransferOperation();
+        ActiveOpMode.telemetry().update();
+
     }
 }
