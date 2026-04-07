@@ -1,11 +1,22 @@
 package org.firstinspires.ftc.teamcode.subsystems;
+
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import dev.nextftc.core.subsystems.Subsystem;
 //todo: add imports for color sensors
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -16,15 +27,12 @@ import dev.nextftc.hardware.powerable.SetPower;
 
 public class intakeTransferSubsystem implements Subsystem {
     // Hardware
-    NormalizedColorSensor Intake;
-    ColorSensor Transfer;
 
 
+    public static MotorEx transfer_Motor = new MotorEx("Transfer_Motor");
 
-    public static MotorEx transfer_Motor = new MotorEx("LeftShooter_Motor");
-
-    public static MotorEx intake_Motor = new MotorEx("RightShooter_Motor");
-    Servo blocker;
+    public static MotorEx intake_Motor = new MotorEx("Intake_Motor");
+public static ServoEx blocker = new ServoEx("blocker");
     public intakeTransferSubsystem() {
 
     }
@@ -34,30 +42,32 @@ public class intakeTransferSubsystem implements Subsystem {
     public static boolean BallInTransfer = true;
     public static boolean BallInThroat = true;
 
+    static NormalizedColorSensor Intake;
+    static NormalizedColorSensor Transfer;
 
-    Transfer = hardwareMap.get(ColorSensor.class, "c1");
-    Intake = hardwareMap.get(NormalizedColorSensor.class, "c2");
+    @Override
+    public void initialize() {
+        Transfer = hardwareMap.get(NormalizedColorSensor.class, "rampSensor");
+        Intake = hardwareMap.get(NormalizedColorSensor.class, "intakeSensor");
 
-    transfer_Motor = hardwareMap.get(DcMotorEx.class, "Transfer_Motor");
-    intake_Motor = hardwareMap.get(DcMotorEx.class, "Intake_Motor");
 
-    blocker = hardwareMap.get(Servo.class, "blocker");
+    }
 
     //todo: tune colorsensors to be able to detect balls
     //todo: win worlds
 
-    public void UpdateColorSensors() {
-        BallInIntake = (((DistanceSensor) Inkate).getDistance(DistanceUnit.CM) < 12);
+    public static void UpdateColorSensors() {
+        BallInIntake = (((DistanceSensor) Intake).getDistance(DistanceUnit.CM) < 12);
         BallInTransfer = (((DistanceSensor) Transfer).getDistance(DistanceUnit.CM) < 12);
     }
-    public int NumberOfBallsInBobot() {
+    public static int NumberOfBallsInBobot() {
         UpdateColorSensors();
-        private int Balls = 0;
-        if BallInThroat {
+        int Balls = 0;
+        if (BallInThroat) {
             Balls += 1;
-            if BallInTransfer {
+            if (BallInTransfer) {
                 Balls += 1;
-                if BallInIntake {
+                if (BallInIntake) {
                     Balls += 1;
                 }
             }
@@ -67,51 +77,49 @@ public class intakeTransferSubsystem implements Subsystem {
 
         return Balls;
     }
-    public void runIntake() {
+    public static void runIntake() {
         intake_Motor.setPower(1);
     }
-    public void runTransfer() {
-        Transfer_Motor.setPower(1);
+    public static void runTransfer() {
+        transfer_Motor.setPower(1);
     }
-    public void stopIntake() {
+    public static void stopIntake() {
         intake_Motor.setPower(0);
     }
-    public void stopTransfer() {
-        Transfer_Motor.setPower(0);
+    public static void stopTransfer() {
+        transfer_Motor.setPower(0);
     }
-    public void blockerOpen() {
-        blocker.setPosition(67); // todo: find open position of blocker servo
+    public static void blockerOpen() {
+        blocker.setPosition(0.5); // todo: find open position of blocker servo
     }
-    public void blockerClose() {
-        blocker.setPosition(67); // todo: find closed position of blocker servo
+    public static void blockerClose() {
+        blocker.setPosition(0.5); // todo: find closed position of blocker servo
     }
-    public void autonomousIntakeTransferOperation{
+    public static void autonomousIntakeTransferOperation() {
         switch (NumberOfBallsInBobot()) {
             case 0:
                 runIntake();
                 runTransfer();
-                blockerClose();
+                //blockerClose();
                 break;
             case 1:
                 runIntake();
                 runTransfer();
-                blockerClose();
+                //blockerClose();
                 break;
-            case 2;
+            case 2:
                 runIntake();
                 stopTransfer();
-                blockerOpen();
+                //blockerOpen();
                 break;
-            case 3;
+            case 3:
                 stopIntake();
                 stopTransfer();
-                blockerOpen();
+                //blockerOpen();
                 break;
         }
     }
-    static Command intakeAutonomously = new LambdaCommand()
-            .setStart(()-> autonomousIntakeTransferOperation())
-            .setIsDone(() -> true);
+    @Override
     public void periodic() {
         UpdateColorSensors();
         autonomousIntakeTransferOperation();

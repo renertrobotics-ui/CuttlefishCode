@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DistanceRed;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.TempHood;*/
 import org.firstinspires.ftc.teamcode.subsystems.drivesubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.intakeTransferSubsystem;
 
 
 import dev.nextftc.core.commands.delays.Delay;
@@ -40,7 +41,7 @@ public class blueteleop extends NextFTCOpMode {
     public blueteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(drivesubsystem.INSTANCE/*, Intake.INSTANCE, Spindexer.INSTANCE*/),
+                new SubsystemComponent(drivesubsystem.INSTANCE, intakeTransferSubsystem.INSTANCE/*, Intake.INSTANCE, Spindexer.INSTANCE*/),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
 
