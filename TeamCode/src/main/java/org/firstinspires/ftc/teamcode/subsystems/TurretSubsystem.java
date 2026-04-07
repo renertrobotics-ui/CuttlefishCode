@@ -84,17 +84,18 @@ public class TurretSubsystem implements Subsystem {
         double distX = 0;
         double turnneed = 0;
         if (isBlue()) {
-            turretX = currentpose.getX() + (Math.cos(currentpose.getHeading()));
-            turretY = currentpose.getY() + (Math.sin(currentpose.getHeading()));
+            turretX = currentpose.getX();
+            turretY = currentpose.getY();
             distY = 141 - Math.abs(turretY);
             distX = 141 - Math.abs(turretX);
             double fieldAngleRad = Math.atan2(distY, distX);
             double robotHeadingRadians = (-currentpose.getHeading());
             double turretTargetRad = fieldAngleRad - robotHeadingRadians;
-            turnneed = 0.5 - turretTargetRad/(Math.PI*2);
-        } else if (isRed()){
-            turretX = currentpose.getX() + (Math.cos(currentpose.getHeading()));
-            turretY = currentpose.getY() + (Math.sin(currentpose.getHeading()));
+            turnneed = turretTargetRad/(Math.PI*2);
+        }
+        if (isRed()){
+            turretX = currentpose.getX();
+            turretY = currentpose.getY();
             distY = 141 - Math.abs(turretY);
             distX = 141 - Math.abs(turretX);
             double fieldAngleRad = Math.atan2(distY, distX);
