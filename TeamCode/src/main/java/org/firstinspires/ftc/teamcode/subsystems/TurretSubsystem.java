@@ -46,12 +46,50 @@ public class TurretSubsystem implements Subsystem {
     public int alliance;
     ServoEx ServoExLeft;
     ServoEx ServoExRight;
+    public Command localize;
 
 
+
+    Pose startingpose = new Pose(72,72, Math.toRadians(90));
 
     @Override
     public void initialize() {
-        follower = PedroComponent.follower();
+        if(isBlue()!=true && isRed()!=true) {
+            ActiveOpMode.telemetry().addLine("No direction set");
+        }
+        else{
+            if(isBlue()==true) {
+                alliance=1;
+            }
+            if(isRed()==true){
+                alliance=-1;
+            }
+        }
+        imu = new IMUEx("imu", Direction.RIGHT, Direction.UP).zeroed();
+
+        if(alliance ==-1){
+            startingpose = new Pose(120, 72, Math.toRadians(90));
+            follower.setStartingPose(startingpose);
+            localize = new LambdaCommand()
+                    .setStart(()->follower.setPose(new Pose(129,90,Math.toRadians(90))));
+
+        }
+        if(alliance ==1){
+            startingpose=new Pose (24, 72, Math.toRadians(90));
+            follower.setStartingPose(startingpose);
+            localize = new LambdaCommand()
+                    .setStart(()->follower.setPose(new Pose(15,90,Math.toRadians(90))));
+
+        }
+
+
+        startingpose = Storage.currentPose;
+        follower.setStartingPose(startingpose);
+
+
+
+
+        follower.update();
         ServoExLeft = new ServoEx("axonLeft");
         ServoExRight = new ServoEx("axonRight");
         imu = new IMUEx("imu", Direction.RIGHT, Direction.UP).zeroed();
@@ -59,8 +97,8 @@ public class TurretSubsystem implements Subsystem {
 
     public void turret_on(double position) {
         ActiveOpMode.telemetry().addData("left position automatic", 0.5 + position);
-        //ServoExLeft.setPosition(0.5 + position); // 0.5 is center position
-        //ServoExRight.setPosition(0.5 - position); // invert to make sure both end up in the same spot
+        ServoExLeft.setPosition(0.5 + position); // 0.5 is center position
+        ServoExRight.setPosition(0.5 - position); // invert to make sure both end up in the same spot
         current_servo_position = ServoExLeft.getPosition() - 0.5;
     }
     public void turret_off() {
@@ -75,6 +113,9 @@ public class TurretSubsystem implements Subsystem {
         ActiveOpMode.telemetry().addData("left position operator", 0.5 + current_servo_position);
         //ServoExLeft.setPosition(0.5 + current_servo_position);
         //ServoExRight.setPosition(0.5 - current_servo_position);
+    }
+    public Command Localize(){
+        return localize;
     }
 
     public void calculate_heading(Pose currentpose) {
@@ -99,7 +140,7 @@ public class TurretSubsystem implements Subsystem {
             double turretTargetRad = fieldAngleRad - robotHeadingRadians;
             turnneed = turretTargetRad/(Math.PI*2);
         }
-        //turret_on(turnneed);
+        turret_on(turnneed);
         ActiveOpMode.telemetry().addData("turnneed", turnneed);
         ActiveOpMode.telemetry().addData("robotx", currentpose.getX());
         ActiveOpMode.telemetry().addData("roboty", currentpose.getY());
@@ -111,11 +152,12 @@ public class TurretSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
+
         follower.update();
         Pose currPose = follower.getPose();
         double robotHeading = follower.getPose().getHeading();
-
-        if (Gamepads.gamepad1().b().get()) {
+/*
+        if (Gamepads.gamepad1().b().toggleOnBecomesTrue().get()) {
             operator_on = !operator_on;
         }
 
@@ -128,9 +170,12 @@ public class TurretSubsystem implements Subsystem {
         } else {
             calculate_heading(currPose);
         }
-
+*/
+        calculate_heading(currPose);
         ActiveOpMode.telemetry().addData("position left", ServoExLeft.getPosition());
         ActiveOpMode.telemetry().addData("position right", ServoExRight.getPosition());
+        ActiveOpMode.telemetry().update();
+
 
     }
 

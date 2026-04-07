@@ -73,16 +73,6 @@ public class blueteleop extends NextFTCOpMode {
 //        limelight.pipelineSwitch(APRILTAG_PIPELINE);
 //        limelight.start();
         blue=true;
-        intakeMotor = new MotorEx("Intake_Motor");
-        transferMotor = new MotorEx("Transfer_Motor");
-        Gamepads.gamepad1().leftTrigger().greaterThan(0.3).whenBecomesTrue(()-> intakeMotor.setPower(1))
-                .whenBecomesFalse(() -> intakeMotor.setPower(0));
-        Gamepads.gamepad1().leftBumper().whenBecomesTrue(()-> transferMotor.setPower(1))
-                .whenBecomesFalse(() -> transferMotor.setPower(0));
-        /*Gamepads.gamepad2().leftTrigger().greaterThan(0.3).whenBecomesTrue(()->intakeMotor.setPower(-1))
-                .whenBecomesFalse(() -> intakeMotor.setPower(0));*/
-        Gamepads.gamepad1().rightTrigger().greaterThan(0.3).whenBecomesTrue(()-> transferMotor.setPower(-1))
-                .whenBecomesFalse(() -> transferMotor.setPower(0));
 
 
 
