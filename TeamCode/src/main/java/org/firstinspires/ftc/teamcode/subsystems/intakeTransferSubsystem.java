@@ -6,7 +6,13 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
+import dev.nextftc.hardware.impl.Direction;
+import dev.nextftc.hardware.impl.IMUEx;
+import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.impl.ServoEx;
+import dev.nextftc.hardware.positionable.SetPosition;
+import dev.nextftc.hardware.positionable.SetPositions;
+import dev.nextftc.hardware.powerable.SetPower;
 
 public class intakeTransferSubsystem implements Subsystem {
     // Hardware
@@ -14,7 +20,10 @@ public class intakeTransferSubsystem implements Subsystem {
     ColorSensor Transfer;
 
 
-    DcMotorEx  transfer_Motor, intake_Motor ;
+
+    public static MotorEx transfer_Motor = new MotorEx("LeftShooter_Motor");
+
+    public static MotorEx intake_Motor = new MotorEx("RightShooter_Motor");
     Servo blocker;
     public intakeTransferSubsystem() {
 
@@ -103,4 +112,8 @@ public class intakeTransferSubsystem implements Subsystem {
     static Command intakeAutonomously = new LambdaCommand()
             .setStart(()-> autonomousIntakeTransferOperation())
             .setIsDone(() -> true);
+    public void periodic() {
+        UpdateColorSensors();
+        autonomousIntakeTransferOperation();
+    }
 }
