@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.jetbrains.annotations.NotNull;
 
 import dev.nextftc.ftc.ActiveOpMode;
@@ -51,11 +52,10 @@ public static ServoEx blocker = new ServoEx("blocker");
 
     static ColorRangeSensor Intake;
     static ColorRangeSensor Transfer;
-    public void initialize(HardwareMap hardwareMap) {
-        Transfer = hardwareMap.get(ColorRangeSensor.class, "rampSensor");
-        Intake = hardwareMap.get(ColorRangeSensor.class, "intakeSensor");
-
-
+    @Override
+    public void initialize() {
+        Transfer = ActiveOpMode.hardwareMap().get(ColorRangeSensor.class, "rampSensor");
+        Intake = ActiveOpMode.hardwareMap().get(ColorRangeSensor.class, "intakeSensor");
     }
 
     //todo: tune colorsensors to be able to detect balls
