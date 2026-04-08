@@ -4,13 +4,17 @@ import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS;
 import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS44;
 import static org.firstinspires.ftc.teamcode.subsystems.Flywheel.shooter;*/
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants; /*
 import org.firstinspires.ftc.teamcode.subsystems.DistanceBlue;
 import org.firstinspires.ftc.teamcode.subsystems.DistanceRed;
@@ -38,6 +42,7 @@ public class blueteleop extends NextFTCOpMode {
 
     public MotorEx intakeMotor;
     public MotorEx transferMotor;
+
     public blueteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
@@ -50,30 +55,11 @@ public class blueteleop extends NextFTCOpMode {
     }
 
     public static boolean blue;
+    static ColorSensor Intake;
+    static ColorSensor Transfer;
     public static boolean isBlue(){
         return blue;
     }
-
-    public static int tagID;
-    public static boolean findMotif = false;
-    public static int ball1Color = 0; //green = 1, purple = 2
-    public static int ball2Color = 0;
-    public static int ball3Color = 0;
-
-    public static int getBall1Color() {
-        return ball1Color;
-    }
-
-    public static int getBall2Color() {
-        return ball2Color;
-    }
-    public static int getBall3Color() {
-        return ball3Color;
-    }
-    public boolean lift;
-    boolean lowerangle = false;
-    public boolean liftmid;
-    boolean loweranglemid = false;
 
 
 

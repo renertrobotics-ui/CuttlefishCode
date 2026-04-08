@@ -12,15 +12,16 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import dev.nextftc.ftc.ActiveOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.jetbrains.annotations.NotNull;
 
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.Direction;
@@ -48,12 +49,11 @@ public static ServoEx blocker = new ServoEx("blocker");
     public static boolean BallInTransfer = true;
     public static boolean BallInThroat = true;
 
-    static ColorSensor Intake;
-    static ColorSensor Transfer;
-@Override
-    public void initialize() {
-        Transfer = hardwareMap.get(ColorSensor.class, "rampSensor");
-        Intake = hardwareMap.get(ColorSensor.class, "intakeSensor");
+    static ColorRangeSensor Intake;
+    static ColorRangeSensor Transfer;
+    public void initialize(HardwareMap hardwareMap) {
+        Transfer = hardwareMap.get(ColorRangeSensor.class, "rampSensor");
+        Intake = hardwareMap.get(ColorRangeSensor.class, "intakeSensor");
 
 
     }
@@ -62,8 +62,8 @@ public static ServoEx blocker = new ServoEx("blocker");
     //todo: win worlds
 
     public static void UpdateColorSensors() {
-        BallInIntake = (((DistanceSensor) Intake).getDistance(DistanceUnit.CM) < 12);
-        BallInTransfer = (((DistanceSensor) Transfer).getDistance(DistanceUnit.CM) < 12);
+        BallInIntake = (Intake.getDistance(DistanceUnit.CM) < 12);
+        BallInTransfer = (Transfer.getDistance(DistanceUnit.CM) < 12);
     }
     public static int NumberOfBallsInBobot() {
         UpdateColorSensors();
@@ -81,6 +81,7 @@ public static ServoEx blocker = new ServoEx("blocker");
         ActiveOpMode.telemetry().addData("balls brosky", BallInIntake);
 
         // do not take this out of context
+        // mhm lil bro
 
         return Balls;
     }
