@@ -130,9 +130,9 @@ public class redteleop extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
-        float newtps=1000;
-        shooter(newtps);
-        ActiveOpMode.telemetry().addData("newtps", newtps);
+        //float newtps=1000;
+        //shooter(newtps);
+        //ActiveOpMode.telemetry().addData("newtps", newtps);
 
         /*
         if(lowerangle==true){

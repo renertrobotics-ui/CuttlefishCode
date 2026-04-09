@@ -46,7 +46,7 @@ public class blueteleop extends NextFTCOpMode {
     public blueteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(drivesubsystem.INSTANCE, intakeTransferSubsystem.INSTANCE/*, Intake.INSTANCE, Spindexer.INSTANCE*/),
+                new SubsystemComponent(drivesubsystem.INSTANCE, intakeTransferSubsystem.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
 
