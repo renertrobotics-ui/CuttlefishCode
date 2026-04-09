@@ -108,7 +108,7 @@ public class redteleop extends NextFTCOpMode {
     @Override
     public void onInit() {
         red=true;
-        intakeMotor = new MotorEx("Intake_Motor").reversed();
+        /*intakeMotor = new MotorEx("Intake_Motor").reversed();
         transferMotor = new MotorEx("Transfer_Motor").reversed();
         Gamepads.gamepad1().leftTrigger().greaterThan(0.3).whenBecomesTrue(()-> intakeMotor.setPower(1))
                 .whenBecomesFalse(() -> intakeMotor.setPower(0));
@@ -119,7 +119,7 @@ public class redteleop extends NextFTCOpMode {
         Gamepads.gamepad2().rightTrigger().greaterThan(0.3).whenBecomesTrue(()-> transferMotor.setPower(-1))
                 .whenBecomesFalse(() -> transferMotor.setPower(0));
         Gamepads.gamepad1().x().whenBecomesTrue(()->follower.setPose(new Pose(79.967,9.271,Math.toRadians(90))));
-
+*/
 
 
 

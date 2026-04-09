@@ -37,8 +37,9 @@ public static ServoEx blocker = new ServoEx("blocker");
     //todo: win worlds
 
     public static void UpdateColorSensors() {
-        BallInIntake = (Intake.getDistance(DistanceUnit.CM) < 12);
-        BallInTransfer = (Transfer.getDistance(DistanceUnit.CM) < 12);
+        BallInIntake = (Intake.getDistance(DistanceUnit.CM) < 6.2);
+
+        BallInTransfer = (Transfer.getDistance(DistanceUnit.CM) < 6.5);
     }
     public static int NumberOfBallsInBobot() {
         UpdateColorSensors();
@@ -64,7 +65,7 @@ public static ServoEx blocker = new ServoEx("blocker");
         intake_Motor.setPower(1);
     }
     public static void runTransfer() {
-        transfer_Motor.setPower(1);
+        transfer_Motor.setPower(-1);
     }
     public static void stopIntake() {
         intake_Motor.setPower(0);
@@ -106,6 +107,8 @@ public static ServoEx blocker = new ServoEx("blocker");
     public void periodic() {
         UpdateColorSensors();
         autonomousIntakeTransferOperation();
+        ActiveOpMode.telemetry().addData("itakecolorsensorreading", (Intake.getDistance(DistanceUnit.CM)));
+        ActiveOpMode.telemetry().addData("newcolorsensorreading", (Transfer.getDistance(DistanceUnit.CM)));
         ActiveOpMode.telemetry().update();
 
     }

@@ -219,8 +219,8 @@ public class drivesubsystem implements Subsystem {
         //Vector v = new Vector(new Pose(138, 138));
         //ActiveOpMode.telemetry().addData("goalX", goalX);
         //ActiveOpMode.telemetry().addData("goalY", goalY);
-        ActiveOpMode.telemetry().addData("RobotX", currPose.getX());
-        ActiveOpMode.telemetry().addData("RobotY", currPose.getY());
+        //ActiveOpMode.telemetry().addData("RobotX", currPose.getX());
+        //ActiveOpMode.telemetry().addData("RobotY", currPose.getY());
         //ActiveOpMode.telemetry().addData("goalXDist", goalXDist);
         //ActiveOpMode.telemetry().addData("goalYDist", goalYDist);
         //ActiveOpMode.telemetry().addData("robotHeading", Math.toDegrees(robotHeading));
