@@ -8,30 +8,21 @@ import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
 public class intakeTransferSubsystem implements Subsystem {
-    public static MotorEx transfer_Motor = new MotorEx("Transfer_Motor");
-    public static MotorEx intake_Motor = new MotorEx("Intake_Motor");
-    public static ServoEx blocker = new ServoEx("blocker");
     public intakeTransferSubsystem() {
 
     }
     public static final intakeTransferSubsystem INSTANCE = new intakeTransferSubsystem();
+    public static MotorEx transfer_Motor = new MotorEx("Transfer_Motor");
+    public static MotorEx intake_Motor = new MotorEx("Intake_Motor");
+    public static ServoEx blocker = new ServoEx("blocker");
+
     public static boolean BallInIntake = true;
     public static boolean BallInTransfer = true;
     public static boolean BallInThroat = true;
     static ColorRangeSensor Intake;
     static ColorRangeSensor Transfer;
-    @Override
-    public void initialize() {
-        Transfer = ActiveOpMode.hardwareMap().get(ColorRangeSensor.class, "rampSensor");
-        Intake = ActiveOpMode.hardwareMap().get(ColorRangeSensor.class, "intakeSensor");
-    }
-
-    //todo: tune colorsensors to be able to detect balls
-    //todo: win worlds
-
     public static void UpdateColorSensors() {
         BallInIntake = (Intake.getDistance(DistanceUnit.CM) < 6.2);
-
         BallInTransfer = (Transfer.getDistance(DistanceUnit.CM) < 6.5);
     }
     public static int NumberOfBallsInBobot() {
@@ -96,10 +87,18 @@ public class intakeTransferSubsystem implements Subsystem {
                 break;
         }
     }
+
+    @Override
+    public void initialize() {
+        Transfer = ActiveOpMode.hardwareMap().get(ColorRangeSensor.class, "rampSensor");
+        Intake = ActiveOpMode.hardwareMap().get(ColorRangeSensor.class, "intakeSensor");
+    }
+
+    //todo: tune colorsensors to be able to detect balls
+    //todo: win worlds
+
     @Override
     public void periodic() {
-        UpdateColorSensors();
-        autonomousIntakeTransferOperation();
         ActiveOpMode.telemetry().addData("itakecolorsensorreading", (Intake.getDistance(DistanceUnit.CM)));
         ActiveOpMode.telemetry().addData("newcolorsensorreading", (Transfer.getDistance(DistanceUnit.CM)));
         ActiveOpMode.telemetry().update();

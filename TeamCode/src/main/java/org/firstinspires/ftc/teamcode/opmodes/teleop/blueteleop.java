@@ -6,6 +6,8 @@ import static org.firstinspires.ftc.teamcode.subsystems.Flywheel.shooter;*/
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
+import static org.firstinspires.ftc.teamcode.subsystems.intakeTransferSubsystem.UpdateColorSensors;
+import static org.firstinspires.ftc.teamcode.subsystems.intakeTransferSubsystem.autonomousIntakeTransferOperation;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -70,6 +72,8 @@ public class blueteleop extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
+        UpdateColorSensors();
+        autonomousIntakeTransferOperation();
         //float newtps=1000;
         //shooter(newtps);
         //ActiveOpMode.telemetry().addData("newtps", newtps);

@@ -24,6 +24,8 @@ import org.firstinspires.ftc.teamcode.subsystems.intakeTransferSubsystem;
 
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+import static org.firstinspires.ftc.teamcode.subsystems.intakeTransferSubsystem.UpdateColorSensors;
+import static org.firstinspires.ftc.teamcode.subsystems.intakeTransferSubsystem.autonomousIntakeTransferOperation;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
@@ -44,8 +46,6 @@ import dev.nextftc.hardware.powerable.SetPower;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Red Teleop")
 public class redteleop extends NextFTCOpMode {
 
-    public MotorEx intakeMotor;
-    public MotorEx transferMotor;
     public redteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
@@ -130,6 +130,9 @@ public class redteleop extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
+        UpdateColorSensors();
+        autonomousIntakeTransferOperation();
+
         //float newtps=1000;
         //shooter(newtps);
         //ActiveOpMode.telemetry().addData("newtps", newtps);
