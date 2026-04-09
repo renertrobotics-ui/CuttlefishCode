@@ -44,21 +44,21 @@ public class ShooterSubsystem implements Subsystem {
     }
 
     // 1. Keep original name: Left side control
-    public static void velocityControlWithFeedforward(KineticState currentstate, float configtps) {
+    public static void velocityControlWithFeedforward(KineticState currentstate, double configtps) {
         controller1.setGoal(new KineticState(0.0, configtps, 0.0));
         double power = controller1.calculate(currentstate);
         flywheel.setPower(power);
     }
 
     // 2. Keep original name: Right side control
-    public static void velocityControlWithFeedforward2(KineticState currentstate, float configtps) {
+    public static void velocityControlWithFeedforward2(KineticState currentstate, double configtps) {
         controller2.setGoal(new KineticState(0.0, configtps, 0.0));
         double power = controller2.calculate(currentstate);
         flywheel2.setPower(-power); // Inverted for hardware
     }
 
     // 3. Keep original name: Main update loop
-    public static void shooter(float tps) {
+    public static void shooter(double tps) {
         BindingManager.update();
 
         flywheelvelocity = flywheel.getVelocity();
@@ -78,6 +78,5 @@ public class ShooterSubsystem implements Subsystem {
     @Override
     public void periodic() {
         // Continuously run the shooter logic at the current target velocity
-        shooter(targetVelocity);
     }
 }

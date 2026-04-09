@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
+import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
+
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.drivesubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -18,6 +20,7 @@ public class blueteleop extends NextFTCOpMode {
 
     public MotorEx intakeMotor;
     public MotorEx transferMotor;
+    private double targetVelocity;
 
     public blueteleop() {
         addComponents(
@@ -59,6 +62,8 @@ public class blueteleop extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         // Telemetry to track shooter speed
+        targetVelocity = 1400;
+        shooter(targetVelocity);
         telemetry.addData("Target Velocity", 2000);
         telemetry.addData("Left Flywheel Vel", ShooterSubsystem.flywheelvelocity);
         telemetry.addData("Right Flywheel Vel", ShooterSubsystem.flywheelvelocity2);
@@ -71,6 +76,6 @@ public class blueteleop extends NextFTCOpMode {
     public void onStop() {
         blue = false;
         // Safety: Stop shooter when OpMode stops
-        ShooterSubsystem.INSTANCE.setVelocity(0);
+        targetVelocity = 0;
     }
 }
