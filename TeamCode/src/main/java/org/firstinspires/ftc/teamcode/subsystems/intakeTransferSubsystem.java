@@ -3,28 +3,21 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import dev.nextftc.core.subsystems.Subsystem;
-//todo: add imports for color sensors
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
 public class intakeTransferSubsystem implements Subsystem {
-    // Hardware
-
-
     public static MotorEx transfer_Motor = new MotorEx("Transfer_Motor");
-
     public static MotorEx intake_Motor = new MotorEx("Intake_Motor");
-public static ServoEx blocker = new ServoEx("blocker");
+    public static ServoEx blocker = new ServoEx("blocker");
     public intakeTransferSubsystem() {
 
     }
-
     public static final intakeTransferSubsystem INSTANCE = new intakeTransferSubsystem();
     public static boolean BallInIntake = true;
     public static boolean BallInTransfer = true;
     public static boolean BallInThroat = true;
-
     static ColorRangeSensor Intake;
     static ColorRangeSensor Transfer;
     @Override

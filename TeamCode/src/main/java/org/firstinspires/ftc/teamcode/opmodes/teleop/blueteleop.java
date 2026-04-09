@@ -40,9 +40,6 @@ import dev.nextftc.hardware.powerable.SetPower;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "blue teleop")
 public class blueteleop extends NextFTCOpMode {
 
-    public MotorEx intakeMotor;
-    public MotorEx transferMotor;
-
     public blueteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
@@ -55,8 +52,6 @@ public class blueteleop extends NextFTCOpMode {
     }
 
     public static boolean blue;
-    static ColorSensor Intake;
-    static ColorSensor Transfer;
     public static boolean isBlue(){
         return blue;
     }
@@ -64,7 +59,6 @@ public class blueteleop extends NextFTCOpMode {
 
 
 
-    private static final int APRILTAG_PIPELINE = 8;
     @Override
     public void onInit() {
         blue=true;

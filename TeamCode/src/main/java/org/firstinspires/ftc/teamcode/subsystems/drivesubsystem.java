@@ -44,7 +44,7 @@ public class drivesubsystem implements Subsystem {
 
 
 
-    Pose startingpose = Storage.currentPose;
+    Pose startingpose;
     @NonNull
     @Override
     //this is your default command - it runs all the time
@@ -131,9 +131,6 @@ public class drivesubsystem implements Subsystem {
 
         }
 
-
-        startingpose = Storage.currentPose;
-        follower.setStartingPose(startingpose);
 
 
 
