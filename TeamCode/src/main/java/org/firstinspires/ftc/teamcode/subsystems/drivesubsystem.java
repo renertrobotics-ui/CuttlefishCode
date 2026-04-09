@@ -1,64 +1,22 @@
 package org.firstinspires.ftc.teamcode.subsystems;
-
-import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.INCH;
-import static org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit.DEGREES;
-//import static org.firstinspires.ftc.teamcode.opModes.TeleOp.FarzoneTeleOpBlue.isBlueFar;
-//import static org.firstinspires.ftc.teamcode.opModes.TeleOp.FarzoneTeleOpRed.isRedFar;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
-//import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS;
-//import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS44;
-//import static org.firstinspires.ftc.teamcode.subsystems.Calculations.lowangle;
-//import static org.firstinspires.ftc.teamcode.subsystems.Flywheel.shooter;
 import static org.firstinspires.ftc.teamcode.opmodes.teleop.redteleop.isRed;
-import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
-
 import static org.firstinspires.ftc.teamcode.opmodes.teleop.blueteleop.isBlue;
-
-//import static org.firstinspires.ftc.teamcode.subsystems.ShooterCalc.calculateShotVectorandUpdateHeading;
-//import static org.firstinspires.ftc.teamcode.subsystems.ShooterCalc.calculateShotVectorandUpdateHeading;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.hardware.Servo;
-
-import dev.nextftc.bindings.BindingManager;
-import dev.nextftc.control.ControlSystem;
-import dev.nextftc.control.KineticState;
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.ParallelGroup;
-import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.LambdaCommand;
-import dev.nextftc.core.components.BindingsComponent;
-import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
-import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.FieldCentric;
 import dev.nextftc.hardware.driving.MecanumDriverControlled;
 import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.impl.ServoEx;
-import dev.nextftc.hardware.positionable.SetPosition;
-import dev.nextftc.hardware.positionable.SetPositions;
-import dev.nextftc.hardware.powerable.SetPower;
-
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
-import java.util.function.Supplier;
-
+import androidx.annotation.NonNull;
 
 @Configurable
 public class drivesubsystem implements Subsystem {
@@ -87,18 +45,19 @@ public class drivesubsystem implements Subsystem {
 
 
     Pose startingpose = Storage.currentPose;
+    @NonNull
     @Override
     //this is your default command - it runs all the time
     public Command getDefaultCommand() {
 
-        if (isBlue() != true && isRed() != true) {
+        if (!isBlue() && !isRed()) {
             ActiveOpMode.telemetry().addLine("No direction set");
         } else {
-            if (isBlue() == true) {
+            if (isBlue()) {
                 alliance = 1;
             }
         }
-        if (isRed() == true) {
+        if (isRed()) {
             alliance = -1;
         }
 
@@ -106,7 +65,7 @@ public class drivesubsystem implements Subsystem {
         Pose currPose = follower.getPose();
         double robotHeading = follower.getPose().getHeading();
         //driving stuff here for mecanum
-        if (slow == true) {
+        if (slow) {
             return new MecanumDriverControlled(
                     fL,
                     fR,
@@ -143,15 +102,15 @@ public class drivesubsystem implements Subsystem {
 
         firsttime = true;
         follower = follower();
-        if(isBlue()!=true && isRed()!=true) {
+        if(!isBlue() && !isRed()) {
             ActiveOpMode.telemetry().addLine("No direction set");
         }
         //alliance 1 means on blue alliance, -1 means on red alliance
         else{
-            if(isBlue()==true) {
+            if(isBlue()) {
                 alliance=1;
             }
-            if(isRed()==true){
+            if(isRed()){
                 alliance=-1;
             }
         }
@@ -234,7 +193,7 @@ public class drivesubsystem implements Subsystem {
     // this is your periodic loop, it runs all the time but is different than a default command
     @Override
     public void periodic() {
-        if (firsttime == true) {
+        if (firsttime) {
             Gamepads.gamepad1().x().whenBecomesTrue((()->Localize().schedule()));
             firsttime = false;
 
@@ -244,12 +203,12 @@ public class drivesubsystem implements Subsystem {
 
 
 
-        if (isBlue() == true) {
+        if (isBlue()) {
             goalXDist = 6;
             goalX = 6;
             localizeX = 136;
         }
-        if (isRed() == true) {
+        if (isRed()) {
             goalXDist = 138;
             goalX = 138;
             localizeX = 8;

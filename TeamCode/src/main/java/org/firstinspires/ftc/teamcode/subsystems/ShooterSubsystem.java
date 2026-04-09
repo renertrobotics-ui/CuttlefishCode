@@ -1,15 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
-
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-//import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS;
-
 import com.bylazar.configurables.annotations.Configurable;
-
 import dev.nextftc.bindings.*;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.control.ControlSystem;
-
 import dev.nextftc.control.feedback.PIDCoefficients;
 import dev.nextftc.control.feedforward.BasicFeedforwardParameters;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -32,7 +25,7 @@ public class ShooterSubsystem implements Subsystem {
 
     public static MotorEx flywheel2 = new MotorEx("RightShooter_Motor");
 
-    public static PIDCoefficients myPidCoeff = new PIDCoefficients(0.015, 0.005, 0.00);
+    public static PIDCoefficients myPidCoeff = new PIDCoefficients(0.015, 0, 0.00);
     public static BasicFeedforwardParameters myFF = new BasicFeedforwardParameters(0.00045, 0, 0.0);
 
 
@@ -84,6 +77,7 @@ public class ShooterSubsystem implements Subsystem {
     }
 
     @Override public void periodic() {
-
+        ActiveOpMode.telemetry().addData("flywheel1", flywheel.getVelocity());
+        ActiveOpMode.telemetry().addData("flywheel2", flywheel2.getVelocity());
     }
 }
