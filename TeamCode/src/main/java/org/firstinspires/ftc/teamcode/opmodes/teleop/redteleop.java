@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.subsystems.LimelightLocalization;
 import org.firstinspires.ftc.teamcode.subsystems.PositionalHood;
 import org.firstinspires.ftc.teamcode.subsystems.TempHood;
 */
-import org.firstinspires.ftc.teamcode.subsystems.drivesubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
@@ -48,7 +48,7 @@ public class redteleop extends NextFTCOpMode {
     public redteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(drivesubsystem.INSTANCE/*, Intake.INSTANCE, Spindexer.INSTANCE*/),
+                new SubsystemComponent(DriveSubsystem.INSTANCE/*, Intake.INSTANCE, Spindexer.INSTANCE*/),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
 

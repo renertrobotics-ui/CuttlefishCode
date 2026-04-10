@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.INCH;
-import static org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit.DEGREES;
 //import static org.firstinspires.ftc.teamcode.opModes.TeleOp.FarzoneTeleOpBlue.isBlueFar;
 //import static org.firstinspires.ftc.teamcode.opModes.TeleOp.FarzoneTeleOpRed.isRedFar;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
@@ -10,9 +8,8 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 //import static org.firstinspires.ftc.teamcode.subsystems.Calculations.lowangle;
 //import static org.firstinspires.ftc.teamcode.subsystems.Flywheel.shooter;
 import static org.firstinspires.ftc.teamcode.opmodes.teleop.redteleop.isRed;
-import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
 
-import static org.firstinspires.ftc.teamcode.opmodes.teleop.blueteleop.isBlue;
+        import static org.firstinspires.ftc.teamcode.opmodes.teleop.blueteleop.isBlue;
 
 //import static org.firstinspires.ftc.teamcode.subsystems.ShooterCalc.calculateShotVectorandUpdateHeading;
 //import static org.firstinspires.ftc.teamcode.subsystems.ShooterCalc.calculateShotVectorandUpdateHeading;
@@ -20,52 +17,27 @@ import static org.firstinspires.ftc.teamcode.opmodes.teleop.blueteleop.isBlue;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import dev.nextftc.bindings.BindingManager;
-import dev.nextftc.control.ControlSystem;
-import dev.nextftc.control.KineticState;
-import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.ParallelGroup;
-import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.commands.utility.LambdaCommand;
-import dev.nextftc.core.components.BindingsComponent;
-import dev.nextftc.core.components.SubsystemComponent;
-import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.extensions.pedro.PedroComponent;
-import dev.nextftc.ftc.ActiveOpMode;
+        import dev.nextftc.core.commands.Command;
+        import dev.nextftc.core.commands.utility.LambdaCommand;
+        import dev.nextftc.core.subsystems.Subsystem;
+        import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
-import dev.nextftc.ftc.components.BulkReadComponent;
-import dev.nextftc.hardware.driving.FieldCentric;
+        import dev.nextftc.hardware.driving.FieldCentric;
 import dev.nextftc.hardware.driving.MecanumDriverControlled;
 import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.impl.ServoEx;
-import dev.nextftc.hardware.positionable.SetPosition;
-import dev.nextftc.hardware.positionable.SetPositions;
-import dev.nextftc.hardware.powerable.SetPower;
 
-import static dev.nextftc.extensions.pedro.PedroComponent.follower;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
-import java.util.function.Supplier;
+        import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 
 @Configurable
-public class drivesubsystem implements Subsystem {
+public class DriveSubsystem implements Subsystem {
     // here is where I create the instance of the class so that it can be used in blueteleop
-    public static final drivesubsystem INSTANCE = new drivesubsystem();
+    public static final DriveSubsystem INSTANCE = new DriveSubsystem();
 
-    public drivesubsystem() {
+    public DriveSubsystem() {
     }
 
 

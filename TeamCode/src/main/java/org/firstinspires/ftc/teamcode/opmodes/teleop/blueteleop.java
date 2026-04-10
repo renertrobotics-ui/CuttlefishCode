@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
 
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.drivesubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import com.pedropathing.follower.Follower;
@@ -26,7 +26,7 @@ public class blueteleop extends NextFTCOpMode {
         addComponents(
                 new PedroComponent(Constants::createFollower),
                 // Added ShooterSubsystem.INSTANCE here so its periodic() loop runs
-                new SubsystemComponent(drivesubsystem.INSTANCE, ShooterSubsystem.INSTANCE),
+                new SubsystemComponent(DriveSubsystem.INSTANCE, ShooterSubsystem.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
@@ -40,7 +40,7 @@ public class blueteleop extends NextFTCOpMode {
         blue = true;
         intakeMotor = new MotorEx("Intake_Motor");
         transferMotor = new MotorEx("Transfer_Motor");
-
+/*
         // --- Shooter Controls ---
         // Sets velocity to 2000 when A (Cross) is pressed
         Gamepads.gamepad1().a().whenBecomesTrue(() -> ShooterSubsystem.INSTANCE.setVelocity(2000));
@@ -56,7 +56,7 @@ public class blueteleop extends NextFTCOpMode {
                 .whenBecomesFalse(() -> transferMotor.setPower(0));
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.3).whenBecomesTrue(() -> transferMotor.setPower(-1))
-                .whenBecomesFalse(() -> transferMotor.setPower(0));
+                .whenBecomesFalse(() -> transferMotor.setPower(0)); */
     }
 
     @Override
@@ -64,7 +64,7 @@ public class blueteleop extends NextFTCOpMode {
         // Telemetry to track shooter speed
         targetVelocity = 1400;
         shooter(targetVelocity);
-        telemetry.addData("Target Velocity", 2000);
+        telemetry.addData("Target Velocity", 1400);
         telemetry.addData("Left Flywheel Vel", ShooterSubsystem.flywheelvelocity);
         telemetry.addData("Right Flywheel Vel", ShooterSubsystem.flywheelvelocity2);
     }
