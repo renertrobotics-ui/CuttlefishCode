@@ -117,7 +117,7 @@ public class redteleop extends NextFTCOpMode {
 
         float newtps=1000;
         double angle = calculate_heading(currPose);
-        turret_on(0.75);
+        turret_on(-0.3);
 
 
 

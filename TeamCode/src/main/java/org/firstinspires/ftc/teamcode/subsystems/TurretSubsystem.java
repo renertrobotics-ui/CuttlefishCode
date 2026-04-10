@@ -39,12 +39,6 @@ public class TurretSubsystem implements Subsystem {
 
     @Override
     public void initialize() {
-
-
-
-
-
-
         ServoExLeft = new ServoEx("axonLeft");
         ServoExRight = new ServoEx("axonRight");
         imu = new IMUEx("imu", Direction.RIGHT, Direction.UP).zeroed();
@@ -53,13 +47,13 @@ public class TurretSubsystem implements Subsystem {
     public static void turret_on(double position) {
         ActiveOpMode.telemetry().addData("left position automatic", 0.5 + position);
         ServoExLeft.setPosition(0.5 + position); // 0.5 is center position
-        ServoExRight.setPosition(0.5 - position); // invert to make sure both end up in the same spot
+        ServoExRight.setPosition(0.5 + position); // invert to make sure both end up in the same spot
         current_servo_position = ServoExLeft.getPosition() - 0.5;
     }
     public static void turret_off() {
         ActiveOpMode.telemetry().addData("left position heading", 0.5);
-        //ServoExLeft.setPosition(0.5);
-        //ServoExRight.setPosition(0.5);
+        ServoExLeft.setPosition(0.5);
+        ServoExRight.setPosition(0.5);
         current_servo_position = ServoExLeft.getPosition() - 0.5;
     }
 
