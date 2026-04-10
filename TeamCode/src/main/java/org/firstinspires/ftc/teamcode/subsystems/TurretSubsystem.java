@@ -12,6 +12,8 @@ import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
+import dev.nextftc.hardware.impl.CRServoEx;
+import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
@@ -25,21 +27,18 @@ public class TurretSubsystem implements Subsystem {
     }
     private IMUEx imu;
     GoBildaPinpointDriver pinpoint;
+    public static final MotorEx throughbore = new MotorEx("Transfer_Motor");
+
     public static double current_servo_position = 0.5;
     public boolean operator_on = true;
 
     public int alliance;
-    static ServoEx ServoExLeft;
-    static ServoEx ServoExRight;
+    static CRServoEx ServoExLeft;
+    static CRServoEx ServoExRight;
     public Command localize;
 
-    public double PreviousturretPos;
+    public static double RawEncoderValue;
 
-    public double GetTurretPosInRadians(){
-        private double RawEncoderValue;
-        //todo: set rawencodervalue to the throughbore encoder value
-        return RawEncoderValue * (Math.pi / 12288);
-    }
 
 
 
@@ -48,35 +47,31 @@ public class TurretSubsystem implements Subsystem {
     @Override
     public void initialize() {
 
-
-
-
-
-
-        ServoExLeft = new ServoEx("axonLeft");
-        ServoExRight = new ServoEx("axonRight");
+        ServoExLeft = new CRServoEx("axonLeft");
+        ServoExRight = new CRServoEx("axonRight");
         imu = new IMUEx("imu", Direction.RIGHT, Direction.UP).zeroed();
     }
 
-    public static void turret_on(double position) {
-        ActiveOpMode.telemetry().addData("left position automatic", 0.5 + position);
-        ServoExLeft.setPosition(0.5 + position); // 0.5 is center position
-        ServoExRight.setPosition(0.5 - position); // invert to make sure both end up in the same spot
-        current_servo_position = ServoExLeft.getPosition() - 0.5;
+    public static double GetTurretPosInRadians(){
+        RawEncoderValue = throughbore.getCurrentPosition();
+        ActiveOpMode.telemetry().addData("turretpos", RawEncoderValue);
+        ActiveOpMode.telemetry().addData("adjusted", RawEncoderValue * (Math.PI / 12288));
+
+        return RawEncoderValue * (Math.PI / 12288);
     }
-    public static void turret_off() {
-        ActiveOpMode.telemetry().addData("left position heading", 0.5);
-        //ServoExLeft.setPosition(0.5);
-        //ServoExRight.setPosition(0.5);
-        current_servo_position = ServoExLeft.getPosition() - 0.5;
-    }
-    public static void turret_on_via_encoder_and_crservos(double target){// will send turret to target position, with target in radians
-        private double Error = target - GetTurretPosInRadians();
-        private double P_value = Error * 1;// todo: tune this
-        private double D_value = (PreviousturretPos - GetTurretPosInRadians()) * 0;//todo: tune this
-        private double Output = P_value + D_value;
+
+    public static void turret_on_via_encoder_and_crservos(double target){// will send turret to target position, with target in radian
+        double Error = target + GetTurretPosInRadians();
+        double kp = 0.23;
+        double P_value = Error * kp;// todo: tune this
+        double kd = 0;
+        //double D_value = (PreviousturretPos - GetTurretPosInRadians()) * kd;//todo: tune this
+        double Output = P_value /*+ D_value*/;
+        ServoExRight.setPower(Output);
+        ServoExLeft.setPower(Output);
+        //double PreviousturretPos = GetTurretPosInRadians();
+
         //todo: set axon power accordingly and be careful of negatives
-        PreviousturretPos = GetTurretPosInRadians();
     }
 
     public static void operator_control(double positionChange) {
@@ -149,8 +144,8 @@ public class TurretSubsystem implements Subsystem {
             calculate_heading(currPose);
         }
 */
-        ActiveOpMode.telemetry().addData("position left", ServoExLeft.getPosition());
-        ActiveOpMode.telemetry().addData("position right", ServoExRight.getPosition());
+        //ActiveOpMode.telemetry().addData("position left", ServoExLeft.getPosition());
+        //ActiveOpMode.telemetry().addData("position right", ServoExRight.getPosition());
         ActiveOpMode.telemetry().update();
 
 

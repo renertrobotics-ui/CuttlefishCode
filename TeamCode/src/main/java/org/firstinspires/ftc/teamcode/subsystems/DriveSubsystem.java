@@ -272,30 +272,6 @@ public class DriveSubsystem implements Subsystem {
         double robotHeading = follower.getPose().getHeading();
         //Vector v = new Vector(new Pose(138, 138));
 
-        //ActiveOpMode.telemetry().addData("Motor1Speed", s1speed);
-        //ActiveOpMode.telemetry().addData("Motor2Speed", s2speed);
-        ActiveOpMode.telemetry().addData("alliance", alliance);
-        //ActiveOpMode.telemetry().addData("bum", bum);
-        //ActiveOpMode.telemetry().addData("servo1pos", hoodServo1.getPosition());
-        //ActiveOpMode.telemetry().addData("servo2pos", hoodServo2.getPosition());
-
-        //double frontLeftRPM = 28 / 60 * fL.getVelocity();
-        //double frontRightRPM = 28 / 60 * fR.getVelocity();
-        //double backLeftRPM = 28 / 60 * bL.getVelocity();
-        //double backRightRPM = 28 / 60 * bR.getVelocity();
-        //ActiveOpMode.telemetry().addData("frontRightRPM", frontRightRPM);
-        //ActiveOpMode.telemetry().addData("backRightRPM", backRightRPM);
-        //ActiveOpMode.telemetry().addData("frontLeftRPM", frontLeftRPM);
-        //ActiveOpMode.telemetry().addData("backLeftRPM", backLeftRPM);
-
-        ActiveOpMode.telemetry().addData("aimMultipler", aimMultiplier);
-        //ActiveOpMode.telemetry().addData("goalX", goalX);
-        //ActiveOpMode.telemetry().addData("goalY", goalY);
-        ActiveOpMode.telemetry().addData("RobotX", currPose.getX());
-        ActiveOpMode.telemetry().addData("RobotY", currPose.getY());
-        //ActiveOpMode.telemetry().addData("goalXDist", goalXDist);
-        //ActiveOpMode.telemetry().addData("goalYDist", goalYDist);
-        //ActiveOpMode.telemetry().addData("robotHeading", Math.toDegrees(robotHeading));
         //ActiveOpMode.telemetry().addData("velocity", follower.getVelocity());
         //ActiveOpMode.telemetry().addData("distance", distance);
         //ActiveOpMode.telemetry().addData("yVCtx", visionYawCommand(headingError));
