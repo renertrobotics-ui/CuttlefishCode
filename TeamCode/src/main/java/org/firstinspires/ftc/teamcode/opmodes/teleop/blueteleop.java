@@ -62,9 +62,9 @@ public class blueteleop extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         // Telemetry to track shooter speed
-        targetVelocity = 1400;
+        targetVelocity = 2000;
         shooter(targetVelocity);
-        telemetry.addData("Target Velocity", 1400);
+        telemetry.addData("Target Velocity", 2000);
         telemetry.addData("Left Flywheel Vel", ShooterSubsystem.flywheelvelocity);
         telemetry.addData("Right Flywheel Vel", ShooterSubsystem.flywheelvelocity2);
     }

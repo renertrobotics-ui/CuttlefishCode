@@ -50,6 +50,9 @@ public class DriveSubsystem implements Subsystem {
     public static final MotorEx bR = new MotorEx("back right drive motor BRFL").brakeMode().reversed();
     // this is how you create your IMU
     private IMUEx imu;
+    public static final MotorEx intake = new MotorEx("Intake_Motor");
+    public static final MotorEx transfer = new MotorEx("Transfer_Motor");
+
 
     public boolean firsttime = true;
 
@@ -212,6 +215,8 @@ public class DriveSubsystem implements Subsystem {
 
 
         }
+        transfer.setPower(-1);
+        intake.setPower(1);
         follower.update();
 
 

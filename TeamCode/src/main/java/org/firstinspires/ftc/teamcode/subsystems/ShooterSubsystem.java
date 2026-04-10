@@ -17,16 +17,20 @@ public class ShooterSubsystem implements Subsystem {
     // Hardware
     public static MotorEx flywheel = new MotorEx("LeftShooter_Motor");
     public static MotorEx flywheel2 = new MotorEx("RightShooter_Motor");
+    public static double kp = 0.015;
+    public static double ki = 0.005;
+    public static double kd = 0;
+    public static double kv = 0;
 
     // Static Controllers (Created once to preserve PID/Integral memory)
     private static final ControlSystem controller1 = ControlSystem.builder()
-            .velPid(new PIDCoefficients(0.015, 0.005, 0.00))
-            .basicFF(new BasicFeedforwardParameters(0.00045, 0, 0.0))
+            .velPid(new PIDCoefficients(0.007, 0, 0))
+            .basicFF(new BasicFeedforwardParameters(0.000368, 0, 0.0))
             .build();
 
     private static final ControlSystem controller2 = ControlSystem.builder()
-            .velPid(new PIDCoefficients(0.015, 0.005, 0.00))
-            .basicFF(new BasicFeedforwardParameters(0.00045, 0, 0.0))
+            .velPid(new PIDCoefficients(0.007, 0, 0))
+            .basicFF(new BasicFeedforwardParameters(0.000368, 0, 0.0))
             .build();
 
     public static double flywheelvelocity;
