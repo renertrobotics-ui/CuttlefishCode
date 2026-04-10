@@ -33,6 +33,14 @@ public class TurretSubsystem implements Subsystem {
     static ServoEx ServoExRight;
     public Command localize;
 
+    public double PreviousturretPos;
+
+    public double GetTurretPosInRadians(){
+        private double RawEncoderValue;
+        //todo: set rawencodervalue to the throughbore encoder value
+        return RawEncoderValue * (Math.pi / 12288);
+    }
+
 
 
     Pose startingpose = new Pose(72,72, Math.toRadians(90));
@@ -61,6 +69,14 @@ public class TurretSubsystem implements Subsystem {
         //ServoExLeft.setPosition(0.5);
         //ServoExRight.setPosition(0.5);
         current_servo_position = ServoExLeft.getPosition() - 0.5;
+    }
+    public static void turret_on_via_encoder_and_crservos(double target){// will send turret to target position, with target in radians
+        private double Error = target - GetTurretPosInRadians();
+        private double P_value = Error * 1;// todo: tune this
+        private double D_value = (PreviousturretPos - GetTurretPosInRadians()) * 0;//todo: tune this
+        private double Output = P_value + D_value;
+        //todo: set axon power accordingly and be careful of negatives
+        PreviousturretPos = GetTurretPosInRadians();
     }
 
     public static void operator_control(double positionChange) {
