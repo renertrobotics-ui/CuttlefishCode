@@ -21,6 +21,8 @@ import org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem;
 
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.calculate_heading;
+import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.turret_on;
 
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
@@ -110,7 +112,14 @@ public class redteleop extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
+        follower.update();
+        Pose currPose = follower.getPose();
+
         float newtps=1000;
+        double angle = calculate_heading(currPose);
+        turret_on(0.75);
+
+
 
         /*
         if(lowerangle==true){

@@ -25,12 +25,12 @@ public class TurretSubsystem implements Subsystem {
     }
     private IMUEx imu;
     GoBildaPinpointDriver pinpoint;
-    public double current_servo_position = 0.5;
+    public static double current_servo_position = 0.5;
     public boolean operator_on = true;
 
     public int alliance;
-    ServoEx ServoExLeft;
-    ServoEx ServoExRight;
+    static ServoEx ServoExLeft;
+    static ServoEx ServoExRight;
     public Command localize;
 
 
@@ -50,20 +50,20 @@ public class TurretSubsystem implements Subsystem {
         imu = new IMUEx("imu", Direction.RIGHT, Direction.UP).zeroed();
     }
 
-    public void turret_on(double position) {
+    public static void turret_on(double position) {
         ActiveOpMode.telemetry().addData("left position automatic", 0.5 + position);
         ServoExLeft.setPosition(0.5 + position); // 0.5 is center position
         ServoExRight.setPosition(0.5 - position); // invert to make sure both end up in the same spot
         current_servo_position = ServoExLeft.getPosition() - 0.5;
     }
-    public void turret_off() {
+    public static void turret_off() {
         ActiveOpMode.telemetry().addData("left position heading", 0.5);
         //ServoExLeft.setPosition(0.5);
         //ServoExRight.setPosition(0.5);
         current_servo_position = ServoExLeft.getPosition() - 0.5;
     }
 
-    public void operator_control(double positionChange) {
+    public static void operator_control(double positionChange) {
         current_servo_position += positionChange/50;
         ActiveOpMode.telemetry().addData("left position operator", 0.5 + current_servo_position);
         //ServoExLeft.setPosition(0.5 + current_servo_position);
@@ -73,7 +73,7 @@ public class TurretSubsystem implements Subsystem {
         return localize;
     }
 
-    public void calculate_heading(Pose currentpose) {
+    public static double calculate_heading(Pose currentpose) {
         double turretX = 0;
         double turretY = 0;
         double distY = 0;
@@ -99,7 +99,7 @@ public class TurretSubsystem implements Subsystem {
             turnneed = turretTargetRad/(Math.PI*2);
         }
 
-        turret_on(turnneed);
+
         ActiveOpMode.telemetry().addData("turnneed", turnneed);
 
         ActiveOpMode.telemetry().addData("heading", (currentpose.getHeading() * 180 / Math.PI ));
@@ -107,6 +107,7 @@ public class TurretSubsystem implements Subsystem {
         ActiveOpMode.telemetry().addData("roboty", currentpose.getY());
         ActiveOpMode.telemetry().addData("goalx", distY);
         ActiveOpMode.telemetry().addData("goaly", distX);
+        return turnneed;
 
     }
 
@@ -132,7 +133,6 @@ public class TurretSubsystem implements Subsystem {
             calculate_heading(currPose);
         }
 */
-        calculate_heading(currPose);
         ActiveOpMode.telemetry().addData("position left", ServoExLeft.getPosition());
         ActiveOpMode.telemetry().addData("position right", ServoExRight.getPosition());
         ActiveOpMode.telemetry().update();
