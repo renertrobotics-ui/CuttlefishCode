@@ -8,6 +8,11 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 
+import dev.nextftc.bindings.BindingManager;
+import dev.nextftc.control.ControlSystem;
+import dev.nextftc.control.KineticState;
+import dev.nextftc.control.feedback.PIDCoefficients;
+import dev.nextftc.control.feedforward.BasicFeedforwardParameters;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -38,8 +43,14 @@ public class TurretSubsystem implements Subsystem {
     public Command localize;
 
     public static double RawEncoderValue;
+    public double PreviousTurretPos;
+    public static PIDCoefficients myPidCoeff = new PIDCoefficients(0.00006, 0, 0.000325);
+//    public static BasicFeedforwardParameters myFF = new BasicFeedforwardParameters(0.0, 0, 0.0);
 
 
+
+
+    private ControlSystem controller2;
 
 
     Pose startingpose = new Pose(72,72, Math.toRadians(90));
@@ -57,21 +68,50 @@ public class TurretSubsystem implements Subsystem {
         ActiveOpMode.telemetry().addData("turretpos", RawEncoderValue);
         ActiveOpMode.telemetry().addData("adjusted", RawEncoderValue * (Math.PI / 12288));
 
-        return RawEncoderValue * (Math.PI / 12288);
+        return RawEncoderValue;
     }
 
-    public static void turret_on_via_encoder_and_crservos(double target){// will send turret to target position, with target in radian
-        double Error = target + GetTurretPosInRadians();
-        double kp = 0.23;
-        double P_value = Error * kp;// todo: tune this
-        double kd = 0;
-        //double D_value = (PreviousturretPos - GetTurretPosInRadians()) * kd;//todo: tune this
-        double Output = P_value /*+ D_value*/;
-        ServoExRight.setPower(Output);
-        ServoExLeft.setPower(Output);
-        //double PreviousturretPos = GetTurretPosInRadians();
+    public static void velocityControlWithFeedforwardExample2(KineticState currentstate, double targetpos) {
+        // Create a velocity controller with PID and feedforward
+        ControlSystem controller2 = ControlSystem.builder()
+                .velPid(myPidCoeff) // Velocity PID with kP=0.1, kI=0.01, kD=0.05
+                .build();
 
-        //todo: set axon power accordingly and be careful of negatives
+        controller2.setGoal(new KineticState(targetpos));
+
+        // In a loop (simulated here), you would:
+        // Create a KineticState with current position and velocity
+
+        double turretF = 0.1;
+        double piwer = Math.abs(controller2.calculate(currentstate))/controller2.calculate(currentstate);
+        double power = controller2.calculate(currentstate) + turretF*(Math.signum(targetpos-GetTurretPosInRadians()));
+        ServoExRight.setPower(power);
+        ServoExLeft.setPower(power);
+    }
+    public static void turret_on_via_encoder_and_crservos(double target){// will send turret to target position, with target in radian
+        BindingManager.update();
+        double turretpos = GetTurretPosInRadians();
+        double delta = turretpos - INSTANCE.PreviousTurretPos;
+        double f;
+        KineticState currentstate = new KineticState(turretpos, delta, 0.0);
+        ControlSystem controller2 = ControlSystem.builder()
+                .posPid(myPidCoeff) // Velocity PID with kP=0.1, kI=0.01, kD=0.05
+                .build();
+        controller2.setGoal(new KineticState(target, 0, 0));
+        if (Math.abs(target-turretpos) < 300 && Math.abs(target-turretpos) > 150) {
+            f = Math.signum(target-turretpos)*(0.3);
+        } else if (Math.abs(target-turretpos) < 150) {
+            f = 0;
+        } else {
+            f = Math.signum(target-turretpos);
+        }
+        double turretF = 0.115;
+        ActiveOpMode.telemetry().addData("controller2.calculate(currentstate)", controller2.calculate(currentstate));
+        double power = controller2.calculate(currentstate) + turretF*f;
+        INSTANCE.PreviousTurretPos = turretpos;
+        ServoExRight.setPower(-power);
+        ServoExLeft.setPower(-power);
+
     }
 
     public static void operator_control(double positionChange) {
