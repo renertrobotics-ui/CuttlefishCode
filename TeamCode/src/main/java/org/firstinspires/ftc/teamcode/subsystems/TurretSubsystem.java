@@ -44,7 +44,7 @@ public class TurretSubsystem implements Subsystem {
 
     public static double RawEncoderValue;
     public double PreviousTurretPos;
-    public static PIDCoefficients myPidCoeff = new PIDCoefficients(0.00006, 0, 0.000325);
+    public static PIDCoefficients myPidCoeff = new PIDCoefficients(0.00006, 0, 0.0003);
 //    public static BasicFeedforwardParameters myFF = new BasicFeedforwardParameters(0.0, 0, 0.0);
 
 
@@ -98,10 +98,8 @@ public class TurretSubsystem implements Subsystem {
                 .posPid(myPidCoeff) // Velocity PID with kP=0.1, kI=0.01, kD=0.05
                 .build();
         controller2.setGoal(new KineticState(target, 0, 0));
-        if (Math.abs(target-turretpos) < 300 && Math.abs(target-turretpos) > 150) {
-            f = Math.signum(target-turretpos)*(0.3);
-        } else if (Math.abs(target-turretpos) < 150) {
-            f = 0;
+        if (Math.abs(target-turretpos) < 500) {
+            f = Math.signum(target-turretpos) * Math.abs(target-turretpos) / 500;
         } else {
             f = Math.signum(target-turretpos);
         }

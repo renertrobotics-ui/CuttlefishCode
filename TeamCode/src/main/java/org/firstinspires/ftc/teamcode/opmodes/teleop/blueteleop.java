@@ -84,7 +84,7 @@ public class blueteleop extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
-        turret_on_via_encoder_and_crservos(-10000);
+        turret_on_via_encoder_and_crservos(-1000);
         //float newtps=1000;
         //shooter(newtps);
         //ActiveOpMode.telemetry().addData("newtps", newtps);
