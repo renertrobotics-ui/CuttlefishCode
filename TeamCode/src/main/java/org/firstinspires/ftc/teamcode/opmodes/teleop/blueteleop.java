@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.Flywheel.shooter;*/
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.UpdateColorSensors;
+import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.autonomousIntakeTransferOperation;
 import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.calculate_heading;
 import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.turret_on_via_encoder_and_crservos;
 
@@ -33,8 +34,6 @@ import dev.nextftc.hardware.impl.MotorEx;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "blue teleop")
 public class blueteleop extends NextFTCOpMode {
 
-    public MotorEx intakeMotor;
-    public MotorEx transferMotor;
     public blueteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
@@ -51,31 +50,9 @@ public class blueteleop extends NextFTCOpMode {
         return blue;
     }
 
-    public static int tagID;
-    public static boolean findMotif = false;
-    public static int ball1Color = 0; //green = 1, purple = 2
-    public static int ball2Color = 0;
-    public static int ball3Color = 0;
-
-    public static int getBall1Color() {
-        return ball1Color;
-    }
-
-    public static int getBall2Color() {
-        return ball2Color;
-    }
-    public static int getBall3Color() {
-        return ball3Color;
-    }
-    public boolean lift;
-    boolean lowerangle = false;
-    public boolean liftmid;
-    boolean loweranglemid = false;
 
 
 
-
-    private static final int APRILTAG_PIPELINE = 8;
     @Override
     public void onInit() {
 //        Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -116,8 +93,6 @@ public class blueteleop extends NextFTCOpMode {
         }*/
     }
 
-    private void autonomousIntakeTransferOperation() {
-    }
 
     public boolean shoot;
 

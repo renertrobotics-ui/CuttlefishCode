@@ -97,9 +97,6 @@ public class IntakeTransferSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
-        ActiveOpMode.telemetry().addData("itakecolorsensorreading", (Intake.getDistance(DistanceUnit.CM)));
-        ActiveOpMode.telemetry().addData("newcolorsensorreading", (Transfer.getDistance(DistanceUnit.CM)));
-        ActiveOpMode.telemetry().update();
 
     }
 }

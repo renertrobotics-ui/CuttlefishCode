@@ -40,8 +40,6 @@ import dev.nextftc.hardware.impl.MotorEx;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Red Teleop")
 public class redteleop extends NextFTCOpMode {
 
-    public MotorEx intakeMotor;
-    public MotorEx transferMotor;
     public redteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
