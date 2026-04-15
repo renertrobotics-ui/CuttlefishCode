@@ -130,12 +130,12 @@ public class TurretSubsystem implements Subsystem {
         double turnneed = 0;
         if (isBlue()) {
             distY = 141 - currentpose.getY();
-            distX = 141 - currentpose.getX();
+            distX = currentpose.getX();
             double fieldAngleRad = Math.atan2(distY, distX);
-            double robotHeadingRadians = (-currentpose.getHeading());
+            double robotHeadingRadians = (currentpose.getHeading());
             double turretTargetRad = fieldAngleRad - robotHeadingRadians;
             ActiveOpMode.telemetry().addData("headingangle", (fieldAngleRad) * 180 / Math.PI );
-            turnneed = turretTargetRad/(Math.PI*2);
+            turnneed = -turretTargetRad/(Math.PI*2)*24576;
         }
         if (isRed()){
             distY = 141 - currentpose.getY();
@@ -145,8 +145,9 @@ public class TurretSubsystem implements Subsystem {
             double turretTargetRad = fieldAngleRad - robotHeadingRadians;
             ActiveOpMode.telemetry().addData("headingangle", (fieldAngleRad) * 180 / Math.PI );
 
-            turnneed = turretTargetRad/(Math.PI*2);
+            turnneed = turretTargetRad/(Math.PI*2)*24576;
         }
+        ActiveOpMode.telemetry().addData("turretpos", throughbore.getCurrentPosition());
 
 
         ActiveOpMode.telemetry().addData("turnneed", turnneed);
@@ -154,6 +155,8 @@ public class TurretSubsystem implements Subsystem {
         ActiveOpMode.telemetry().addData("heading", (currentpose.getHeading() * 180 / Math.PI ));
 
         ActiveOpMode.telemetry().addData("roboty", currentpose.getY());
+        ActiveOpMode.telemetry().addData("robotx", currentpose.getX());
+
         ActiveOpMode.telemetry().addData("goalx", distY);
         ActiveOpMode.telemetry().addData("goaly", distX);
         return turnneed;

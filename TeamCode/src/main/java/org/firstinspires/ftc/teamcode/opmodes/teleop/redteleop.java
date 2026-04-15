@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS;
 import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS44;
 import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
 */
+import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.UpdateColorSensors;
+import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.autonomousIntakeTransferOperation;
 import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
 
 import com.pedropathing.geometry.Pose;
@@ -17,11 +19,13 @@ import org.firstinspires.ftc.teamcode.subsystems.PositionalHood;
 import org.firstinspires.ftc.teamcode.subsystems.TempHood;
 */
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem;
 
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.calculate_heading;
+import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.turret_on_via_encoder_and_crservos;
 
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
@@ -41,7 +45,7 @@ public class redteleop extends NextFTCOpMode {
     public redteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(DriveSubsystem.INSTANCE, TurretSubsystem.INSTANCE),
+                new SubsystemComponent(DriveSubsystem.INSTANCE, IntakeTransferSubsystem.INSTANCE, TurretSubsystem.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
 
@@ -116,6 +120,10 @@ public class redteleop extends NextFTCOpMode {
 
         float newtps=1000;
         double angle = calculate_heading(currPose);
+        UpdateColorSensors();
+        autonomousIntakeTransferOperation();
+
+        //turret_on_via_encoder_and_crservos(angle);
 
 
 

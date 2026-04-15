@@ -181,7 +181,7 @@ public class DriveSubsystem implements Subsystem {
 
         }
         if(alliance ==1){
-            startingpose=new Pose (24, 72, Math.toRadians(90));
+            startingpose=new Pose (21, 72, Math.toRadians(90));
             follower.setStartingPose(startingpose);
             localize = new LambdaCommand()
                     .setStart(()->follower.setPose(new Pose(15,90,Math.toRadians(90))));
