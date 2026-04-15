@@ -4,7 +4,11 @@ import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS;
 import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS44;
 import static org.firstinspires.ftc.teamcode.subsystems.Flywheel.shooter;*/
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.calculate_heading;
 import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.turret_on_via_encoder_and_crservos;
+
+import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants; /*
 import org.firstinspires.ftc.teamcode.subsystems.DistanceBlue;
@@ -84,7 +88,12 @@ public class blueteleop extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
-        turret_on_via_encoder_and_crservos(-1000);
+        //turret_on_via_encoder_and_crservos(-1000);
+        follower.update();
+        Pose currPose = follower.getPose();
+
+        float newtps=1000;
+        double angle = calculate_heading(currPose);
         //float newtps=1000;
         //shooter(newtps);
         //ActiveOpMode.telemetry().addData("newtps", newtps);

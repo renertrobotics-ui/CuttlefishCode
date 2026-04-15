@@ -129,7 +129,7 @@ public class TurretSubsystem implements Subsystem {
         double distX = 0;
         double turnneed = 0;
         if (isBlue()) {
-            distY = 141 - currentpose.getY();
+            distY = 141 + currentpose.getY();
             distX = 141 - currentpose.getX();
             double fieldAngleRad = Math.atan2(distY, distX);
             double robotHeadingRadians = (-currentpose.getHeading());
