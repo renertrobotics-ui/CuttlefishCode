@@ -46,6 +46,7 @@ public class blueteleop extends NextFTCOpMode {
     }
 
     public static boolean blue;
+    private boolean shooting = false;
     public static boolean isBlue(){
         return blue;
     }
@@ -60,6 +61,8 @@ public class blueteleop extends NextFTCOpMode {
 //        limelight.start();
         blue=true;
 
+        Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> shooting = true)
+                .whenBecomesFalse(() -> shooting = false);
 
 
 
@@ -73,7 +76,8 @@ public class blueteleop extends NextFTCOpMode {
         float newtps=1000;
         double angle = calculate_heading(currPose);
         UpdateColorSensors();
-        autonomousIntakeTransferOperation();
+
+        autonomousIntakeTransferOperation(shooting);
         //float newtps=100
         //turret_on_via_encoder_and_crservos(-10000);
         //float newtps=1000;

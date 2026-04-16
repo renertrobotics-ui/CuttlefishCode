@@ -12,7 +12,7 @@ public class IntakeTransferSubsystem implements Subsystem {
     public static final IntakeTransferSubsystem INSTANCE = new IntakeTransferSubsystem();
     public static MotorEx transfer_Motor = new MotorEx("Transfer_Motor");
     public static MotorEx intake_Motor = new MotorEx("Intake_Motor");
-    public static ServoEx blocker = new ServoEx("blocker");
+    //public static ServoEx blocker = new ServoEx("blocker");
 
     public static boolean BallInIntake = true;
     public static boolean BallInTransfer = true;
@@ -55,34 +55,41 @@ public class IntakeTransferSubsystem implements Subsystem {
     public static void stopTransfer() {
         transfer_Motor.setPower(0);
     }
-    public static void blockerOpen() {
+    /*public static void blockerOpen() {
         blocker.setPosition(0.5); // todo: find open position of blocker servo
     }
     public static void blockerClose() {
         blocker.setPosition(0.5); // todo: find closed position of blocker servo
-    }
-    public static void autonomousIntakeTransferOperation() {
-        switch (NumberOfBallsInBobot()) {
-            case 0:
-                runIntake();
-                runTransfer();
-                //blockerClose();
-                break;
-            case 1:
-                runIntake();
-                runTransfer();
-                //blockerClose();
-                break;
-            case 2:
-                runIntake();
-                stopTransfer();
-                //blockerOpen();
-                break;
-            case 3:
-                stopIntake();
-                stopTransfer();
-                //blockerOpen();
-                break;
+    }*/
+    public static void autonomousIntakeTransferOperation(boolean shooting) {
+        if (!shooting) {
+            switch (NumberOfBallsInBobot()) {
+                case 0:
+                    runIntake();
+                    runTransfer();
+                    //blockerClose();
+                    break;
+                case 1:
+                    runIntake();
+                    runTransfer();
+                    //blockerClose();
+                    break;
+                case 2:
+                    runIntake();
+                    stopTransfer();
+                    //blockerOpen();
+                    break;
+                case 3:
+                    stopIntake();
+                    stopTransfer();
+                    //blockerOpen();
+                    break;
+            }
+        }
+        if (shooting) {
+            runIntake();
+            runTransfer();
+            //blockerOpen();
         }
     }
 

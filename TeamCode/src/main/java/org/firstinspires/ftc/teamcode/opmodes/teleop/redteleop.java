@@ -35,6 +35,7 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.impl.ServoEx;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Red Teleop")
@@ -52,11 +53,13 @@ public class redteleop extends NextFTCOpMode {
     }
 
     public static boolean red;
+    public static ServoEx blocker = new ServoEx("blocker");
     public static boolean isRed(){
         return red;
     }
 
     public static int tagID;
+    private boolean shooting = false;
     public static boolean findMotif = false;
 
 
@@ -102,11 +105,14 @@ public class redteleop extends NextFTCOpMode {
     @Override
     public void onInit() {
         red=true;
+        Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> shooting = true)
+                .whenBecomesFalse(() -> shooting = false);
 
-
-
-
-
+        Gamepads.gamepad1().a().whenBecomesTrue(() -> blocker.setPosition(0.5));
+        Gamepads.gamepad1().b().whenBecomesTrue(() -> blocker.setPosition(0.7));
+        Gamepads.gamepad1().x().whenBecomesTrue(() -> blocker.setPosition(0.9));
+        Gamepads.gamepad1().y().whenBecomesTrue(() -> blocker.setPosition(0.3));
+        Gamepads.gamepad1().leftBumper().whenBecomesTrue(() -> blocker.setPosition(0.1));
 
 
     }
@@ -119,9 +125,8 @@ public class redteleop extends NextFTCOpMode {
         float newtps=1000;
         double angle = calculate_heading(currPose);
         UpdateColorSensors();
-        autonomousIntakeTransferOperation();
-
-        //turret_on_via_encoder_and_crservos(angle);
+        //autonomousIntakeTransferOperation(shooting);
+        turret_on_via_encoder_and_crservos(angle);
 
 
 

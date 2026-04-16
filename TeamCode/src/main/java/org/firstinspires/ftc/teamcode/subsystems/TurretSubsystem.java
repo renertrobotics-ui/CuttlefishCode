@@ -44,7 +44,7 @@ public class TurretSubsystem implements Subsystem {
 
     public static double RawEncoderValue;
     public double PreviousTurretPos;
-    public static PIDCoefficients myPidCoeff = new PIDCoefficients(0.00006, 0, 0.0001);
+    public static PIDCoefficients myPidCoeff = new PIDCoefficients(0.00006, 0, 0.00005);
 //    public static BasicFeedforwardParameters myFF = new BasicFeedforwardParameters(0.0, 0, 0.0);
 
 
@@ -82,7 +82,7 @@ public class TurretSubsystem implements Subsystem {
         // In a loop (simulated here), you would:
         // Create a KineticState with current position and velocity
 
-        double turretF = 0.1;
+        double turretF = 0.95;
         double piwer = Math.abs(controller2.calculate(currentstate))/controller2.calculate(currentstate);
         double power = controller2.calculate(currentstate) + turretF*(Math.signum(targetpos-GetTurretPosInRadians()));
         ServoExRight.setPower(power);
@@ -93,19 +93,21 @@ public class TurretSubsystem implements Subsystem {
         double turretpos = GetTurretPosInRadians();
         double delta = turretpos - INSTANCE.PreviousTurretPos;
         double f;
+        double error = target - turretpos;
+        /*
         KineticState currentstate = new KineticState(turretpos, delta, 0.0);
         ControlSystem controller2 = ControlSystem.builder()
                 .posPid(myPidCoeff) // Velocity PID with kP=0.1, kI=0.01, kD=0.05
                 .build();
-        controller2.setGoal(new KineticState(target, 0, 0));
-        if (Math.abs(target-turretpos) == 0) {
+        controller2.setGoal(new KineticState(target, 0, 0));*/
+        if (Math.abs(target-turretpos) < 75) {
             f = 0;
         } else {
             f = Math.signum(target-turretpos);
         }
-        double turretF = 0.076;
-        ActiveOpMode.telemetry().addData("controller2.calculate(currentstate)", controller2.calculate(currentstate));
-        double power = controller2.calculate(currentstate) + turretF*f;
+        double turretF = 0.075;
+        //ActiveOpMode.telemetry().addData("controller2.calculate(currentstate)", controller2.calculate(currentstate));
+        double power = Math.signum(error) * Math.sqrt(Math.abs(error)) * 0.002 + turretF * f/*controller2.calculate(currentstate) + turretF*f*/;
         INSTANCE.PreviousTurretPos = turretpos;
         ServoExRight.setPower(-power);
         ServoExLeft.setPower(-power);
