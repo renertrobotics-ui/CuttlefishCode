@@ -9,7 +9,7 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 //import static org.firstinspires.ftc.teamcode.subsystems.Flywheel.shooter;
 import static org.firstinspires.ftc.teamcode.opmodes.teleop.redteleop.isRed;
 
-        import static org.firstinspires.ftc.teamcode.opmodes.teleop.blueteleop.isBlue;
+import static org.firstinspires.ftc.teamcode.opmodes.teleop.blueteleop.isBlue;
 
 //import static org.firstinspires.ftc.teamcode.subsystems.ShooterCalc.calculateShotVectorandUpdateHeading;
 //import static org.firstinspires.ftc.teamcode.subsystems.ShooterCalc.calculateShotVectorandUpdateHeading;
@@ -87,7 +87,7 @@ public class DriveSubsystem implements Subsystem {
                         fR,
                         bL,
                         bR,
-                        Gamepads.gamepad1().leftStickX().map(it -> alliance * it * 0.4),
+                        Gamepads.gamepad1().leftStickX().map(it -> alliance * it * -0.4),
                         Gamepads.gamepad1().leftStickY().map(it -> alliance * it *-0.4),
                         Gamepads.gamepad1().rightStickX().map(it -> it * 0.4 * -0.75),
                         new FieldCentric(imu)
@@ -100,7 +100,7 @@ public class DriveSubsystem implements Subsystem {
                         fR,
                         bL,
                         bR,
-                        Gamepads.gamepad1().leftStickX().map(it -> 1.5 *alliance *it),
+                        Gamepads.gamepad1().leftStickX().map(it -> 1.5 *alliance *-it),
                         Gamepads.gamepad1().leftStickY().map(it -> alliance * -1.5 * it),
                         Gamepads.gamepad1().rightStickX().map(it -> it * -1),
                         new FieldCentric(imu)
@@ -215,8 +215,8 @@ public class DriveSubsystem implements Subsystem {
 
 
         }
-        transfer.setPower(-1);
-        intake.setPower(1);
+        //transfer.setPower(-1);
+        //intake.setPower(1);
         follower.update();
 
 
