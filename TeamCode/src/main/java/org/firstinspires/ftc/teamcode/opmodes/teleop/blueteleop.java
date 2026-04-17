@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.calculat
 import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.turret_on_via_encoder_and_crservos;
 
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants; /*
 import org.firstinspires.ftc.teamcode.subsystems.DistanceBlue;
@@ -46,6 +47,8 @@ public class blueteleop extends NextFTCOpMode {
     }
 
     public static boolean blue;
+    public static ElapsedTime newtime = new ElapsedTime();
+
     private boolean shooting = false;
     public static boolean isBlue(){
         return blue;
@@ -76,7 +79,7 @@ public class blueteleop extends NextFTCOpMode {
         float newtps=1000;
         double angle = calculate_heading(currPose);
         UpdateColorSensors();
-
+        turret_on_via_encoder_and_crservos(angle, newtime.seconds());
         autonomousIntakeTransferOperation(shooting);
         //float newtps=100
         //turret_on_via_encoder_and_crservos(-10000);

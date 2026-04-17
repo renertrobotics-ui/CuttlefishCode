@@ -7,19 +7,17 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import dev.nextftc.bindings.BindingManager;
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.control.feedback.PIDCoefficients;
-import dev.nextftc.control.feedforward.BasicFeedforwardParameters;
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.CRServoEx;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
 
@@ -41,14 +39,16 @@ public class TurretSubsystem implements Subsystem {
     static CRServoEx ServoExLeft;
     static CRServoEx ServoExRight;
     public Command localize;
+    public static double newpose;
+    public static double three;
 
     public static double RawEncoderValue;
     public double PreviousTurretPos;
-    public static PIDCoefficients myPidCoeff = new PIDCoefficients(0.00006, 0, 0.00005);
+    public static PIDCoefficients myPidCoeff = new PIDCoefficients(0.000055, 0, 0.00001);
 //    public static BasicFeedforwardParameters myFF = new BasicFeedforwardParameters(0.0, 0, 0.0);
+    public static double F = 0.0885;
 
-
-
+    public double Seconds;
 
     private ControlSystem controller2;
 
@@ -71,44 +71,35 @@ public class TurretSubsystem implements Subsystem {
         return RawEncoderValue;
     }
 
-    public static void velocityControlWithFeedforwardExample2(KineticState currentstate, double targetpos) {
-        // Create a velocity controller with PID and feedforward
-        ControlSystem controller2 = ControlSystem.builder()
-                .velPid(myPidCoeff) // Velocity PID with kP=0.1, kI=0.01, kD=0.05
-                .build();
-
-        controller2.setGoal(new KineticState(targetpos));
-
-        // In a loop (simulated here), you would:
-        // Create a KineticState with current position and velocity
-
-        double turretF = 0.95;
-        double piwer = Math.abs(controller2.calculate(currentstate))/controller2.calculate(currentstate);
-        double power = controller2.calculate(currentstate) + turretF*(Math.signum(targetpos-GetTurretPosInRadians()));
-        ServoExRight.setPower(power);
-        ServoExLeft.setPower(power);
-    }
-    public static void turret_on_via_encoder_and_crservos(double target){// will send turret to target position, with target in radian
+    public static void turret_on_via_encoder_and_crservos(double target, double seconds){// will send turret to target position, with target in radian
         BindingManager.update();
         double turretpos = GetTurretPosInRadians();
-        double delta = turretpos - INSTANCE.PreviousTurretPos;
+        double time = seconds;
+
+
+        double delta = (turretpos-newpose);
         double f;
         double error = target - turretpos;
-        /*
-        KineticState currentstate = new KineticState(turretpos, delta, 0.0);
+
+        KineticState currentstate = new KineticState(turretpos, delta);
         ControlSystem controller2 = ControlSystem.builder()
                 .posPid(myPidCoeff) // Velocity PID with kP=0.1, kI=0.01, kD=0.05
                 .build();
-        controller2.setGoal(new KineticState(target, 0, 0));*/
+        controller2.setGoal(new KineticState(target, 0));
         if (Math.abs(target-turretpos) < 75) {
             f = 0;
         } else {
             f = Math.signum(target-turretpos);
         }
         double turretF = 0.075;
+        ActiveOpMode.telemetry().addData("time", time);
+
         //ActiveOpMode.telemetry().addData("controller2.calculate(currentstate)", controller2.calculate(currentstate));
-        double power = Math.signum(error) * Math.sqrt(Math.abs(error)) * 0.002 + turretF * f/*controller2.calculate(currentstate) + turretF*f*/;
-        INSTANCE.PreviousTurretPos = turretpos;
+        double power = /*Math.signum(error) * Math.sqrt(Math.abs(error)) * 0.002 + turretF * f*/controller2.calculate(currentstate) + F*f;
+        newpose = turretpos;
+        three = time;
+        ActiveOpMode.telemetry().addData("delta", delta);
+
         ServoExRight.setPower(-power);
         ServoExLeft.setPower(-power);
 

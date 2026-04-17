@@ -9,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.
 import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
 
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 /*
@@ -53,6 +54,8 @@ public class redteleop extends NextFTCOpMode {
     }
 
     public static boolean red;
+    public static ElapsedTime runtime = new ElapsedTime();
+
     public static ServoEx blocker = new ServoEx("blocker");
     public static boolean isRed(){
         return red;
@@ -61,6 +64,7 @@ public class redteleop extends NextFTCOpMode {
     public static int tagID;
     private boolean shooting = false;
     public static boolean findMotif = false;
+    boolean firsttime = true;
 
 
 
@@ -119,14 +123,18 @@ public class redteleop extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
+        if (firsttime) {
+            runtime.reset();
+            firsttime = false;
+        }
         follower.update();
         Pose currPose = follower.getPose();
 
         float newtps=1000;
         double angle = calculate_heading(currPose);
         UpdateColorSensors();
-        //autonomousIntakeTransferOperation(shooting);
-        turret_on_via_encoder_and_crservos(angle);
+        autonomousIntakeTransferOperation(shooting);
+        turret_on_via_encoder_and_crservos(angle, runtime.seconds());
 
 
 
