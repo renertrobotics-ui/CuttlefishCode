@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.shooting;
+
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import dev.nextftc.core.subsystems.Subsystem;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -11,12 +13,15 @@ public class IntakeTransferSubsystem implements Subsystem {
 
     }
     public static final IntakeTransferSubsystem INSTANCE = new IntakeTransferSubsystem();
-    public static MotorEx transfer_Motor = new MotorEx("Transfer_Motor");
-    public static MotorEx intake_Motor = new MotorEx("Intake_Motor");
     static ServoEx blocker;
     static ServoEx light;
 
     public static boolean BallInIntake = true;
+    public static boolean intake = false;
+    public static boolean transfer = false;
+    public static boolean close = false;
+    public static MotorEx transfer_Motor;
+    public static MotorEx intake_Motor;
     public static boolean BallInTransfer = true;
     public static boolean BallInThroat = true;
     static ColorRangeSensor Intake;
@@ -67,35 +72,36 @@ public class IntakeTransferSubsystem implements Subsystem {
         if (!shooting) {
             switch (NumberOfBallsInBobot()) {
                 case 0:
-                    runIntake();
-                    runTransfer();
-                    blockerClose();
+                    intake = true;
+                    transfer = true;
+                    close = true;
                     light.setPosition(0.2);
                     break;
                 case 1:
-                    runIntake();
-                    runTransfer();
-                    blockerClose();
+                    intake = true;
+                    transfer = true;
+                    close = true;
                     light.setPosition(0.2);
                     break;
                 case 2:
-                    runIntake();
-                    stopTransfer();
-                    blockerOpen();
+                    intake = true;
+                    transfer = false;
+                    close = true;
                     light.setPosition(0.32);
                     break;
                 case 3:
-                    stopIntake();
-                    stopTransfer();
-                    blockerOpen();
+                    intake = false;
+                    transfer = false;
+                    close = false;
                     light.setPosition(0.45);
                     break;
             }
         }
         if (shooting) {
-            runIntake();
-            runTransfer();
-            blockerOpen();
+            intake = true;
+            transfer = true;
+            close = false;
+
         }
     }
 
@@ -103,12 +109,14 @@ public class IntakeTransferSubsystem implements Subsystem {
     public void initialize() {
         Transfer = ActiveOpMode.hardwareMap().get(ColorRangeSensor.class, "rampSensor");
         Intake = ActiveOpMode.hardwareMap().get(ColorRangeSensor.class, "intakeSensor");
+        transfer_Motor = new MotorEx("Transfer_Motor");
+        intake_Motor = new MotorEx("Intake_Motor");
 
         blocker = new ServoEx("blocker");
         light = new ServoEx("light");
-        light.setPosition(0);
+        //light.setPosition(0);
 
-        blocker.setPosition(0);
+        //blocker.setPosition(0);
     }
 
     //todo: tune colorsensors to be able to detect balls
@@ -116,8 +124,31 @@ public class IntakeTransferSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
-        ActiveOpMode.telemetry().addData("intake", BallInIntake);
-        ActiveOpMode.telemetry().addData("transfer", BallInTransfer);
+        ActiveOpMode.telemetry().addData("intake",intake_Motor.getPower() );
+        ActiveOpMode.telemetry().addData("transfer", transfer_Motor.getPower());
+        if (intake) {
+            intake_Motor.setPower(1);
+        }
+        if (!intake) {
+            intake_Motor.setPower(0);
+        }
+        if (transfer) {
+            transfer_Motor.setPower(-1);
+        }
+        if (!transfer) {
+            transfer_Motor.setPower(0);
+        }
+        if (close) {
+            blocker.setPosition(0); // todo: find open position of blocker servo
+        }
+        if (!close) {
+            blocker.setPosition(0.4); // todo: find open position of blocker servo
+        }
+
+        ActiveOpMode.telemetry().addData("intantnat",Intake.getDistance(DistanceUnit.CM) );
+        ActiveOpMode.telemetry().addData("transgenderblenderadventure", Transfer.getDistance(DistanceUnit.CM));
+        UpdateColorSensors();
+
 
     }
 }

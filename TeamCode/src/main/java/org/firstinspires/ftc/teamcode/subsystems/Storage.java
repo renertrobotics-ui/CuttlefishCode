@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.pedropathing.geometry.Pose;
 
 public class Storage {
-
     public static double currentX = 0;
 
     public static double currentY = 0;

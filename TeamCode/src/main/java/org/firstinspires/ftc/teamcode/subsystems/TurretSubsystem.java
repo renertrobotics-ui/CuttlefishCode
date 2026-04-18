@@ -46,9 +46,9 @@ public class TurretSubsystem implements Subsystem {
     public double PreviousTurretPos;
     public static PIDCoefficients myPidCoeff = new PIDCoefficients(0.000055, 0, 0.00001);
 //    public static BasicFeedforwardParameters myFF = new BasicFeedforwardParameters(0.0, 0, 0.0);
-    public static double turretF = 0.0885;
+    public static double turretF = 0.07;
     public static double turretD = 0;
-    public static double turretP = 0;
+    public static double turretP = 0.00005;
 
     public double Seconds;
 
@@ -67,8 +67,8 @@ public class TurretSubsystem implements Subsystem {
 
     public static double GetTurretPosInRadians(){
         RawEncoderValue = throughbore.getCurrentPosition();
-       //ActiveOpMode.telemetry().addData("turretpos", RawEncoderValue);
-        //ActiveOpMode.telemetry().addData("adjusted", RawEncoderValue * (Math.PI / 12288));
+       ActiveOpMode.telemetry().addData("turretpos", RawEncoderValue);
+       ActiveOpMode.telemetry().addData("adjusted", RawEncoderValue * (Math.PI / 12288));
 
         return RawEncoderValue;
     }
@@ -134,6 +134,7 @@ public class TurretSubsystem implements Subsystem {
 
             turnneed = turretTargetRad/(Math.PI*2)*24576;
         }
+
         /*ActiveOpMode.telemetry().addData("turretpos", throughbore.getCurrentPosition());
 
 
@@ -146,6 +147,8 @@ public class TurretSubsystem implements Subsystem {
 
         ActiveOpMode.telemetry().addData("goalx", distY);
         ActiveOpMode.telemetry().addData("goaly", distX);*/
+
+
         return turnneed;
 
     }

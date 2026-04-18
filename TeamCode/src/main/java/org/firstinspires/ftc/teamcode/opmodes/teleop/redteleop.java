@@ -12,6 +12,7 @@ import com.pedropathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
+import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.ActiveOpMode;
@@ -96,7 +97,7 @@ public class redteleop extends NextFTCOpMode {
     // TODO: The 'e' value was cut off in your screenshot! Replace 0.0 with your actual 'e' value.
     private static final double e = -3.291;
     // ----------------------------------------
-
+public Pose starting;
 
 
 
@@ -160,6 +161,11 @@ public class redteleop extends NextFTCOpMode {
         red=true;
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> shooting = true)
                 .whenBecomesFalse(() -> shooting = false);
+            starting=new Pose (120, 72, Math.toRadians(90));
+            follower.setPose(starting);
+
+
+        follower.update();
 
         /*Gamepads.gamepad1().a().whenBecomesTrue(() -> blocker.setPosition(0.5));
         Gamepads.gamepad1().b().whenBecomesTrue(() -> blocker.setPosition(0.7));
@@ -172,6 +178,13 @@ public class redteleop extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
+        if (firsttime) {
+                starting=new Pose (120, 72, Math.toRadians(90));
+                follower.setPose(starting);
+                follower.update();
+                firsttime = false;
+
+        }
         follower.update();
         Pose currPose = follower.getPose();
         double distance = getDistanceToGoal();
@@ -180,7 +193,7 @@ public class redteleop extends NextFTCOpMode {
         float newtps = calculateShooterTPS(distance);
 
         // 3. Command the shooter
-        shooter(1800);
+        shooter(newtps);
 
         double angle = calculate_heading(currPose);
         UpdateColorSensors();

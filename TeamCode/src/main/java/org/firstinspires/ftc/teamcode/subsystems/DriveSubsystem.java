@@ -98,9 +98,8 @@ public class DriveSubsystem implements Subsystem {
 
 
 
-    //Pose startingpose = Storage.currentPose;
-    Pose startingpose = Storage.currentPose;
-    @Override
+Pose startingpose;
+@Override
     public Command getDefaultCommand() {
 
         if (isBlue() != true && isRed() != true) {
@@ -126,8 +125,8 @@ public class DriveSubsystem implements Subsystem {
                     fR,
                     bL,
                     bR,
-                    Gamepads.gamepad1().leftStickY().map(it -> alliance * it * 0.4),
-                    Gamepads.gamepad1().leftStickX().map(it -> alliance * it *-0.4),
+                    Gamepads.gamepad1().leftStickX().map( it -> alliance * it * -0.4),
+                    Gamepads.gamepad1().leftStickY().map(it -> alliance * it *-0.4),
                     Gamepads.gamepad1().rightStickX().map(it -> it * 0.4 * -0.75),
                     new FieldCentric(imu)
             );
@@ -139,8 +138,8 @@ public class DriveSubsystem implements Subsystem {
                     fR,
                     bL,
                     bR,
-                    Gamepads.gamepad1().leftStickY().map(it -> 1.5 *alliance *it),
-                    Gamepads.gamepad1().leftStickX().map(it -> alliance * -1.5 * it),
+                    Gamepads.gamepad1().leftStickX().map(it -> -1.5 *alliance *it),
+                    Gamepads.gamepad1().leftStickY().map(it -> alliance * -1.5 * it),
                     Gamepads.gamepad1().rightStickX().map(it -> it * -1),
                     new FieldCentric(imu)
             );
@@ -189,8 +188,6 @@ public class DriveSubsystem implements Subsystem {
         }
 
 
-        startingpose = Storage.currentPose;
-        follower.setStartingPose(startingpose);
 
 
 
@@ -252,7 +249,6 @@ public class DriveSubsystem implements Subsystem {
         if (firsttime == true) {
             //Gamepads.gamepad1().x().whenBecomesTrue((()->Localize().schedule()));
             firsttime = false;
-
 
         }
         follower.update();
