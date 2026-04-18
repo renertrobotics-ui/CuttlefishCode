@@ -63,7 +63,7 @@ public class redteleop extends NextFTCOpMode {
     public redteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(DriveSubsystem.INSTANCE, IntakeTransferSubsystem.INSTANCE, TurretSubsystem.INSTANCE),
+                new SubsystemComponent(DriveSubsystem.INSTANCE, ShooterSubsystem.INSTANCE, IntakeTransferSubsystem.INSTANCE, TurretSubsystem.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
 
@@ -74,7 +74,7 @@ public class redteleop extends NextFTCOpMode {
     public static boolean red;
     public static ElapsedTime runtime = new ElapsedTime();
 
-    public static ServoEx blocker = new ServoEx("blocker");
+    //public static ServoEx blocker = new ServoEx("blocker");
     public static boolean isRed(){
         return red;
     }
@@ -161,11 +161,11 @@ public class redteleop extends NextFTCOpMode {
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> shooting = true)
                 .whenBecomesFalse(() -> shooting = false);
 
-        Gamepads.gamepad1().a().whenBecomesTrue(() -> blocker.setPosition(0.5));
+        /*Gamepads.gamepad1().a().whenBecomesTrue(() -> blocker.setPosition(0.5));
         Gamepads.gamepad1().b().whenBecomesTrue(() -> blocker.setPosition(0.7));
         Gamepads.gamepad1().x().whenBecomesTrue(() -> blocker.setPosition(0.9));
         Gamepads.gamepad1().y().whenBecomesTrue(() -> blocker.setPosition(0.3));
-        Gamepads.gamepad1().leftBumper().whenBecomesTrue(() -> blocker.setPosition(0.1));
+        Gamepads.gamepad1().leftBumper().whenBecomesTrue(() -> blocker.setPosition(0.1));*/
 
 
     }
@@ -186,6 +186,9 @@ public class redteleop extends NextFTCOpMode {
         UpdateColorSensors();
         autonomousIntakeTransferOperation(shooting);
         turret_on_via_encoder_and_crservos(angle);
+        //ActiveOpMode.telemetry().addData("position left", flywheel.getVelocity());
+        //ActiveOpMode.telemetry().addData("position right", flywheel.getVelocity());
+        ActiveOpMode.telemetry().update();
 
 
 

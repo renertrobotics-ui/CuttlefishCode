@@ -118,7 +118,7 @@ public class blueteleop extends NextFTCOpMode {
         float newtps = calculateShooterTPS(distance);
 
         // 3. Command the shooter
-        shooter(newtps);
+        shooter(1800);
         double angle = calculate_heading(currPose);
         UpdateColorSensors();
         turret_on_via_encoder_and_crservos(angle);

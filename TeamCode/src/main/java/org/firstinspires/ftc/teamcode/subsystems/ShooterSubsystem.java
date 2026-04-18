@@ -68,10 +68,16 @@ public class ShooterSubsystem implements Subsystem {
 
         flywheelvelocity = flywheel.getVelocity();
         flywheelvelocity2 = flywheel2.getVelocity();
+        double Fvalue = tps/3000;
+        double Pvalue = ((tps - flywheelvelocity) / 200);
+        double power = Fvalue + Pvalue;
+
+        flywheel.setPower(power);
+        flywheel2.setPower(-power);
 
         // Pass current velocities to the controllers
-        velocityControlWithFeedforward(new KineticState(0, flywheelvelocity, 0), tps);
-        velocityControlWithFeedforward2(new KineticState(0, -flywheelvelocity2, 0), tps);
+        //velocityControlWithFeedforward(new KineticState(0, flywheelvelocity, 0), tps);
+        //velocityControlWithFeedforward2(new KineticState(0, -flywheelvelocity2, 0), tps);
     }
 
     @Override
@@ -83,7 +89,7 @@ public class ShooterSubsystem implements Subsystem {
     @Override
     public void periodic() {
         ActiveOpMode.telemetry().addData("position left", flywheel.getVelocity());
-        ActiveOpMode.telemetry().addData("position right", flywheel.getVelocity());
+        ActiveOpMode.telemetry().addData("position right", flywheel2.getVelocity());
         ActiveOpMode.telemetry().update();
 
         // Continuously run the shooter logic at the current target velocity
