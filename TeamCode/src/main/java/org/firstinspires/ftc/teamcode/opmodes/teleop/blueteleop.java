@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.Flywheel.shooter;*/
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.UpdateColorSensors;
 import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.autonomousIntakeTransferOperation;
+import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
 import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.calculate_heading;
 import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.turret_on_via_encoder_and_crservos;
 
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.TempHood;*/
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem;
 
 
@@ -38,7 +40,7 @@ public class blueteleop extends NextFTCOpMode {
     public blueteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(DriveSubsystem.INSTANCE, IntakeTransferSubsystem.INSTANCE, TurretSubsystem.INSTANCE/*, Intake.INSTANCE, Spindexer.INSTANCE*/),
+                new SubsystemComponent(DriveSubsystem.INSTANCE, IntakeTransferSubsystem.INSTANCE, TurretSubsystem.INSTANCE, ShooterSubsystem.INSTANCE/*, Intake.INSTANCE, Spindexer.INSTANCE*/),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
 
@@ -55,7 +57,41 @@ public class blueteleop extends NextFTCOpMode {
     }
 
 
+    // --- REGRESSION & TARGETING CONSTANTS ---
+    private static final double GOAL_X = 141.5;
+    private static final double GOAL_Y = 141.5;
 
+    // Quartic Regression Coefficients (from image)
+    private static final double a = -3.25025e-7;
+    private static final double b = 0.000367273;
+    private static final double c = -0.145764;
+    private static final double d = 25.48778;
+
+    // TODO: The 'e' value was cut off in your screenshot! Replace 0.0 with your actual 'e' value.
+    private static final double e = -3.291;
+    // ----------------------------------------
+
+
+
+    // --- NEW METHOD: Calculate Distance ---
+    private double getDistanceToGoal() {
+        Pose currentPose = follower.getPose();
+        double deltaX = GOAL_X - currentPose.getX();
+        double deltaY = GOAL_Y - currentPose.getY();
+
+        // Math.hypot calculates sqrt(deltaX^2 + deltaY^2)
+        return 2.54*Math.hypot(deltaX, deltaY);
+    }
+
+    // --- NEW METHOD: Calculate Target TPS via Regression ---
+    private float calculateShooterTPS(double distance) {
+        double targetTPS = (a * Math.pow(distance, 4)) +
+                (b * Math.pow(distance, 3)) +
+                (c * Math.pow(distance, 2)) +
+                (d * distance) + e;
+
+        return (float) targetTPS;
+    }
 
     @Override
     public void onInit() {
@@ -76,10 +112,16 @@ public class blueteleop extends NextFTCOpMode {
         follower.update();
         Pose currPose = follower.getPose();
 
-        float newtps=1000;
+        double distance = getDistanceToGoal();
+
+        // 2. Plug distance into your regression formula
+        float newtps = calculateShooterTPS(distance);
+
+        // 3. Command the shooter
+        shooter(newtps);
         double angle = calculate_heading(currPose);
         UpdateColorSensors();
-        turret_on_via_encoder_and_crservos(angle, newtime.seconds());
+        turret_on_via_encoder_and_crservos(angle);
         autonomousIntakeTransferOperation(shooting);
         //float newtps=100
         //turret_on_via_encoder_and_crservos(-10000);

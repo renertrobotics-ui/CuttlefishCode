@@ -30,7 +30,7 @@ public class TurretSubsystem implements Subsystem {
     }
     private IMUEx imu;
     GoBildaPinpointDriver pinpoint;
-    public static final MotorEx throughbore = new MotorEx("Transfer_Motor");
+    public static final MotorEx throughbore = new MotorEx("Intake_Motor");
 
     public static double current_servo_position = 0.5;
     public boolean operator_on = true;
@@ -46,7 +46,9 @@ public class TurretSubsystem implements Subsystem {
     public double PreviousTurretPos;
     public static PIDCoefficients myPidCoeff = new PIDCoefficients(0.000055, 0, 0.00001);
 //    public static BasicFeedforwardParameters myFF = new BasicFeedforwardParameters(0.0, 0, 0.0);
-    public static double F = 0.0885;
+    public static double turretF = 0.0885;
+    public static double turretD = 0;
+    public static double turretP = 0;
 
     public double Seconds;
 
@@ -65,40 +67,32 @@ public class TurretSubsystem implements Subsystem {
 
     public static double GetTurretPosInRadians(){
         RawEncoderValue = throughbore.getCurrentPosition();
-        ActiveOpMode.telemetry().addData("turretpos", RawEncoderValue);
-        ActiveOpMode.telemetry().addData("adjusted", RawEncoderValue * (Math.PI / 12288));
+       //ActiveOpMode.telemetry().addData("turretpos", RawEncoderValue);
+        //ActiveOpMode.telemetry().addData("adjusted", RawEncoderValue * (Math.PI / 12288));
 
         return RawEncoderValue;
     }
 
-    public static void turret_on_via_encoder_and_crservos(double target, double seconds){// will send turret to target position, with target in radian
+    public static void turret_on_via_encoder_and_crservos(double target){// will send turret to target position, with target in radian
         BindingManager.update();
         double turretpos = GetTurretPosInRadians();
-        double time = seconds;
-
-
         double delta = (turretpos-newpose);
         double f;
         double error = target - turretpos;
 
-        KineticState currentstate = new KineticState(turretpos, delta);
+        /*KineticState currentstate = new KineticState(turretpos, delta);
         ControlSystem controller2 = ControlSystem.builder()
                 .posPid(myPidCoeff) // Velocity PID with kP=0.1, kI=0.01, kD=0.05
                 .build();
-        controller2.setGoal(new KineticState(target, 0));
-        if (Math.abs(target-turretpos) < 75) {
+        controller2.setGoal(new KineticState(target, 0));*/
+        if (Math.abs(error) == 0) {
             f = 0;
         } else {
-            f = Math.signum(target-turretpos);
+            f = Math.signum(error);
         }
-        double turretF = 0.075;
-        ActiveOpMode.telemetry().addData("time", time);
 
-        //ActiveOpMode.telemetry().addData("controller2.calculate(currentstate)", controller2.calculate(currentstate));
-        double power = /*Math.signum(error) * Math.sqrt(Math.abs(error)) * 0.002 + turretF * f*/controller2.calculate(currentstate) + F*f;
+        double power = error * turretP + delta * turretD + f * turretF /*controller2.calculate(currentstate) + F*f*/;
         newpose = turretpos;
-        three = time;
-        ActiveOpMode.telemetry().addData("delta", delta);
 
         ServoExRight.setPower(-power);
         ServoExLeft.setPower(-power);
@@ -107,7 +101,7 @@ public class TurretSubsystem implements Subsystem {
 
     public static void operator_control(double positionChange) {
         current_servo_position += positionChange/50;
-        ActiveOpMode.telemetry().addData("left position operator", 0.5 + current_servo_position);
+        //ActiveOpMode.telemetry().addData("left position operator", 0.5 + current_servo_position);
         //ServoExLeft.setPosition(0.5 + current_servo_position);
         //ServoExRight.setPosition(0.5 - current_servo_position);
     }
@@ -127,7 +121,7 @@ public class TurretSubsystem implements Subsystem {
             double fieldAngleRad = Math.atan2(distY, distX);
             double robotHeadingRadians = (currentpose.getHeading());
             double turretTargetRad = fieldAngleRad - robotHeadingRadians;
-            ActiveOpMode.telemetry().addData("headingangle", (fieldAngleRad) * 180 / Math.PI );
+            //ActiveOpMode.telemetry().addData("headingangle", (fieldAngleRad) * 180 / Math.PI );
             turnneed = -turretTargetRad/(Math.PI*2)*24576;
         }
         if (isRed()){
@@ -136,11 +130,11 @@ public class TurretSubsystem implements Subsystem {
             double fieldAngleRad = Math.atan2(distY, distX);
             double robotHeadingRadians = (currentpose.getHeading());
             double turretTargetRad = fieldAngleRad - robotHeadingRadians;
-            ActiveOpMode.telemetry().addData("headingangle", (fieldAngleRad) * 180 / Math.PI );
+            //ActiveOpMode.telemetry().addData("headingangle", (fieldAngleRad) * 180 / Math.PI );
 
             turnneed = turretTargetRad/(Math.PI*2)*24576;
         }
-        ActiveOpMode.telemetry().addData("turretpos", throughbore.getCurrentPosition());
+        /*ActiveOpMode.telemetry().addData("turretpos", throughbore.getCurrentPosition());
 
 
         ActiveOpMode.telemetry().addData("turnneed", turnneed);
@@ -151,7 +145,7 @@ public class TurretSubsystem implements Subsystem {
         ActiveOpMode.telemetry().addData("robotx", currentpose.getX());
 
         ActiveOpMode.telemetry().addData("goalx", distY);
-        ActiveOpMode.telemetry().addData("goaly", distX);
+        ActiveOpMode.telemetry().addData("goaly", distX);*/
         return turnneed;
 
     }
@@ -180,7 +174,7 @@ public class TurretSubsystem implements Subsystem {
 */
         //ActiveOpMode.telemetry().addData("position left", ServoExLeft.getPosition());
         //ActiveOpMode.telemetry().addData("position right", ServoExRight.getPosition());
-        ActiveOpMode.telemetry().update();
+       // ActiveOpMode.telemetry().update();
 
 
     }

@@ -4,6 +4,23 @@ import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS;
 import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS44;
 import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
 */
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
+import static dev.nextftc.extensions.pedro.PedroComponent.follower;
+
+import com.pedropathing.geometry.Pose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+
+import dev.nextftc.core.components.SubsystemComponent;
+import dev.nextftc.extensions.pedro.PedroComponent;
+import dev.nextftc.ftc.ActiveOpMode;
+import dev.nextftc.ftc.Gamepads;
+import dev.nextftc.ftc.NextFTCOpMode;
+import dev.nextftc.core.components.BindingsComponent;
+import dev.nextftc.ftc.components.BulkReadComponent;
+import dev.nextftc.hardware.impl.MotorEx;
+
 import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.UpdateColorSensors;
 import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.autonomousIntakeTransferOperation;
 import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
@@ -21,6 +38,7 @@ import org.firstinspires.ftc.teamcode.subsystems.TempHood;
 */
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem;
 
 
@@ -65,6 +83,20 @@ public class redteleop extends NextFTCOpMode {
     private boolean shooting = false;
     public static boolean findMotif = false;
     boolean firsttime = true;
+    // --- REGRESSION & TARGETING CONSTANTS ---
+    private static final double GOAL_X = 141.5;
+    private static final double GOAL_Y = 141.5;
+
+    // Quartic Regression Coefficients (from image)
+    private static final double a = -3.25025e-7;
+    private static final double b = 0.000367273;
+    private static final double c = -0.145764;
+    private static final double d = 25.48778;
+
+    // TODO: The 'e' value was cut off in your screenshot! Replace 0.0 with your actual 'e' value.
+    private static final double e = -3.291;
+    // ----------------------------------------
+
 
 
 
@@ -102,7 +134,24 @@ public class redteleop extends NextFTCOpMode {
         return false;
     }
 
+    private double getDistanceToGoal() {
+        Pose currentPose = follower.getPose();
+        double deltaX = currentPose.getX();
+        double deltaY = GOAL_Y - currentPose.getY();
 
+        // Math.hypot calculates sqrt(deltaX^2 + deltaY^2)
+        return 2.54*Math.hypot(deltaX, deltaY);
+    }
+
+    // --- NEW METHOD: Calculate Target TPS via Regression ---
+    private float calculateShooterTPS(double distance) {
+        double targetTPS = (a * Math.pow(distance, 4)) +
+                (b * Math.pow(distance, 3)) +
+                (c * Math.pow(distance, 2)) +
+                (d * distance) + e;
+
+        return (float) targetTPS;
+    }
 
 
     private static final int APRILTAG_PIPELINE = 7;
@@ -123,18 +172,20 @@ public class redteleop extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
-        if (firsttime) {
-            runtime.reset();
-            firsttime = false;
-        }
         follower.update();
         Pose currPose = follower.getPose();
+        double distance = getDistanceToGoal();
 
-        float newtps=1000;
+        // 2. Plug distance into your regression formula
+        float newtps = calculateShooterTPS(distance);
+
+        // 3. Command the shooter
+        shooter(1800);
+
         double angle = calculate_heading(currPose);
         UpdateColorSensors();
         autonomousIntakeTransferOperation(shooting);
-        turret_on_via_encoder_and_crservos(angle, runtime.seconds());
+        turret_on_via_encoder_and_crservos(angle);
 
 
 

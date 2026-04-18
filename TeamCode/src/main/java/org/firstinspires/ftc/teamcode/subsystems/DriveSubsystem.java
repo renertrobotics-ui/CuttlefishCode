@@ -99,7 +99,7 @@ public class DriveSubsystem implements Subsystem {
 
 
     //Pose startingpose = Storage.currentPose;
-    Pose startingpose = new Pose(72,72, Math.toRadians(90));
+    Pose startingpose = Storage.currentPose;
     @Override
     public Command getDefaultCommand() {
 
@@ -189,6 +189,8 @@ public class DriveSubsystem implements Subsystem {
         }
 
 
+        startingpose = Storage.currentPose;
+        follower.setStartingPose(startingpose);
 
 
 
