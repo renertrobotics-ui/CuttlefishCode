@@ -48,7 +48,7 @@ public class TurretSubsystem implements Subsystem {
 //    public static BasicFeedforwardParameters myFF = new BasicFeedforwardParameters(0.0, 0, 0.0);
     public static double turretF = 0.07;
     public static double turretD = 0;
-    public static double turretP = 0.00005;
+    public static double turretP = 0.000052;
 
     public double Seconds;
 
@@ -134,8 +134,13 @@ public class TurretSubsystem implements Subsystem {
 
             turnneed = turretTargetRad/(Math.PI*2)*24576;
         }
-
-        /*ActiveOpMode.telemetry().addData("turretpos", throughbore.getCurrentPosition());
+if (turnneed < -6800) {
+    turnneed = -6800;
+}
+if (turnneed > 6800) {
+    turnneed = 6800;
+}
+        ActiveOpMode.telemetry().addData("turretpos", throughbore.getCurrentPosition());
 
 
         ActiveOpMode.telemetry().addData("turnneed", turnneed);
@@ -146,7 +151,7 @@ public class TurretSubsystem implements Subsystem {
         ActiveOpMode.telemetry().addData("robotx", currentpose.getX());
 
         ActiveOpMode.telemetry().addData("goalx", distY);
-        ActiveOpMode.telemetry().addData("goaly", distX);*/
+        ActiveOpMode.telemetry().addData("goaly", distX);
 
 
         return turnneed;
