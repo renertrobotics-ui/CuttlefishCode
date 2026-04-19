@@ -146,7 +146,7 @@ public class IntakeTransferSubsystem implements Subsystem {
         }
 
         ActiveOpMode.telemetry().addData("intantnat",Intake.getDistance(DistanceUnit.CM) );
-        ActiveOpMode.telemetry().addData("transgenderblenderadventure", Transfer.getDistance(DistanceUnit.CM));
+        ActiveOpMode.telemetry().addData("transfer", Transfer.getDistance(DistanceUnit.CM));
         UpdateColorSensors();
 
 

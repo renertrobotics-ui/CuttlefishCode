@@ -68,7 +68,10 @@ public class blueteleop extends NextFTCOpMode {
     private static final double d = 25.48778;
 
     // TODO: The 'e' value was cut off in your screenshot! Replace 0.0 with your actual 'e' value.
-    private static final double e = -3.291;
+    private static final double e = 12.291;
+    public Pose starting;
+    public boolean firsttime = true;
+
     // ----------------------------------------
 
 
@@ -99,30 +102,39 @@ public class blueteleop extends NextFTCOpMode {
 //        limelight.pipelineSwitch(APRILTAG_PIPELINE);
 //        limelight.start();
         blue=true;
+        starting=new Pose (21, 72, Math.toRadians(90));
+        follower.setPose(starting);
 
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> shooting = true)
                 .whenBecomesFalse(() -> shooting = false);
 
-
+follower.update();
 
     }
 
     @Override
     public void onUpdate() {
+        if (firsttime) {
+            starting=new Pose (21, 72, Math.toRadians(90));
+            follower.setPose(starting);
+            follower.update();
+            firsttime = false;
+
+        }
         follower.update();
         Pose currPose = follower.getPose();
-
         double distance = getDistanceToGoal();
 
         // 2. Plug distance into your regression formula
         float newtps = calculateShooterTPS(distance);
 
         // 3. Command the shooter
-        shooter(1800);
+        shooter(newtps);
+
         double angle = calculate_heading(currPose);
         UpdateColorSensors();
-        turret_on_via_encoder_and_crservos(angle);
         autonomousIntakeTransferOperation(shooting);
+        turret_on_via_encoder_and_crservos(angle);
         //float newtps=100
         //turret_on_via_encoder_and_crservos(-10000);
         //float newtps=1000;

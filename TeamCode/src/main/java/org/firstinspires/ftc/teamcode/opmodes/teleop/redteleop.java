@@ -95,7 +95,7 @@ public class redteleop extends NextFTCOpMode {
     private static final double d = 25.48778;
 
     // TODO: The 'e' value was cut off in your screenshot! Replace 0.0 with your actual 'e' value.
-    private static final double e = -3.291;
+    private static final double e = 12.291;
     // ----------------------------------------
 public Pose starting;
 

@@ -119,10 +119,12 @@ public class TurretSubsystem implements Subsystem {
             distY = 141 - currentpose.getY();
             distX = currentpose.getX();
             double fieldAngleRad = Math.atan2(distY, distX);
-            double robotHeadingRadians = (currentpose.getHeading());
-            double turretTargetRad = fieldAngleRad - robotHeadingRadians;
-            //ActiveOpMode.telemetry().addData("headingangle", (fieldAngleRad) * 180 / Math.PI );
+            double robotHeadingRadians = (currentpose.getHeading()-Math.PI);
+            double turretTargetRad = fieldAngleRad + robotHeadingRadians;
+            ActiveOpMode.telemetry().addData("headingangle", (fieldAngleRad) * 180 / Math.PI );
             turnneed = -turretTargetRad/(Math.PI*2)*24576;
+            ActiveOpMode.telemetry().addData("unadjusted", -turretTargetRad/(Math.PI*2)*24576);
+
         }
         if (isRed()){
             distY = 141 - currentpose.getY();
@@ -130,7 +132,7 @@ public class TurretSubsystem implements Subsystem {
             double fieldAngleRad = Math.atan2(distY, distX);
             double robotHeadingRadians = (currentpose.getHeading());
             double turretTargetRad = fieldAngleRad - robotHeadingRadians;
-            //ActiveOpMode.telemetry().addData("headingangle", (fieldAngleRad) * 180 / Math.PI );
+            ActiveOpMode.telemetry().addData("headingangle", (fieldAngleRad) * 180 / Math.PI );
 
             turnneed = turretTargetRad/(Math.PI*2)*24576;
         }
