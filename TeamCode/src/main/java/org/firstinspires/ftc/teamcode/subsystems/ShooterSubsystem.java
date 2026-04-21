@@ -69,14 +69,15 @@ public class ShooterSubsystem implements Subsystem {
         flywheelvelocity = flywheel.getVelocity();
         flywheelvelocity2 = flywheel2.getVelocity();
         double Fvalue = tps/3000;
-        double Pvalue = ((tps - flywheelvelocity) / 200);
+        double Pvalue = ((tps - flywheelvelocity) / 100);
         double power = Fvalue + Pvalue;
 
         flywheel.setPower(power);
         flywheel2.setPower(-power);
-        //ActiveOpMode.telemetry().addData("position left", flywheel.getVelocity());
-        //ActiveOpMode.telemetry().addData("position right", flywheel2.getVelocity());
+        ActiveOpMode.telemetry().addData("position left", flywheel.getVelocity());
+        ActiveOpMode.telemetry().addData("position right", flywheel2.getVelocity());
 
+        ActiveOpMode.telemetry().addData("tps left", tps);
 
         // Pass current velocities to the controllers
         //velocityControlWithFeedforward(new KineticState(0, flywheelvelocity, 0), tps);

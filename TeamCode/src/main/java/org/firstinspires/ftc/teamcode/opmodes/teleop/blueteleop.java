@@ -92,7 +92,9 @@ public class blueteleop extends NextFTCOpMode {
                 (b * Math.pow(distance, 3)) +
                 (c * Math.pow(distance, 2)) +
                 (d * distance) + e;
-
+if (distance > 150) {
+    targetTPS += 50;
+}
         return (float) targetTPS;
     }
 

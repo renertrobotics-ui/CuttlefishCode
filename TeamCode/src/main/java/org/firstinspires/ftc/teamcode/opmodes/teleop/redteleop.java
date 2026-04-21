@@ -150,6 +150,10 @@ public Pose starting;
                 (b * Math.pow(distance, 3)) +
                 (c * Math.pow(distance, 2)) +
                 (d * distance) + e;
+        if (distance > 150) {
+            targetTPS += 50;
+        }
+        ActiveOpMode.telemetry().addData("distane", distance);
 
         return (float) targetTPS;
     }

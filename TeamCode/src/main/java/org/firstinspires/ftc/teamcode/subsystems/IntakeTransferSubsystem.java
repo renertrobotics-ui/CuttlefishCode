@@ -63,44 +63,44 @@ public class IntakeTransferSubsystem implements Subsystem {
         transfer_Motor.setPower(0);
     }
     public static void blockerOpen() {
-        blocker.setPosition(0.4); // todo: find open position of blocker servo
+        blocker.setPosition(0.6); // todo: find open position of blocker servo
     }
     public static void blockerClose() {
-        blocker.setPosition(0); // todo: find closed position of blocker servo
+        blocker.setPosition(0.3); // todo: find closed position of blocker servo
     }
     public static void autonomousIntakeTransferOperation(boolean shooting) {
         if (!shooting) {
             switch (NumberOfBallsInBobot()) {
                 case 0:
-                    intake = true;
-                    transfer = true;
-                    close = true;
+runIntake();
+runTransfer();
+                    blockerClose();
                     light.setPosition(0.2);
                     break;
                 case 1:
-                    intake = true;
-                    transfer = true;
-                    close = true;
+runIntake();
+runTransfer();
+                    blockerClose();
                     light.setPosition(0.2);
                     break;
                 case 2:
-                    intake = true;
-                    transfer = false;
-                    close = true;
+                    runIntake();
+                    stopTransfer();
+                    blockerClose();
                     light.setPosition(0.32);
                     break;
                 case 3:
-                    intake = false;
-                    transfer = false;
-                    close = false;
+                    stopIntake();
+                    stopTransfer();
+                    blockerOpen();
                     light.setPosition(0.45);
                     break;
             }
         }
         if (shooting) {
-            intake = true;
-            transfer = true;
-            close = false;
+            runIntake();
+            runTransfer();
+            blockerOpen();
 
         }
     }
@@ -126,24 +126,6 @@ public class IntakeTransferSubsystem implements Subsystem {
     public void periodic() {
         ActiveOpMode.telemetry().addData("intake",intake_Motor.getPower() );
         ActiveOpMode.telemetry().addData("transfer", transfer_Motor.getPower());
-        if (intake) {
-            intake_Motor.setPower(1);
-        }
-        if (!intake) {
-            intake_Motor.setPower(0);
-        }
-        if (transfer) {
-            transfer_Motor.setPower(-1);
-        }
-        if (!transfer) {
-            transfer_Motor.setPower(0);
-        }
-        if (close) {
-            blocker.setPosition(0); // todo: find open position of blocker servo
-        }
-        if (!close) {
-            blocker.setPosition(0.4); // todo: find open position of blocker servo
-        }
 
         ActiveOpMode.telemetry().addData("intantnat",Intake.getDistance(DistanceUnit.CM) );
         ActiveOpMode.telemetry().addData("transfer", Transfer.getDistance(DistanceUnit.CM));

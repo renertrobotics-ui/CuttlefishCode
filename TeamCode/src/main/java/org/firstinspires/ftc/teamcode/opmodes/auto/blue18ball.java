@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 //import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS;
 //import static org.firstinspires.ftc.teamcode.subsystems.ShooterCalc.calculateShotVectorandUpdateHeading;
 
+import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.UpdateColorSensors;
+import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.autonomousIntakeTransferOperation;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -16,7 +19,9 @@ import com.pedropathing.util.Timer;
         import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 //import org.firstinspires.ftc.teamcode.subsystems.DistanceRed;
 //import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
@@ -38,7 +43,7 @@ import dev.nextftc.hardware.impl.MotorEx;
 public class blue18ball extends NextFTCOpMode {
     public blue18ball(){
         addComponents(
-                new SubsystemComponent(ShooterSubsystem.INSTANCE),
+                new SubsystemComponent(ShooterSubsystem.INSTANCE, IntakeTransferSubsystem.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE,
                 new PedroComponent(hwMap -> Constants.createFollower(hwMap))
@@ -52,6 +57,7 @@ public class blue18ball extends NextFTCOpMode {
 
 
     private Paths paths;
+    private boolean shoot = false;
     public MotorEx intakeMotor;
 
     int tagId = 0;
@@ -148,26 +154,15 @@ public class blue18ball extends NextFTCOpMode {
     }
 
 
-    private Command intakeMotorOn = new LambdaCommand()
-            .setStart(() -> intakeMotor.setPower(1));
 
-    Command intakeBack = new LambdaCommand()
-            .setStart(() -> intakeMotor.setPower(-1));
-
-    double distance;
-
-    Command transferOn = new LambdaCommand()
-            .setStart(()-> transfer1.setPower(-1));
-    Command transferOff = new LambdaCommand()
-            .setStart(() -> transfer1.setPower(0));
-    Command transferOnForIntake = new LambdaCommand()
-            .setStart(()-> transfer1.setPower(-1));
+    Command onshoot = new LambdaCommand()
+            .setStart(()-> shoot = true);
+    Command offshoot = new LambdaCommand()
+            .setStart(()-> shoot = false);
 
 
-    public SequentialGroup shoot = new SequentialGroup(new Delay(0.05), transferOn, new Delay(0.4), transferOff);
+    public SequentialGroup shooter = new SequentialGroup(new Delay(0.05), onshoot, new Delay(0.4), offshoot);
 
-    public Command reverseIntakeForMe = new LambdaCommand()
-            .setStart(() -> intakeMotor.setPower(0.5));
 
     public Command Auto(){
         return new SequentialGroup(
@@ -176,9 +171,7 @@ public class blue18ball extends NextFTCOpMode {
                 preloadSpun*/
                 new Delay(0.5),
                 new FollowPath(paths.preloadLaunch,true,1.0),
-                shoot,
-                intakeMotorOn,
-                transferOn,
+                shooter,
                 new Delay(0.1),
 
                 new FollowPath(paths.intakeSet2,true,1.0),
@@ -186,38 +179,28 @@ public class blue18ball extends NextFTCOpMode {
 
 
                 new FollowPath(paths.launchSet2,true,1.0),
-                shoot,
-                intakeMotorOn,
-                transferOn
-                ,
+                shooter,
 
                 new FollowPath(paths.resetAndIntake1,true,1.0),
                 new Delay(1),
                 //reverseIntakeForMe,
                 new FollowPath(paths.launchSpam1, true, 1.0),
-                shoot,
-
-                intakeMotorOn,
-                transferOn,
+                shooter,
 
 
                 new FollowPath(paths.resetAndIntake2,true,1.0),
                 new Delay(1.0),
                 //reverseIntakeForMe,
                 new FollowPath(paths.launchSpam2, true, 1.0),
-                shoot,
+                shooter,
 
-                intakeMotorOn,
-                transferOn,
                 new FollowPath(paths.intakeSet1,true,1.0),
                 new FollowPath(paths.launchSet1,true,1.0),
-                shoot,
+                shooter,
 
-                intakeMotorOn,
-                transferOn,
                 new FollowPath(paths.intakeSet3,true,1.0),
                 new FollowPath(paths.launchSet3,true,1.0),
-                shoot,
+                shooter,
 
                 new FollowPath(paths.teleOpPark,true,1.0)
         );
@@ -241,6 +224,8 @@ public class blue18ball extends NextFTCOpMode {
     @Override
     public void onUpdate(){
         follower.update();
+        UpdateColorSensors();
+        autonomousIntakeTransferOperation(shoot);
 
         /*if(preloadspinreal) {
             shooter(1080);
@@ -262,7 +247,6 @@ public class blue18ball extends NextFTCOpMode {
 
         Pose currPose = follower.getPose();
         double robotHeading = follower.getPose().getHeading();
-        Vector robotToGoalVector = new Vector(follower.getPose().distanceFrom(new Pose(4, 141)), Math.atan2(141 - currPose.getY(), 4 - currPose.getX()));
         //Vector v = new Vector(new Pose(138, 138));
         //Double[] results = calculateShotVectorandUpdateHeading(robotHeading, robotToGoalVector, follower.getVelocity());
         //double flywheelSpeed = results[0];
@@ -341,8 +325,6 @@ public class blue18ball extends NextFTCOpMode {
                     ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
                     .setVelocityConstraint(1.0)
                     .setTValueConstraint(0.8)
-                    .addTemporalCallback(0.1, intakeBack)
-                    .addTemporalCallback(0.1, transferOn)
                     .build();
 
             moverBacker = follower.pathBuilder().addPath(
@@ -364,7 +346,6 @@ public class blue18ball extends NextFTCOpMode {
                     ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
                     .setVelocityConstraint(0.3)
                     .setTValueConstraint(0.95)
-                    .addPoseCallback(new Pose(18, 61), reverseIntakeForMe, 0.3) // 142 - 124
                     .build();
 
             resetAndIntake2 = follower.pathBuilder().addPath(
@@ -376,8 +357,6 @@ public class blue18ball extends NextFTCOpMode {
                     ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
                     .setVelocityConstraint(1.0)
                     .setTValueConstraint(0.8)
-                    .addTemporalCallback(0.1, intakeBack)
-                    .addTemporalCallback(0.1, transferOn)
                     .build();
 
             launchSpam2 = follower.pathBuilder().addPath(
@@ -389,7 +368,6 @@ public class blue18ball extends NextFTCOpMode {
                     ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
                     .setVelocityConstraint(0.3)
                     .setTValueConstraint(0.95)
-                    .addPoseCallback(new Pose(18, 61), reverseIntakeForMe, 0.3) // 142 - 118
                     .build();
 
             intakeSet1 = follower.pathBuilder().addPath(
@@ -400,10 +378,7 @@ public class blue18ball extends NextFTCOpMode {
                             )
                     ).setTangentHeadingInterpolation()
                     .setVelocityConstraint(1.0)
-                    .setTValueConstraint(0.8)
-                    .addTemporalCallback(0.1, intakeMotorOn)
-                    .addTemporalCallback(0.1, transferOn)
-                    .build();
+                    .setTValueConstraint(0.8).build();
 
             launchSet1 = follower.pathBuilder().addPath(
                             new BezierLine(
@@ -413,7 +388,6 @@ public class blue18ball extends NextFTCOpMode {
                     ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(133))
                     .setVelocityConstraint(0.3)
                     .setTValueConstraint(0.95)
-                    .addPoseCallback(new Pose(40, 86), reverseIntakeForMe, 0.4) // 142 - 102
                     .build();
 
             intakeSet3 = follower.pathBuilder().addPath(
@@ -426,8 +400,6 @@ public class blue18ball extends NextFTCOpMode {
                     ).setLinearHeadingInterpolation(Math.toRadians(136), Math.toRadians(180))
                     .setVelocityConstraint(1.0)
                     .setTValueConstraint(0.8)
-                    .addTemporalCallback(0.1, intakeMotorOn)
-                    .addTemporalCallback(0.1, transferOn)
                     .build();
 
             launchSet3 = follower.pathBuilder().addPath(
@@ -438,7 +410,6 @@ public class blue18ball extends NextFTCOpMode {
                     ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(133))
                     .setVelocityConstraint(0.3)
                     .setTValueConstraint(0.95)
-                    .addPoseCallback(new Pose(35, 69), reverseIntakeForMe, 0.8) // 142 - 107
                     .build();
 
             teleOpPark = follower.pathBuilder().addPath(
