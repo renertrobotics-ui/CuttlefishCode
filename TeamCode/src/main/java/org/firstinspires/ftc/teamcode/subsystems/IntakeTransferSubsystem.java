@@ -27,7 +27,7 @@ public class IntakeTransferSubsystem implements Subsystem {
     static ColorRangeSensor Intake;
     static ColorRangeSensor Transfer;
     public static void UpdateColorSensors() {
-        BallInIntake = (Intake.getDistance(DistanceUnit.CM) < 5.7);
+        BallInIntake = (Intake.getDistance(DistanceUnit.CM) < 6);
         BallInTransfer = (Transfer.getDistance(DistanceUnit.CM) < 6.5);
     }
     public static int NumberOfBallsInBobot() {
