@@ -46,7 +46,7 @@ public class TurretSubsystem implements Subsystem {
     public double PreviousTurretPos;
     public static PIDCoefficients myPidCoeff = new PIDCoefficients(0.000055, 0, 0.00001);
 //    public static BasicFeedforwardParameters myFF = new BasicFeedforwardParameters(0.0, 0, 0.0);
-    public static double turretF = 0.07;
+    public static double turretF = 0.071;
     public static double turretD = 0;
     public static double n = 0;
     public static double turretP = 0.000052;

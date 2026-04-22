@@ -16,8 +16,8 @@ public class ShooterSubsystem implements Subsystem {
     public static final ShooterSubsystem INSTANCE = new ShooterSubsystem();
 
     // Hardware
-    public static MotorEx flywheel = new MotorEx("LeftShooter_Motor");
-    public static MotorEx flywheel2 = new MotorEx("RightShooter_Motor");
+    public static MotorEx flywheel;
+    public static MotorEx flywheel2;
     public static double kp = 0.015;
     public static double ki = 0.005;
     public static double kd = 0;
@@ -79,6 +79,8 @@ public class ShooterSubsystem implements Subsystem {
 
         ActiveOpMode.telemetry().addData("tps left", tps);
 
+        ActiveOpMode.telemetry().addData("power", power);
+
         // Pass current velocities to the controllers
         //velocityControlWithFeedforward(new KineticState(0, flywheelvelocity, 0), tps);
         //velocityControlWithFeedforward2(new KineticState(0, -flywheelvelocity2, 0), tps);
@@ -88,6 +90,9 @@ public class ShooterSubsystem implements Subsystem {
     public void initialize() {
         // Ensure motors are in a neutral state on start
         targetVelocity = 0;
+        flywheel = new MotorEx("LeftShooter_Motor");
+        flywheel2 = new MotorEx("RightShooter_Motor");
+
     }
 
     @Override
