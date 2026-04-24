@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.shooting;
 
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import dev.nextftc.core.subsystems.Subsystem;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import dev.nextftc.ftc.ActiveOpMode;
@@ -66,7 +68,7 @@ public class IntakeTransferSubsystem implements Subsystem {
         blocker.setPosition(0.6); // todo: find open position of blocker servo
     }
     public static void blockerClose() {
-        blocker.setPosition(0.3); // todo: find closed position of blocker servo
+        blocker.setPosition(0.25); // todo: find closed position of blocker servo
     }
     public static void autonomousIntakeTransferOperation(boolean shooting) {
         if (!shooting) {
@@ -100,6 +102,55 @@ runTransfer();
         if (shooting) {
             runIntake();
             runTransfer();
+            blockerOpen();
+
+        }
+    }
+    public static void autonomousIntakeTransferOperationforAutonomous(boolean shooting) {
+        ElapsedTime time = new ElapsedTime();
+        ElapsedTime t2me = new ElapsedTime();
+
+        if (!shooting) {
+            switch (NumberOfBallsInBobot()) {
+                case 0:
+                    runIntake();
+                    runTransfer();
+                    blockerClose();
+                    light.setPosition(0.2);
+                    break;
+                case 1:
+                    runIntake();
+                    runTransfer();
+                    blockerClose();
+                    light.setPosition(0.2);
+                    break;
+                case 2:
+                    runIntake();
+                    stopTransfer();
+                    blockerClose();
+                    light.setPosition(0.32);
+                    time.reset();
+                    break;
+                case 3:
+                    if (time.seconds() > 0.3) {
+                        blockerClose();
+                        } else {
+                        blockerOpen();
+                    }
+                    stopIntake();
+                    stopTransfer();
+                    light.setPosition(0.45);
+                    t2me.reset();
+                    break;
+            }
+        }
+        if (shooting) {
+            if (t2me.seconds() > 0.1) {
+                stopIntake();
+                stopTransfer();
+            } else {
+            runIntake();
+            runTransfer(); }
             blockerOpen();
 
         }

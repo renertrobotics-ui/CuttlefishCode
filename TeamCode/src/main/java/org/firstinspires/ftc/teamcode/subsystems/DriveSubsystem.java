@@ -176,17 +176,18 @@ Pose startingpose;
             startingpose = new Pose(120, 72, Math.toRadians(90));
             follower.setStartingPose(startingpose);
             localize = new LambdaCommand()
-                    .setStart(()->follower.setPose(new Pose(129,90,Math.toRadians(90))));
+                    .setStart(()->follower.setPose(new Pose(133,8,Math.toRadians(90))));
 
         }
         if(alliance ==1){
             startingpose=new Pose (21, 72, Math.toRadians(90));
             follower.setStartingPose(startingpose);
             localize = new LambdaCommand()
-                    .setStart(()->follower.setPose(new Pose(15,90,Math.toRadians(90))));
+                    .setStart(()->follower.setPose(new Pose(8,8,Math.toRadians(90))));
 
         }
 
+        Gamepads.gamepad1().x().whenBecomesTrue((()->Localize().schedule()));
 
 
 
@@ -247,7 +248,6 @@ Pose startingpose;
     @Override
     public void periodic() {
         if (firsttime == true) {
-            //Gamepads.gamepad1().x().whenBecomesTrue((()->Localize().schedule()));
             firsttime = false;
 
         }

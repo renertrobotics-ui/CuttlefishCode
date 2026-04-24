@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.Calculations.findTPS44;
 import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
 */
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.autonomousIntakeTransferOperationforAutonomous;
 import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
@@ -45,6 +46,7 @@ import org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem;
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.calculate_heading;
+import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.operator_control;
 import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.turret_on_via_encoder_and_crservos;
 
 import dev.nextftc.core.components.SubsystemComponent;
@@ -93,6 +95,7 @@ public class redteleop extends NextFTCOpMode {
     private static final double b = 0.000367273;
     private static final double c = -0.145764;
     private static final double d = 25.48778;
+    public boolean operator = false;
 
     // TODO: The 'e' value was cut off in your screenshot! Replace 0.0 with your actual 'e' value.
     private static final double e = 12.291;
@@ -151,7 +154,7 @@ public Pose starting;
                 (c * Math.pow(distance, 2)) +
                 (d * distance) + e;
         if (distance > 150) {
-            targetTPS += 50;
+            targetTPS += 30;
         }
         ActiveOpMode.telemetry().addData("distane", distance);
 
@@ -168,6 +171,8 @@ public Pose starting;
             starting=new Pose (120, 72, Math.toRadians(90));
             follower.setPose(starting);
 
+
+        Gamepads.gamepad2().x().whenBecomesTrue(() -> operator = !operator);
 
         follower.update();
 
@@ -201,8 +206,18 @@ public Pose starting;
 
         double angle = calculate_heading(currPose);
         UpdateColorSensors();
-        autonomousIntakeTransferOperation(shooting);
-        turret_on_via_encoder_and_crservos(angle);
+        autonomousIntakeTransferOperationforAutonomous(shooting);
+        double power = gamepad2.left_trigger - gamepad2.right_trigger;
+        //double servopower = Gamepads.gamepad1().rightTrigger().get();
+        ActiveOpMode.telemetry().addData("rihght trigger", gamepad1.right_stick_x);
+        ActiveOpMode.telemetry().addData("power",power);
+
+
+        if (!operator) {
+    turret_on_via_encoder_and_crservos(angle);
+} else {
+    operator_control(power * 0.3);
+}
         //ActiveOpMode.telemetry().addData("position left", flywheel.getVelocity());
         //ActiveOpMode.telemetry().addData("position right", flywheel.getVelocity());
         ActiveOpMode.telemetry().update();

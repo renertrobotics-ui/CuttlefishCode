@@ -7,8 +7,10 @@ import static org.firstinspires.ftc.teamcode.subsystems.Flywheel.shooter;*/
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.UpdateColorSensors;
 import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.autonomousIntakeTransferOperation;
+import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.autonomousIntakeTransferOperationforAutonomous;
 import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
 import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.calculate_heading;
+import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.operator_control;
 import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.turret_on_via_encoder_and_crservos;
 
 import com.pedropathing.geometry.Pose;
@@ -73,7 +75,7 @@ public class blueteleop extends NextFTCOpMode {
     public boolean firsttime = true;
 
     // ----------------------------------------
-
+private boolean operator = false;
 
 
     // --- NEW METHOD: Calculate Distance ---
@@ -93,7 +95,7 @@ public class blueteleop extends NextFTCOpMode {
                 (c * Math.pow(distance, 2)) +
                 (d * distance) + e;
 if (distance > 150) {
-    targetTPS += 50;
+    targetTPS += 30;
 }
         return (float) targetTPS;
     }
@@ -106,6 +108,7 @@ if (distance > 150) {
         blue=true;
         starting=new Pose (21, 72, Math.toRadians(90));
         follower.setPose(starting);
+        Gamepads.gamepad2().x().whenBecomesTrue(() -> operator = !operator);
 
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> shooting = true)
                 .whenBecomesFalse(() -> shooting = false);
@@ -132,11 +135,15 @@ follower.update();
 
         // 3. Command the shooter
         shooter(newtps);
-
+        double power = gamepad2.left_trigger - gamepad2.right_trigger;
         double angle = calculate_heading(currPose);
         UpdateColorSensors();
-        autonomousIntakeTransferOperation(shooting);
-        turret_on_via_encoder_and_crservos(angle);
+        autonomousIntakeTransferOperationforAutonomous(shooting);
+        if (!operator) {
+            turret_on_via_encoder_and_crservos(angle);
+        } else {
+            operator_control(power * 0.3);
+        }
         //float newtps=100
         //turret_on_via_encoder_and_crservos(-10000);
         //float newtps=1000;

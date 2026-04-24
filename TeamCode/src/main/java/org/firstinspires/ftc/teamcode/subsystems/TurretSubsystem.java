@@ -10,12 +10,14 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import dev.nextftc.bindings.BindingManager;
+import dev.nextftc.bindings.Range;
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.control.feedback.PIDCoefficients;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
+import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.hardware.impl.CRServoEx;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.Direction;
@@ -46,7 +48,7 @@ public class TurretSubsystem implements Subsystem {
     public double PreviousTurretPos;
     public static PIDCoefficients myPidCoeff = new PIDCoefficients(0.000055, 0, 0.00001);
 //    public static BasicFeedforwardParameters myFF = new BasicFeedforwardParameters(0.0, 0, 0.0);
-    public static double turretF = 0.071;
+    public static double turretF = 0.072;
     public static double turretD = 0;
     public static double n = 0;
     public static double turretP = 0.000052;
@@ -58,12 +60,14 @@ public static double continuousHeading = 0;
 
 
     Pose startingpose = new Pose(72,72, Math.toRadians(90));
+    private double servopower;
 
     @Override
     public void initialize() {
         continuousHeading = 0;
         lastangle = 0;
-n = 0;
+        n = 0;
+
         ServoExLeft = new CRServoEx("axonLeft");
         ServoExRight = new CRServoEx("axonRight");
         imu = new IMUEx("imu", Direction.RIGHT, Direction.UP).zeroed();
@@ -104,11 +108,10 @@ n = 0;
 
     }
 
-    public static void operator_control(double positionChange) {
-        current_servo_position += positionChange/50;
+    public static void operator_control(double power) {
         //ActiveOpMode.telemetry().addData("left position operator", 0.5 + current_servo_position);
-        //ServoExLeft.setPosition(0.5 + current_servo_position);
-        //ServoExRight.setPosition(0.5 - current_servo_position);
+        ServoExLeft.setPower(power);
+        ServoExRight.setPower(power);
     }
     public Command Localize(){
         return localize;
@@ -180,11 +183,11 @@ n = 0;
 
         }
         ActiveOpMode.telemetry().addData("turnneed", turnneed);
-        if (turnneed < -6800) {
-    turnneed = -6800;
+        if (turnneed < -7500) {
+    turnneed = -7500;
 }
-if (turnneed > 6800) {
-    turnneed = 6800;
+if (turnneed > 6300) {
+    turnneed = 6300;
 }
 
 
@@ -196,10 +199,7 @@ if (turnneed > 6800) {
     @Override
     public void periodic() {
 
-        follower.update();
-        Pose currPose = follower.getPose();
-        double robotHeading = follower.getPose().getHeading();
-/*
+      /*
         if (Gamepads.gamepad1().b().toggleOnBecomesTrue().get()) {
             operator_on = !operator_on;
         }
