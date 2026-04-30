@@ -67,7 +67,7 @@ public class red18ball extends NextFTCOpMode {
 
     int tagId = 0;
 
-    public Pose start = new Pose(109, 133, Math.toRadians(90));
+    public Pose start = new Pose(109, 127, Math.toRadians(90));
 
 
     private MotorEx transfer1;
@@ -298,13 +298,11 @@ public class red18ball extends NextFTCOpMode {
         public Paths(Follower follower) {
             preloadLaunch = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(109.000, 133.000),
+                                    new Pose(109.000, 127.000),
                                     new Pose(95.000, 95.000)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
-                    .setVelocityConstraint(1.0)
-                    .setTValueConstraint(0.8)
                     .build();
 
             intakeSet2 = follower.pathBuilder().addPath(
@@ -315,8 +313,6 @@ public class red18ball extends NextFTCOpMode {
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(20))
-                    .setVelocityConstraint(1.0)
-                    .setTValueConstraint(0.8)
                     .build();
 
             launchSet2 = follower.pathBuilder().addPath(
@@ -326,54 +322,46 @@ public class red18ball extends NextFTCOpMode {
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(20), Math.toRadians(0))
-                    .setVelocityConstraint(0.3)
-                    .setTValueConstraint(0.95)
                     .build();
 
             resetAndIntake1 = follower.pathBuilder().addPath(
                             new BezierCurve(
                                     new Pose(95.000, 95.000),
                                     new Pose(114.600, 55.000),
-                                    new Pose(131.000, 60.900)
+                                    new Pose(128.000, 62)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(30))
-                    .setVelocityConstraint(0.1)
-                    .setTValueConstraint(0.98)
                     .build();
 
             launchSpam1 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(131.000, 60.900),
+                            new BezierCurve(
+                                    new Pose(128.000, 62),
+                                    new Pose(100, 67),
                                     new Pose(95.000, 95.000)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(30), Math.toRadians(0))
-                    .setVelocityConstraint(0.3)
-                    .setTValueConstraint(0.95)
                     .build();
 
             resetAndIntake2 = follower.pathBuilder().addPath(
                             new BezierCurve(
                                     new Pose(95.000, 95.000),
                                     new Pose(114.600, 55.000),
-                                    new Pose(131.000, 60.900)
+                                    new Pose(128.000, 62)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(30))
-                    .setVelocityConstraint(0.1)
-                    .setTValueConstraint(0.98)
                     .build();
 
             launchSpam2 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(131.000, 60.900),
+                            new BezierCurve(
+                                    new Pose(128.000, 62),
+                                    new Pose(100, 67),
                                     new Pose(95.000, 95.000)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(30), Math.toRadians(0))
-                    .setVelocityConstraint(0.3)
-                    .setTValueConstraint(0.95)
                     .build();
             intakeSet1 = follower.pathBuilder().addPath(
                             new BezierCurve(
@@ -393,9 +381,6 @@ public class red18ball extends NextFTCOpMode {
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-                    .setVelocityConstraint(0.3)
-                    .setTValueConstraint(0.95)
                     .build();
 
             intakeSet3 = follower.pathBuilder().addPath(
@@ -406,8 +391,6 @@ public class red18ball extends NextFTCOpMode {
                                     new Pose(12, 32.000)    // 142 - 129.151
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-                    .setVelocityConstraint(1.0)
-                    .setTValueConstraint(0.8)
                     .build();
 
             launchSet3 = follower.pathBuilder().addPath(
@@ -416,19 +399,15 @@ public class red18ball extends NextFTCOpMode {
                                     new Pose(50.000, 94.000)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-                    .setVelocityConstraint(0.3)
-                    .setTValueConstraint(0.95)
                     .build();
 
             teleOpPark = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(95.000, 95.000),
-                                    new Pose(100.000, 120.000)
+                                    new Pose(118.000, 72.000)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                    .setVelocityConstraint(0)
-                    .setTValueConstraint(0.99)
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(90))
                     .build();
         }
     }

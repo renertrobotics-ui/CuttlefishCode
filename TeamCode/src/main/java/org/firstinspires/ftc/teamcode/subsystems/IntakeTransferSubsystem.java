@@ -56,7 +56,7 @@ public class IntakeTransferSubsystem implements Subsystem {
         intake_Motor.setPower(1);
     }
     public static void runTransfer() {
-        transfer_Motor.setPower(-1);
+        transfer_Motor.setPower(-0.8);
     }
     public static void stopIntake() {
         intake_Motor.setPower(0);
@@ -175,12 +175,12 @@ runTransfer();
 
     @Override
     public void periodic() {
-        ActiveOpMode.telemetry().addData("intake",intake_Motor.getPower() );
+       /* ActiveOpMode.telemetry().addData("intake",intake_Motor.getPower() );
         ActiveOpMode.telemetry().addData("transfer", transfer_Motor.getPower());
 
         ActiveOpMode.telemetry().addData("intantnat",Intake.getDistance(DistanceUnit.CM) );
         ActiveOpMode.telemetry().addData("transfer", Transfer.getDistance(DistanceUnit.CM));
-        UpdateColorSensors();
+        */UpdateColorSensors();
 
 
     }

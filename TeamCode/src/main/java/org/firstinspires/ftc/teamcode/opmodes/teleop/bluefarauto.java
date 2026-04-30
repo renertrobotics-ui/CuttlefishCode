@@ -10,7 +10,6 @@ import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.
 import static org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem.autonomousIntakeTransferOperationforAutonomous;
 import static org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem.shooter;
 import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.calculate_heading;
-import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.calculate_headingdouble;
 import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.operator_control;
 import static org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem.turret_on_via_encoder_and_crservos;
 
@@ -30,7 +29,6 @@ import org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem;
 
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
-import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.core.components.BindingsComponent;
@@ -38,10 +36,10 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.impl.MotorEx;
 
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "blue close teleop")
-public class blueteleop extends NextFTCOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "blue far teleop")
+public class bluefarauto extends NextFTCOpMode {
 
-    public blueteleop() {
+    public bluefarauto() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
                 new SubsystemComponent(DriveSubsystem.INSTANCE, IntakeTransferSubsystem.INSTANCE, TurretSubsystem.INSTANCE, ShooterSubsystem.INSTANCE/*, Intake.INSTANCE, Spindexer.INSTANCE*/),
@@ -75,10 +73,9 @@ public class blueteleop extends NextFTCOpMode {
     private static final double e = 12.291;
     public Pose starting;
     public boolean firsttime = true;
-    public double offset = 0;
 
     // ----------------------------------------
-private boolean operator = false;
+    private boolean operator = false;
 
 
     // --- NEW METHOD: Calculate Distance ---
@@ -97,13 +94,10 @@ private boolean operator = false;
                 (b * Math.pow(distance, 3)) +
                 (c * Math.pow(distance, 2)) +
                 (d * distance) + e;
-        targetTPS += (offset + 30);
-
+        targetTPS += (30);
         return (float) targetTPS;
     }
     public boolean resetpose = false;
-    public double xoffset = 0;
-    public double yoffset = 0;
 
     @Override
     public void onInit() {
@@ -111,35 +105,29 @@ private boolean operator = false;
 //        limelight.pipelineSwitch(APRILTAG_PIPELINE);
 //        limelight.start();
         blue=true;
-        starting=new Pose (21, 72, Math.toRadians(90));
+        starting=new Pose (38, 83, Math.toRadians(90));
         follower.setPose(starting);
         Gamepads.gamepad2().x().whenBecomesTrue(() -> operator = !operator);
         Gamepads.gamepad2().y().whenBecomesTrue(() -> resetpose = true);
-        Gamepads.gamepad2().a().whenBecomesTrue(() -> offset += 10);
-        Gamepads.gamepad2().b().whenBecomesTrue(() -> offset -= 10);
-        Gamepads.gamepad2().dpadDown().whenBecomesTrue(() -> xoffset += 1);
-        Gamepads.gamepad2().dpadUp().whenBecomesTrue(() -> xoffset -= 1);
-        Gamepads.gamepad2().dpadLeft().whenBecomesTrue(() -> yoffset -= 1);
-        Gamepads.gamepad2().dpadRight().whenBecomesTrue(() -> yoffset += 1);
+
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> shooting = true)
                 .whenBecomesFalse(() -> shooting = false);
 
-follower.update();
+        follower.update();
 
     }
 
     @Override
     public void onUpdate() {
         if (firsttime) {
-            starting=new Pose (24, 72, Math.toRadians(90));
+            starting=new Pose (38, 33, Math.toRadians(90));
             follower.setPose(starting);
             follower.update();
             firsttime = false;
 
         }
-
         if (resetpose) {
-            starting=new Pose (136  , 8, Math.toRadians(90));
+            starting=new Pose (133, 8, Math.toRadians(180));
             follower.setPose(starting);
             follower.update();
             resetpose = false;
@@ -147,13 +135,6 @@ follower.update();
 
         follower.update();
         Pose currPose = follower.getPose();
-        double x = currPose.getX();
-        double y = currPose.getY();
-        double newx = x + xoffset;
-        double newy = y + yoffset;
-        double heading = currPose.getHeading();
-
-        Pose updatedpose = new Pose (newx, newy, heading);
         double distance = getDistanceToGoal();
 
         // 2. Plug distance into your regression formula
@@ -168,16 +149,8 @@ follower.update();
         if (!operator) {
             turret_on_via_encoder_and_crservos(angle);
         } else {
-            operator_control(power * 0.2);
+            operator_control(power * 0.3);
         }
-        ActiveOpMode.telemetry().addData("xoffset", xoffset);
-
-        ActiveOpMode.telemetry().addData("yoffset", yoffset);
-
-        ActiveOpMode.telemetry().addData("newest x", updatedpose.getX());
-
-        ActiveOpMode.telemetry().addData("newest y", updatedpose.getY());
-
         //float newtps=100
         //turret_on_via_encoder_and_crservos(-10000);
         //float newtps=1000;

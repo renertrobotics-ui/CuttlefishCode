@@ -61,9 +61,9 @@ import dev.nextftc.hardware.impl.ServoEx;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Red Teleop")
-public class redteleop extends NextFTCOpMode {
+public class redfarteleop extends NextFTCOpMode {
 
-    public redteleop() {
+    public redfarteleop() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
                 new SubsystemComponent(DriveSubsystem.INSTANCE, ShooterSubsystem.INSTANCE, IntakeTransferSubsystem.INSTANCE, TurretSubsystem.INSTANCE),
@@ -100,7 +100,7 @@ public class redteleop extends NextFTCOpMode {
     // TODO: The 'e' value was cut off in your screenshot! Replace 0.0 with your actual 'e' value.
     private static final double e = 12.291;
     // ----------------------------------------
-public Pose starting;
+    public Pose starting;
 
 
 
@@ -157,7 +157,7 @@ public Pose starting;
         return (float) targetTPS;
     }
 
-public static boolean resetpose = false;
+public boolean resetpose = false;
     public double offset = 0;
     private static final int APRILTAG_PIPELINE = 7;
     @Override
@@ -165,14 +165,16 @@ public static boolean resetpose = false;
         red=true;
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> shooting = true)
                 .whenBecomesFalse(() -> shooting = false);
-            starting=new Pose (120, 72, Math.toRadians(90));
-            follower.setPose(starting);
+        starting=new Pose (103.5, 33, Math.toRadians(90));
+        follower.setPose(starting);
 
 
         Gamepads.gamepad2().x().whenBecomesTrue(() -> operator = !operator);
-        Gamepads.gamepad2().y().whenBecomesTrue(() -> resetpose = true);
         Gamepads.gamepad2().a().whenBecomesTrue(() -> offset += 10);
         Gamepads.gamepad2().b().whenBecomesTrue(() -> offset -= 10);
+
+
+        Gamepads.gamepad2().y().whenBecomesTrue(() -> resetpose = true);
 
 
         follower.update();
@@ -189,18 +191,19 @@ public static boolean resetpose = false;
     @Override
     public void onUpdate() {
         if (firsttime) {
-                starting=new Pose (120, 72, Math.toRadians(90));
-                follower.setPose(starting);
-                follower.update();
-                firsttime = false;
+            starting=new Pose (103.5, 33, Math.toRadians(90));
+            follower.setPose(starting);
+            follower.update();
+            firsttime = false;
+
         }
         if (resetpose) {
-            starting=new Pose (6, 8, Math.toRadians(90));
+            starting=new Pose (8, 8, Math.toRadians(0));
             follower.setPose(starting);
             follower.update();
             resetpose = false;
-        }
 
+        }
         follower.update();
         Pose currPose = follower.getPose();
         double distance = getDistanceToGoal();
@@ -221,12 +224,12 @@ public static boolean resetpose = false;
 
 
         if (!operator) {
-    turret_on_via_encoder_and_crservos(angle);
-} else {
-    operator_control(power * 0.15);
-}
-        ActiveOpMode.telemetry().addData("position x", currPose.getX());
-        ActiveOpMode.telemetry().addData("position y", currPose.getY());
+            turret_on_via_encoder_and_crservos(angle);
+        } else {
+            operator_control(power * 0.3);
+        }
+        //ActiveOpMode.telemetry().addData("position left", flywheel.getVelocity());
+        //ActiveOpMode.telemetry().addData("position right", flywheel.getVelocity());
         ActiveOpMode.telemetry().update();
 
 

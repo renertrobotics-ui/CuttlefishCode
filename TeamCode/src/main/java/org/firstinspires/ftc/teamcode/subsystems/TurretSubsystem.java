@@ -48,10 +48,11 @@ public class TurretSubsystem implements Subsystem {
     public double PreviousTurretPos;
     public static PIDCoefficients myPidCoeff = new PIDCoefficients(0.000055, 0, 0.00001);
 //    public static BasicFeedforwardParameters myFF = new BasicFeedforwardParameters(0.0, 0, 0.0);
-    public static double turretF = 0.072;
+    public static double turretF = 0.0725;
     public static double turretD = 0;
     public static double n = 0;
-    public static double turretP = 0.000052;
+    public static double x = 0;
+    public static double turretP = 0.000053;
 public static double lastangle = 0;
 public static double continuousHeading = 0;
     public double Seconds;
@@ -67,6 +68,7 @@ public static double continuousHeading = 0;
         continuousHeading = 0;
         lastangle = 0;
         n = 0;
+        x = 0;
 
         ServoExLeft = new CRServoEx("axonLeft");
         ServoExRight = new CRServoEx("axonRight");
@@ -76,8 +78,8 @@ public static double continuousHeading = 0;
     public static double GetTurretPosInRadians(){
         RawEncoderValue = throughbore.getCurrentPosition();
 
-       ActiveOpMode.telemetry().addData("turretpos", RawEncoderValue);
-       ActiveOpMode.telemetry().addData("adjusted", RawEncoderValue * (Math.PI / 12288));
+      // ActiveOpMode.telemetry().addData("turretpos", RawEncoderValue);
+       //ActiveOpMode.telemetry().addData("adjusted", RawEncoderValue * (Math.PI / 12288));
 
         return RawEncoderValue;
     }
@@ -120,15 +122,20 @@ public static double continuousHeading = 0;
     public static double calculate_heading(Pose currentpose) {
         double turretX = 0;
         double turretY = 0;
+        //ActiveOpMode.telemetry().addData("posex", currentpose.getX());
+        //ActiveOpMode.telemetry().addData("posey", currentpose.getY());
+        //ActiveOpMode.telemetry().addData("heading", currentpose.getHeading());
+
+
         double distY = 0;
         double distX = 0;
         double turnneed = 0;
         double currentangle = currentpose.getHeading();
         double delta = currentangle - lastangle;
         if (delta < -Math.PI) {
-            delta += 2*Math.PI;
+            delta += 2 * Math.PI;
         } else if (delta > Math.PI) {
-            delta -= 2*Math.PI;
+            delta -= 2 * Math.PI;
         }
         continuousHeading += delta;
         lastangle = currentangle;
@@ -137,10 +144,10 @@ public static double continuousHeading = 0;
             distY = 141 - currentpose.getY();
             distX = currentpose.getX();
             double fieldAngleRad = Math.atan2(distY, distX);
-            double robotHeadingRadians = (continuousHeading-Math.PI);
+            double robotHeadingRadians = (continuousHeading - Math.PI);
             double turretTargetRad = fieldAngleRad + robotHeadingRadians;
-            turnneed = -turretTargetRad/(Math.PI*2)*24576;
-            if (turnneed > 12288) {
+            turnneed = -turretTargetRad / (Math.PI * 2) * 24576;
+           /*if (turnneed > 12288) {
                 if ((turnneed - 24576*n) > 12288) {
                     n += 1;
                 }
@@ -148,24 +155,23 @@ public static double continuousHeading = 0;
                     turnneed = turnneed - n*24576;
                 }
             } else if (turnneed < -12288) {
-                if ((turnneed + 24576*n) < -12288) {
-                    n += 1;
+                if ((turnneed + 24576*x) < -12288) {
+                    x += 1;
                 }
                 else {
-                    turnneed = turnneed + n*24576;
+                    turnneed = turnneed + x*24576;
                 }
-            }
+            }*/
 
         }
-        if (isRed()){
+        if (isRed()) {
             distY = 141 - currentpose.getY();
             distX = 141 - currentpose.getX();
             double fieldAngleRad = Math.atan2(distY, distX);
             double robotHeadingRadians = (continuousHeading);
             double turretTargetRad = fieldAngleRad - robotHeadingRadians;
-
-            turnneed = turretTargetRad/(Math.PI*2)*24576;
-            if (turnneed > 12288) {
+            turnneed = turretTargetRad / (Math.PI * 2) * 24576;
+            /*if (turnneed > 12288) {
                 if ((turnneed - 24576*n) > 12288) {
                     n += 1;
                 }
@@ -173,27 +179,119 @@ public static double continuousHeading = 0;
                     turnneed = turnneed - n*24576;
                 }
             } else if (turnneed < -12288) {
-                if ((turnneed + 24576*n) < -12288) {
+                if ((turnneed + 24576*x) < -12288) {
+                    x += 1;
+                }
+                else {
+                    turnneed = turnneed + x*24576;
+                }
+            }
+*/
+        }
+        //ActiveOpMode.telemetry().addData("turning", turnneed);
+
+        turnneed = ((turnneed + 12288*201) % 24576) - 12288;
+        //ActiveOpMode.telemetry().addData("turnneed", turnneed);
+
+        if (turnneed < -7500) {
+                turnneed = -7500;
+            }
+            if (turnneed > 6300) {
+                turnneed = 6300;
+            }
+
+
+            return turnneed;
+
+        }
+
+    public static double calculate_headingdouble(double x, double y, double heading) {
+        double turretX = 0;
+        double turretY = 0;
+        //ActiveOpMode.telemetry().addData("posex", currentpose.getX());
+        //ActiveOpMode.telemetry().addData("posey", currentpose.getY());
+        //ActiveOpMode.telemetry().addData("heading", currentpose.getHeading());
+
+
+        double distY = 0;
+        double distX = 0;
+        double turnneed = 0;
+        double currentangle = heading;
+        double delta = currentangle - lastangle;
+        if (delta < -Math.PI) {
+            delta += 2 * Math.PI;
+        } else if (delta > Math.PI) {
+            delta -= 2 * Math.PI;
+        }
+        continuousHeading += delta;
+        lastangle = currentangle;
+
+        if (isBlue()) {
+            distY = 141 - y;
+            distX = x;
+            double fieldAngleRad = Math.atan2(distY, distX);
+            double robotHeadingRadians = (continuousHeading - Math.PI);
+            double turretTargetRad = fieldAngleRad + robotHeadingRadians;
+            turnneed = -turretTargetRad / (Math.PI * 2) * 24576;
+           /*if (turnneed > 12288) {
+                if ((turnneed - 24576*n) > 12288) {
                     n += 1;
                 }
                 else {
-                    turnneed = turnneed + n*24576;
+                    turnneed = turnneed - n*24576;
                 }
-            }
+            } else if (turnneed < -12288) {
+                if ((turnneed + 24576*x) < -12288) {
+                    x += 1;
+                }
+                else {
+                    turnneed = turnneed + x*24576;
+                }
+            }*/
 
         }
-        ActiveOpMode.telemetry().addData("turnneed", turnneed);
+        if (isRed()) {
+            distY = 141 - y;
+            distX = 141 - x;
+            double fieldAngleRad = Math.atan2(distY, distX);
+            double robotHeadingRadians = (continuousHeading);
+            double turretTargetRad = fieldAngleRad - robotHeadingRadians;
+            turnneed = turretTargetRad / (Math.PI * 2) * 24576;
+            /*if (turnneed > 12288) {
+                if ((turnneed - 24576*n) > 12288) {
+                    n += 1;
+                }
+                else {
+                    turnneed = turnneed - n*24576;
+                }
+            } else if (turnneed < -12288) {
+                if ((turnneed + 24576*x) < -12288) {
+                    x += 1;
+                }
+                else {
+                    turnneed = turnneed + x*24576;
+                }
+            }
+*/
+        }
+        //ActiveOpMode.telemetry().addData("turning", turnneed);
+
+        turnneed = ((turnneed + 12288*201) % 24576) - 12288;
+        //ActiveOpMode.telemetry().addData("turnneed", turnneed);
+
         if (turnneed < -7500) {
-    turnneed = -7500;
-}
-if (turnneed > 6300) {
-    turnneed = 6300;
-}
+            turnneed = -7500;
+        }
+        if (turnneed > 6300) {
+            turnneed = 6300;
+        }
 
 
         return turnneed;
 
     }
+
+
 
 
     @Override

@@ -19,9 +19,9 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
-        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-        import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 //import org.firstinspires.ftc.teamcode.subsystems.DistanceRed;
 //import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeTransferSubsystem;
@@ -30,13 +30,13 @@ import org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
-        import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
-        import dev.nextftc.ftc.NextFTCOpMode;
+import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
@@ -45,8 +45,8 @@ import dev.nextftc.hardware.impl.MotorEx;
 
 @Autonomous
 @Configurable
-public class blue18ball extends NextFTCOpMode {
-    public blue18ball(){
+public class bluefarauto_nogate extends NextFTCOpMode {
+    public bluefarauto_nogate(){
         addComponents(
                 new SubsystemComponent(ShooterSubsystem.INSTANCE, IntakeTransferSubsystem.INSTANCE, TurretSubsystem.INSTANCE),
                 BulkReadComponent.INSTANCE,
@@ -125,9 +125,9 @@ public class blue18ball extends NextFTCOpMode {
 
     private double shoottps;
     //Command findTPSShoot = new LambdaCommand()
-            //.setStart(()->shoottps = findTPS(DistanceRed.INSTANCE.getDistanceFromTag()));
+    //.setStart(()->shoottps = findTPS(DistanceRed.INSTANCE.getDistanceFromTag()));
     //Command findTPSPreload = new LambdaCommand()
-           // .setStart(()->preloadtps = findTPS(DistanceRed.INSTANCE.getDistanceFromTag()));
+    // .setStart(()->preloadtps = findTPS(DistanceRed.INSTANCE.getDistanceFromTag()));
 
 
     public void onInit() {
@@ -175,41 +175,33 @@ public class blue18ball extends NextFTCOpMode {
                 /*spinupPLEASEEIsagiINEEDTHIS,
                 preloadSpun*/
                 new FollowPath(paths.preloadLaunch,true,1.0),
-                new Delay(0.5),
+                new Delay(1),
                 shooter,
 
+                new FollowPath(paths.intakespikemark,true,1.0),
 
-
-                new FollowPath(paths.intakeSet2,true,1.0),
-
-
-
-                new FollowPath(paths.launchSet2,true,1.0),
+                new FollowPath(paths.launchspikemark,true,1.0),
                 shooter,
 
-                new FollowPath(paths.resetAndIntake1,true,0.95),
-                new Delay(1.5),
-                //reverseIntakeForMe,
-                new FollowPath(paths.launchSpam1, true, 1.0),
+                new FollowPath(paths.intakedepot,false,1.0),
+                new FollowPath(paths.shootdepot, true, 1.0),
                 shooter,
 
-
-                new FollowPath(paths.resetAndIntake2,true,0.95),
-                new Delay(1.5),
-                //reverseIntakeForMe,
-                new FollowPath(paths.launchSpam2, true, 1.0),
+                new FollowPath(paths.intakedepot1,false,1.0),
+                new FollowPath(paths.shootdepot1, true, 1.0),
                 shooter,
 
-
-                new FollowPath(paths.intakeSet1,true,1.0),
-                new FollowPath(paths.launchSet1,true,1.0),
+                new FollowPath(paths.intakedepot,false,1.0),
+                new FollowPath(paths.shootdepot, true, 1.0),
                 shooter,
-                new FollowPath(paths.resetAndIntake2,true,0.95),
-                new Delay(1.5),
-                //reverseIntakeForMe,
-                //new FollowPath(paths.launchSpam2, true, 1.0),
-                //shooter,
 
+                new FollowPath(paths.intakedepot2,false,1.0),
+                new FollowPath(paths.shootdepot2, true, 1.0),
+                shooter,
+
+                new FollowPath(paths.intakedepot,false,1.0),
+                new FollowPath(paths.shootdepot, true, 1.0),
+                shooter,
 
 
                 new FollowPath(paths.teleOpPark,true,1.0)
@@ -236,10 +228,10 @@ public class blue18ball extends NextFTCOpMode {
         follower.update();
         UpdateColorSensors();
         autonomousIntakeTransferOperationforAutonomous(shoot);
-shooter(1670);
+        shooter(2100);
         Pose currPose = follower.getPose();
 
-       turret_on_via_encoder_and_crservos(-3100);
+        turret_on_via_encoder_and_crservos(-5000);
 
         /*if(preloadspinreal) {
             shooter(1080);
@@ -284,151 +276,108 @@ shooter(1670);
         public PathChain preloadLaunch;
         public PathChain intakeSet2;
         public PathChain launchSet2;
-        public PathChain resetAndIntake1;
-        public PathChain moverBacker;
+        public PathChain launchspikemark;
+        public PathChain intakespikemark;
         public PathChain launchSpam1;
-        public PathChain resetAndIntake2;
-        public PathChain launchSpam2;
-        public PathChain intakeSet1;
-        public PathChain launchSet1;
-        public PathChain intakeSet3;
-        public PathChain launchSet3;
+        public PathChain shootdepot2;
+        public PathChain intakedepot2;
+        public PathChain intakedepot1;
+        public PathChain shootdepot1;
+        public PathChain shootdepot;
+        public PathChain intakedepot;
         public PathChain teleOpPark;
 
         public Paths(Follower follower) {
-            preloadLaunch = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(29.842, 135.289),  // 142 - 112.158
-                                    new Pose(32.000, 110.500),  // 142 - 110.0
-                                    new Pose(50.000, 94)   // 142 - 100.0
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
-                    .setVelocityConstraint(1.0)
-                    .setTValueConstraint(0.8)
-                    .build();
-
-            intakeSet2 = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(50.000, 94.000),
-                                    new Pose(57.000, 56.798),   // 142 - 85
-                                    new Pose(10, 60.000)    // 142 - 130
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(195))
-                    .setVelocityConstraint(1.0)
-                    .setTValueConstraint(0.8)
-                    .build();
-
-            launchSet2 = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(10, 60.000),
-                                    new Pose(38.000, 67.000),   // 142 - 104
-                                    new Pose(50.000, 94.000)    // 142 - 92
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(195), Math.toRadians(180))
-                    .setVelocityConstraint(0.3)
-                    .setTValueConstraint(0.95)
-                    .build();
-
-            resetAndIntake1 = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(50.000, 94.000),
-                                    new Pose(40.000, 63.000),
-                                    new Pose(6.5, 60)      // 142 - 130.5
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(150))
-                    .setVelocityConstraint(0.1)
-                    .setTValueConstraint(0.98)
-                    .build();
-
-            moverBacker = follower.pathBuilder().addPath(
+            preloadLaunch = follower.pathBuilder()
+                    .addPath(
                             new BezierLine(
-                                    new Pose(11.5, 66),
-                                    new Pose(10, 60.25)       // 142 - 129.5
+                                    new Pose(56.000, 8.000),
+                                    new Pose(56.000, 16.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
-                    .setVelocityConstraint(1.0)
-                    .setTValueConstraint(0.8)
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
 
-            launchSpam1 = follower.pathBuilder().addPath(
+            intakespikemark = follower.pathBuilder().addPath(
                             new BezierCurve(
-                                    new Pose(6.5, 60),
-                                    new Pose(38.000, 67.000),
-                                    new Pose(50.000, 94.000)
+                                    new Pose(56.000, 16.000),
+                                    new Pose(56.000, 37.000),
+                                    new Pose(16.000, 35.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(150), Math.toRadians(180))
-                    .setVelocityConstraint(0.3)
-                    .setTValueConstraint(0.95)
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
 
-            resetAndIntake2 = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(50.000, 94.000),
-                                    new Pose(40.000, 63.000),
-                                    new Pose(6.5, 60)      // 142 - 130.5
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(150))
-                    .setVelocityConstraint(0.1)
-                    .setTValueConstraint(0.98)
-                    .build();
-
-            launchSpam2 = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(6.5, 60),       // 142 - 129
-                                    new Pose(38.000, 67.000),
-                                    new Pose(50.0, 94.0)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(150), Math.toRadians(180))
-                    .setVelocityConstraint(0.3)
-                    .setTValueConstraint(0.95)
-                    .build();
-
-            intakeSet1 = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(50.0, 94.0),
-                                    new Pose(38.0, 87.0),
-                                    new Pose(18, 86.898)    // 142 - 124.665
-                            )
-                    ).setTangentHeadingInterpolation()
-                    .setVelocityConstraint(1.0)
-                    .setTValueConstraint(0.8).build();
-
-            launchSet1 = follower.pathBuilder().addPath(
+            launchspikemark = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(18, 86.898),
-                                    new Pose(50.000, 94.000)
+                                    new Pose(16.000, 35.000),
+                                    new Pose(56.000, 16.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-                    .setVelocityConstraint(0.3)
-                    .setTValueConstraint(0.95)
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
 
-            intakeSet3 = follower.pathBuilder().addPath(
-                            new BezierCurve(
-                                    new Pose(50.000, 94.000),
-                                    new Pose(54.000, 89.500),   // 142 - 88
-                                    new Pose(67.000, 28.615),   // 142 - 75
-                                    new Pose(12, 32.000)    // 142 - 129.151
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-                    .setVelocityConstraint(1.0)
-                    .setTValueConstraint(0.8)
-                    .build();
-
-            launchSet3 = follower.pathBuilder().addPath(
+            intakedepot = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(12, 32),
-                                    new Pose(50.000, 94.000)
+                                    new Pose(56.000, 16.000),
+                                    new Pose(8.000, 8.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-                    .setVelocityConstraint(0.3)
-                    .setTValueConstraint(0.95)
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
 
+            shootdepot = follower.pathBuilder().addPath(
+                            new BezierLine(
+                                    new Pose(8.000, 8.000),
+                                    new Pose(56.000, 16.000)
+                            )
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+
+                    .build();
+
+            intakedepot1 = follower.pathBuilder().addPath(
+                            new BezierLine(
+                                    new Pose(56.000, 16.000),
+                                    new Pose(8.000, 11.000)
+                            )
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+
+                    .build();
+
+            shootdepot1 = follower.pathBuilder().addPath(
+                            new BezierLine(
+                                    new Pose(8.000, 11.000),
+                                    new Pose(56.000, 16.000)
+                            )
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+
+                    .build();
+
+            intakedepot2 = follower.pathBuilder().addPath(
+                            new BezierLine(
+                                    new Pose(56.000, 16.000),
+                                    new Pose(8.000, 15.000)
+                            )
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+
+                    .build();
+
+            shootdepot2 = follower.pathBuilder().addPath(
+                            new BezierLine(
+                                    new Pose(8.000, 15.000),
+                                    new Pose(56.000, 16.000)
+                            )
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    .build();
             teleOpPark = follower.pathBuilder().addPath(
                             new BezierLine(
                                     new Pose(50.000, 94.000),
-                                    new Pose(25, 72)    // 142 - 89.168
+                                    new Pose(38, 33)    // 142 - 89.168
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(180),Math.toRadians(90))
                     .setVelocityConstraint(0)

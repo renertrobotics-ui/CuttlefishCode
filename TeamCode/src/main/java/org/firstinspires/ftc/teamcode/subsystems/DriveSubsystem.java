@@ -187,7 +187,7 @@ Pose startingpose;
 
         }
 
-        Gamepads.gamepad1().x().whenBecomesTrue((()->Localize().schedule()));
+        Gamepads.gamepad1().x().whenBecomesTrue((this::Localize));
 
 
 
