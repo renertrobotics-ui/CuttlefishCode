@@ -316,8 +316,9 @@ public class red18ball extends NextFTCOpMode {
                     .build();
 
             launchSet2 = follower.pathBuilder().addPath(
-                            new BezierLine(
+                            new BezierCurve(
                                     new Pose(125.000, 60.000),
+                                    new Pose(114, 75),
                                     new Pose(95.000, 95.000)
                             )
                     )
@@ -347,7 +348,7 @@ public class red18ball extends NextFTCOpMode {
             resetAndIntake2 = follower.pathBuilder().addPath(
                             new BezierCurve(
                                     new Pose(95.000, 95.000),
-                                    new Pose(114.600, 55.000),
+                                    new Pose(115.600, 70.000),
                                     new Pose(128.000, 62)
                             )
                     )
